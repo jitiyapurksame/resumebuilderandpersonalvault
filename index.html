@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ProfileVault">
+<meta name="theme-color" content="#1d4e89">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; frame-src blob:">
+<title>ProfileVault</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:#1f2933; --muted:#6b7785; --accent:#1d4e89; --accent-soft:#e6eef7;
+    --bg:#f6f4ef; --card:#ffffff; --line:#e2ddd2; --ok:#2f7d5b; --warn:#b26a00;
+    --nav-w:230px; --bar-h:64px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink:#e8ecf0; --muted:#98a4b1; --accent:#7fb2ea; --accent-soft:#1d2b3b;
+            --bg:#12171d; --card:#1b222b; --line:#2b3540; --ok:#5cc39a; --warn:#e0a24a; }
+  }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { margin:0; height:100%; }
+  body { font-family:'Sarabun',-apple-system,'Noto Sans Thai',sans-serif; color:var(--ink); background:var(--bg); font-size:16px; line-height:1.5; }
+
+  /* ---- layout ---- */
+  #nav { position:fixed; z-index:10; background:var(--card); border-top:1px solid var(--line);
+         left:0; right:0; bottom:0; display:flex; justify-content:space-around;
+         padding-bottom:env(safe-area-inset-bottom,0px); }
+  #nav .brand { display:none; }
+  #nav a { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+           min-height:var(--bar-h); color:var(--muted); text-decoration:none; font-size:12px; }
+  #nav a .ic { font-size:22px; line-height:1; }
+  #nav a.active { color:var(--accent); font-weight:700; }
+  #main { padding:16px; padding-top:calc(16px + env(safe-area-inset-top,0px));
+          padding-bottom:calc(var(--bar-h) + 24px + env(safe-area-inset-bottom,0px)); max-width:900px; margin:0 auto; }
+  @media (min-width:768px) {
+    #nav { top:0; bottom:auto; right:auto; width:var(--nav-w); flex-direction:column; justify-content:flex-start;
+           border-top:0; border-right:1px solid var(--line); padding:calc(18px + env(safe-area-inset-top,0px)) 10px 18px; gap:4px; }
+    #nav .brand { display:block; font-weight:700; font-size:20px; color:var(--accent); padding:4px 12px 2px; }
+    #nav .tag { display:block; font-size:12px; color:var(--muted); padding:0 12px 14px; }
+    #nav a { flex:none; flex-direction:row; justify-content:flex-start; gap:12px; min-height:46px; padding:0 12px;
+             border-radius:10px; font-size:16px; }
+    #nav a.active { background:var(--accent-soft); }
+    #main { margin-left:var(--nav-w); max-width:none; padding:28px 32px; }
+    #main > .wrap { max-width:860px; }
+  }
+  #nav .tag { display:none; }
+  @media (min-width:768px) { #nav .tag { display:block; } }
+
+  /* ---- components ---- */
+  h1 { font-size:24px; margin:0 0 4px; }
+  .sub { color:var(--muted); margin:0 0 18px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:14px; }
+  .card h2 { font-size:17px; margin:0 0 10px; }
+  .grid { display:grid; gap:12px; grid-template-columns:1fr; }
+  @media (min-width:600px) { .grid.two { grid-template-columns:1fr 1fr; } }
+  .btn { font:inherit; font-size:16px; min-height:46px; padding:10px 16px; border:0; border-radius:12px; cursor:pointer;
+         background:var(--accent); color:#fff; display:inline-flex; align-items:center; gap:8px; }
+  .btn.ghost { background:var(--accent-soft); color:var(--accent); }
+  .btn[disabled] { opacity:.55; cursor:default; }
+  .actions { display:grid; gap:10px; grid-template-columns:1fr 1fr; }
+  .bar { height:12px; background:var(--accent-soft); border-radius:99px; overflow:hidden; }
+  .bar > span { display:block; height:100%; background:var(--ok); }
+  .pill { display:inline-block; font-size:12px; padding:2px 10px; border-radius:99px; background:var(--accent-soft); color:var(--accent); }
+  .pill.warn { background:rgba(178,106,0,.15); color:var(--warn); }
+  .pill.ok { background:rgba(47,125,91,.15); color:var(--ok); }
+  .empty { text-align:center; padding:28px 12px; color:var(--muted); }
+  .empty .big { font-size:42px; }
+  .row { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid var(--line); }
+  .row:last-child { border-bottom:0; }
+  .seg { display:inline-flex; border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+  .seg button { font:inherit; border:0; background:transparent; color:var(--ink); padding:10px 18px; min-height:44px; cursor:pointer; }
+  .seg button.on { background:var(--accent); color:#fff; }
+  .input { font:inherit; width:100%; min-height:46px; padding:8px 12px; border:1px solid var(--line); border-radius:12px; background:var(--card); color:var(--ink); }
+  label.lbl { display:block; font-size:14px; color:var(--muted); margin:0 0 4px; }
+  .tests { list-style:none; margin:10px 0 0; padding:0; font-size:14px; }
+  .tests li { padding:4px 0; border-bottom:1px solid var(--line); }
+  .tests li.fail { color:var(--warn); font-weight:700; }
+  [hidden] { display:none !important; }
+  a.btn { text-decoration:none; justify-content:center; }
+  .btn.danger { background:var(--warn); color:#fff; }
+  .btn.sm { min-height:38px; padding:6px 12px; font-size:14px; }
+  .row { flex-wrap:wrap; }
+  .item { display:flex; gap:12px; align-items:center; text-decoration:none; color:inherit; }
+  .item .txt { flex:1; min-width:0; }
+  .item .txt b, .item .txt span { display:block; overflow:hidden; text-overflow:ellipsis; }
+  .avatar { width:46px; height:46px; border-radius:50%; background:var(--accent-soft); color:var(--accent); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:19px; flex:none; }
+  .avatar.lg { width:64px; height:64px; font-size:26px; }
+  .fld { margin-bottom:12px; }
+  textarea.input { min-height:90px; resize:vertical; }
+  .chk { display:flex; gap:8px; align-items:center; font-size:14px; color:var(--muted); margin-top:6px; }
+  .chk input { width:22px; height:22px; }
+  .toolbar { display:flex; gap:10px; flex-wrap:wrap; margin:12px 0; }
+  .msg { color:var(--warn); font-weight:700; min-height:22px; }
+  .vh { position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; }
+  .avatar { overflow:hidden; }
+  .avatar-img { width:100%; height:100%; object-fit:cover; display:block; }
+  .photos { display:grid; gap:12px; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); margin-bottom:12px; }
+  .ph img { width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:10px; display:block; background:var(--accent-soft); }
+  .ph .input { min-height:38px; padding:4px 8px; font-size:14px; margin:6px 0; }
+  .ph .btns { display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+  .full { grid-column:1 / -1; }
+  .tagline { margin-top:6px; }
+  .tagline .pill { margin-right:4px; }
+  .chips { display:flex; gap:8px; flex-wrap:wrap; margin:10px 0; }
+  .chip { font:inherit; border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:99px; padding:6px 14px; min-height:38px; cursor:pointer; }
+  .chip.on { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .preview { text-align:center; }
+  .preview img { max-width:100%; max-height:70vh; border-radius:8px; }
+  .preview iframe { width:100%; height:65vh; border:1px solid var(--line); border-radius:8px; background:#fff; }
+  pre.txt { white-space:pre-wrap; text-align:left; max-height:60vh; overflow:auto; font-size:13px; margin:0; }
+  a:focus-visible, button:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+</style>
+</head>
+<body>
+<nav id="nav" aria-label="Main"></nav>
+<main id="main"><div class="wrap" id="view"></div></main>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------- Text (English / Thai) ----------
+  var I18N = {
+    en: {
+      app: 'ProfileVault', tagline: 'Enter once. Keep everything. Generate anything.',
+      dashboard: 'Home', people: 'People', documents: 'Documents', resume: 'Resume', settings: 'Settings',
+      welcome: 'Welcome', dashSub: 'Your personal information notebook.',
+      person: 'Person', noPerson: 'No person yet', addPersonHint: 'Add the first person to start.',
+      completeness: 'Profile completeness', quick: 'Quick actions',
+      addPerson: 'Add person', addEducation: 'Add education', addAward: 'Add award',
+      uploadDoc: 'Upload document', genResume: 'Generate resume',
+      lastBackup: 'Last backup', never: 'Never', backupNote: 'Backups arrive in step 7.',
+      soon: 'Coming in step', comingPeople: 'People and profiles', comingDocs: 'Document vault', comingResume: 'Resume generator',
+      language: 'Language', appearance: 'Appearance', autoTheme: 'Follows your device (light / dark)',
+      storage: 'Storage on this device', persistent: 'Protected from automatic clearing',
+      notPersistent: 'Not protected yet', requestPersist: 'Request protection',
+      persistDenied: 'The browser did not grant protection. Install the app to the Home Screen and try again.',
+      used: 'Space used', installTitle: 'Install on this device',
+      installIos: 'iPhone / iPad: tap Share, then "Add to Home Screen". This helps Safari keep your data.',
+      installed: 'Running as an installed app.',
+      backup: 'Backup and restore', deviceNote: 'Each device keeps its own data until backup/sync is built.',
+      version: 'Version', unknown: 'Unknown', yes: 'Yes', no: 'No',
+      dbTitle: 'Database on this device', dbReady: 'Ready', dbError: 'Not available',
+      cPeople: 'People', cRecords: 'Records', cDocs: 'Documents',
+      deviceName: 'Device name', save: 'Save', saved: 'Saved',
+      runTest: 'Run database self-test', testRunning: 'Testing...',
+      testAllPass: 'All checks passed', testSomeFail: 'Some checks failed',
+      peopleSub: 'Everyone in this workspace', noPeopleYet: 'No people yet. Add the first person.',
+      activeLbl: 'Active', makeActive: 'Make active', edit: 'Edit', del: 'Delete', cancel: 'Cancel', back: 'Back', notFound: 'Not found',
+      newPerson: 'New person', editPerson: 'Edit person', nameEn: 'Name (English)', nameTh: 'Name (Thai)',
+      firstName: 'First name', middleName: 'Middle name', lastName: 'Last name', about: 'About',
+      preferred: 'Preferred name', titleF: 'Title', gender: 'Gender', dob: 'Date of birth', pob: 'Place of birth',
+      nationality: 'Nationality', nid: 'National ID / passport', notes: 'Notes', privLbl: 'Private',
+      privHint: 'Private fields are left out of generated documents unless you choose to include them.',
+      nameReq: 'Enter at least a first or last name.',
+      gFemale: 'Female', gMale: 'Male', gOther: 'Other', gUndisclosed: 'Prefer not to say',
+      basicInfo: 'Basic information',
+      moreSoon: 'Education, awards and other records arrive in step 5.',
+      delAsk: 'Delete this person?', delWarn: 'They and all their data move to Recently deleted. You can restore them from Settings.',
+      yesDelete: 'Yes, delete', recentlyDeleted: 'Recently deleted', restore: 'Restore', forever: 'Delete forever',
+      tapAgain: 'Tap again to erase', nothingDeleted: 'Nothing deleted.', openProfile: 'Open profile',
+      docsSub: 'Certificates and supporting files', uploadDocs: 'Upload documents', upCat: 'Category', searchDocs: 'Search documents',
+      allCats: 'All', noDocs: 'No documents yet.',
+      dcIdentity: 'Identity', dcEducation: 'Education', dcCertificate: 'Certificates', dcAward: 'Awards', dcTraining: 'Training',
+      dcEmployment: 'Employment', dcProject: 'Projects', dcPhoto: 'Photos', dcPublication: 'Publications', dcOther: 'Other',
+      dName: 'File name', dDate: 'Document date', dSource: 'Source', dExpiry: 'Expiry date', download: 'Download', preview: 'Preview',
+      noPreview: 'No preview for this file type. Download it to open.', openTab: 'Open in new tab',
+      linkedTo: 'Linked records', noLinks: 'Not linked to any record yet.', linkRec: 'Link to a record', linkBtn: 'Link', unlink: 'Unlink',
+      supportDocs: 'Supporting documents', attachDoc: 'Attach a document',
+      uploadFirst: 'No documents to attach. Upload some in Documents first.', noRecsToLink: 'No records to link. Add records first.',
+      upAdded: 'added', errType: 'is not an allowed file type', errSize: 'is too large (max 25 MB)', errBad: 'does not match its file type',
+      expired: 'Expired', expiresIn: 'Expires in', daysWord: 'days', openVault: 'Open',
+      tEducation: 'Education', tExperience: 'Experience', tTraining: 'Training', tAward: 'Awards', tSkill: 'Skills', tProject: 'Projects',
+      sEducation: 'Education', sExperience: 'Experience', sTraining: 'Training', sAward: 'Award', sSkill: 'Skill', sProject: 'Project',
+      records: 'Records', addNew: 'Add', noRecs: 'Nothing here yet.', present: 'Present',
+      fQualification: 'Qualification / degree', fInstitution: 'Institution', fMajor: 'Field of study / major', fCountry: 'Country',
+      fStart: 'Start', fEnd: 'End', fCurrent: 'Current / ongoing', fGpa: 'GPA / grade', fHonors: 'Honors', fDesc: 'Description',
+      fTags: 'Tags (comma separated)', fPosition: 'Position', fOrg: 'Organization', fType: 'Type', fLocation: 'Location',
+      fResp: 'Responsibilities', fAchv: 'Achievements', fCourse: 'Course name', fOrganizer: 'Organizer', fInstructor: 'Instructor',
+      fHours: 'Duration (hours)', fDate: 'Date', fAward: 'Award name', fAwarding: 'Awarding organization', fLevel: 'Level',
+      fResult: 'Ranking / result', fSkill: 'Skill name', fCategory: 'Category', fYears: 'Years of experience', fProject: 'Project name',
+      fRole: 'Role', fObjective: 'Objective', fSkillsUsed: 'Skills used', fOutcome: 'Outcome', fLinks: 'Links',
+      titleReq: 'Enter a name or title (English or Thai).',
+      x_employment: 'Employment', x_internship: 'Internship', x_volunteer: 'Volunteer', x_leadership: 'Leadership', x_research: 'Research', x_teaching: 'Teaching', x_other: 'Other',
+      x_workshop: 'Workshop', x_professional: 'Professional training', x_online: 'Online course', x_certification: 'Certification course', x_seminar: 'Seminar', x_conference: 'Conference',
+      x_technical: 'Technical', x_soft: 'Soft skill',
+      photos: 'Photos', addPhoto: 'Add photo', noPhotos: 'No photos yet.',
+      photoBad: 'Please choose an image file (JPG, PNG or WebP).', photoBig: 'This image is too large (max 15 MB).',
+      pCurrent: 'Current', pPrevious: 'Previous', pPassport: 'Passport', pProfessional: 'Professional', pSchool: 'School', pOther: 'Other',
+      contacts: 'Contact information', addContact: 'Add contact', noContacts: 'No contact information yet.',
+      kHome: 'Home address', kWork: 'Work address', kSchool: 'School address', kMail: 'Mailing address',
+      kMobile: 'Mobile', kPhone: 'Telephone', kEmail: 'Email', kWeb: 'Website', kLinked: 'LinkedIn', kOther: 'Other link',
+      kindF: 'Type', detailsF: 'Details', addrLine: 'Address line', district: 'District', province: 'Province',
+      postal: 'Postal code', country: 'Country', preferredC: 'Preferred', newContact: 'New contact', editContact: 'Edit contact',
+      contactReq: 'Enter the contact details.', tapDelete: 'Tap again to delete'
+    },
+    th: {
+      app: 'ProfileVault', tagline: 'กรอกครั้งเดียว เก็บครบ สร้างได้ทุกเอกสาร',
+      dashboard: 'หน้าหลัก', people: 'บุคคล', documents: 'เอกสาร', resume: 'เรซูเม่', settings: 'ตั้งค่า',
+      welcome: 'ยินดีต้อนรับ', dashSub: 'สมุดบันทึกข้อมูลส่วนตัวของคุณ',
+      person: 'บุคคล', noPerson: 'ยังไม่มีบุคคล', addPersonHint: 'เพิ่มบุคคลคนแรกเพื่อเริ่มต้น',
+      completeness: 'ความสมบูรณ์ของโปรไฟล์', quick: 'ทางลัด',
+      addPerson: 'เพิ่มบุคคล', addEducation: 'เพิ่มประวัติการศึกษา', addAward: 'เพิ่มรางวัล',
+      uploadDoc: 'อัปโหลดเอกสาร', genResume: 'สร้างเรซูเม่',
+      lastBackup: 'สำรองข้อมูลล่าสุด', never: 'ยังไม่เคย', backupNote: 'ระบบสำรองข้อมูลจะมาในขั้นตอนที่ 7',
+      soon: 'จะมาในขั้นตอนที่', comingPeople: 'บุคคลและโปรไฟล์', comingDocs: 'คลังเอกสาร', comingResume: 'ตัวสร้างเรซูเม่',
+      language: 'ภาษา', appearance: 'การแสดงผล', autoTheme: 'ตามอุปกรณ์ (สว่าง / มืด)',
+      storage: 'พื้นที่จัดเก็บบนอุปกรณ์นี้', persistent: 'ป้องกันการล้างข้อมูลอัตโนมัติแล้ว',
+      notPersistent: 'ยังไม่ได้รับการป้องกัน', requestPersist: 'ขอการป้องกัน',
+      persistDenied: 'เบราว์เซอร์ไม่อนุญาต ลองเพิ่มแอปไปที่หน้าจอโฮมแล้วลองอีกครั้ง',
+      used: 'พื้นที่ที่ใช้', installTitle: 'ติดตั้งบนอุปกรณ์นี้',
+      installIos: 'iPhone / iPad: แตะปุ่มแชร์ แล้วเลือก "เพิ่มไปยังหน้าจอโฮม" จะช่วยให้ Safari เก็บข้อมูลของคุณไว้',
+      installed: 'กำลังใช้งานในรูปแบบแอปที่ติดตั้งแล้ว',
+      backup: 'สำรองและกู้คืนข้อมูล', deviceNote: 'ตอนนี้แต่ละอุปกรณ์เก็บข้อมูลของตัวเอง จนกว่าจะมีระบบสำรอง/ซิงก์',
+      version: 'เวอร์ชัน', unknown: 'ไม่ทราบ', yes: 'ใช่', no: 'ไม่ใช่',
+      dbTitle: 'ฐานข้อมูลบนอุปกรณ์นี้', dbReady: 'พร้อมใช้งาน', dbError: 'ใช้งานไม่ได้',
+      cPeople: 'บุคคล', cRecords: 'รายการข้อมูล', cDocs: 'เอกสาร',
+      deviceName: 'ชื่ออุปกรณ์', save: 'บันทึก', saved: 'บันทึกแล้ว',
+      runTest: 'ทดสอบฐานข้อมูล', testRunning: 'กำลังทดสอบ...',
+      testAllPass: 'ผ่านการตรวจสอบทั้งหมด', testSomeFail: 'บางรายการไม่ผ่าน',
+      peopleSub: 'ทุกคนในพื้นที่ทำงานนี้', noPeopleYet: 'ยังไม่มีบุคคล เพิ่มคนแรกได้เลย',
+      activeLbl: 'ใช้งานอยู่', makeActive: 'ตั้งเป็นบุคคลปัจจุบัน', edit: 'แก้ไข', del: 'ลบ', cancel: 'ยกเลิก', back: 'กลับ', notFound: 'ไม่พบข้อมูล',
+      newPerson: 'เพิ่มบุคคลใหม่', editPerson: 'แก้ไขข้อมูลบุคคล', nameEn: 'ชื่อ (ภาษาอังกฤษ)', nameTh: 'ชื่อ (ภาษาไทย)',
+      firstName: 'ชื่อ', middleName: 'ชื่อกลาง', lastName: 'นามสกุล', about: 'ข้อมูลทั่วไป',
+      preferred: 'ชื่อที่ต้องการให้เรียก', titleF: 'คำนำหน้า', gender: 'เพศ', dob: 'วันเกิด', pob: 'สถานที่เกิด',
+      nationality: 'สัญชาติ', nid: 'เลขบัตรประชาชน / หนังสือเดินทาง', notes: 'บันทึก', privLbl: 'ส่วนตัว',
+      privHint: 'ข้อมูลที่ตั้งเป็นส่วนตัวจะไม่ถูกใส่ในเอกสารที่สร้าง เว้นแต่คุณเลือกใส่',
+      nameReq: 'กรุณากรอกชื่อหรือนามสกุลอย่างน้อยหนึ่งช่อง',
+      gFemale: 'หญิง', gMale: 'ชาย', gOther: 'อื่น ๆ', gUndisclosed: 'ไม่ระบุ',
+      basicInfo: 'ข้อมูลพื้นฐาน',
+      moreSoon: 'ประวัติการศึกษา รางวัล และรายการอื่น ๆ จะมาในขั้นตอนที่ 5',
+      delAsk: 'ลบบุคคลนี้หรือไม่?', delWarn: 'บุคคลนี้และข้อมูลทั้งหมดจะย้ายไปที่ "ลบล่าสุด" และกู้คืนได้จากหน้าตั้งค่า',
+      yesDelete: 'ใช่ ลบเลย', recentlyDeleted: 'ลบล่าสุด', restore: 'กู้คืน', forever: 'ลบถาวร',
+      tapAgain: 'แตะอีกครั้งเพื่อลบถาวร', nothingDeleted: 'ไม่มีรายการที่ถูกลบ', openProfile: 'เปิดโปรไฟล์',
+      docsSub: 'ใบประกาศนียบัตรและไฟล์หลักฐาน', uploadDocs: 'อัปโหลดเอกสาร', upCat: 'หมวดหมู่', searchDocs: 'ค้นหาเอกสาร',
+      allCats: 'ทั้งหมด', noDocs: 'ยังไม่มีเอกสาร',
+      dcIdentity: 'เอกสารระบุตัวตน', dcEducation: 'การศึกษา', dcCertificate: 'ใบประกาศนียบัตร', dcAward: 'รางวัล', dcTraining: 'การอบรม',
+      dcEmployment: 'การทำงาน', dcProject: 'โครงงาน', dcPhoto: 'รูปภาพ', dcPublication: 'ผลงานตีพิมพ์', dcOther: 'อื่น ๆ',
+      dName: 'ชื่อไฟล์', dDate: 'วันที่ของเอกสาร', dSource: 'แหล่งที่มา', dExpiry: 'วันหมดอายุ', download: 'ดาวน์โหลด', preview: 'ตัวอย่าง',
+      noPreview: 'ไฟล์ประเภทนี้ไม่มีตัวอย่าง ดาวน์โหลดเพื่อเปิดดู', openTab: 'เปิดในแท็บใหม่',
+      linkedTo: 'รายการที่เชื่อมโยง', noLinks: 'ยังไม่ได้เชื่อมโยงกับรายการใด', linkRec: 'เชื่อมโยงกับรายการ', linkBtn: 'เชื่อมโยง', unlink: 'ยกเลิกการเชื่อมโยง',
+      supportDocs: 'เอกสารประกอบ', attachDoc: 'แนบเอกสาร',
+      uploadFirst: 'ยังไม่มีเอกสารให้แนบ อัปโหลดที่หน้าเอกสารก่อน', noRecsToLink: 'ยังไม่มีรายการให้เชื่อมโยง กรุณาเพิ่มรายการก่อน',
+      upAdded: 'เพิ่มแล้ว', errType: 'เป็นไฟล์ประเภทที่ไม่รองรับ', errSize: 'ใหญ่เกินไป (สูงสุด 25 MB)', errBad: 'ไม่ตรงกับประเภทไฟล์',
+      expired: 'หมดอายุแล้ว', expiresIn: 'จะหมดอายุใน', daysWord: 'วัน', openVault: 'เปิด',
+      tEducation: 'ประวัติการศึกษา', tExperience: 'ประสบการณ์', tTraining: 'การอบรม', tAward: 'รางวัล', tSkill: 'ทักษะ', tProject: 'โครงงาน',
+      sEducation: 'ประวัติการศึกษา', sExperience: 'ประสบการณ์', sTraining: 'การอบรม', sAward: 'รางวัล', sSkill: 'ทักษะ', sProject: 'โครงงาน',
+      records: 'รายการข้อมูล', addNew: 'เพิ่ม', noRecs: 'ยังไม่มีรายการ', present: 'ปัจจุบัน',
+      fQualification: 'วุฒิการศึกษา / ปริญญา', fInstitution: 'สถาบัน', fMajor: 'สาขาวิชา', fCountry: 'ประเทศ',
+      fStart: 'เริ่ม', fEnd: 'สิ้นสุด', fCurrent: 'ปัจจุบัน / ยังดำเนินอยู่', fGpa: 'เกรดเฉลี่ย', fHonors: 'เกียรตินิยม', fDesc: 'รายละเอียด',
+      fTags: 'แท็ก (คั่นด้วยเครื่องหมายจุลภาค)', fPosition: 'ตำแหน่ง', fOrg: 'องค์กร', fType: 'ประเภท', fLocation: 'สถานที่',
+      fResp: 'หน้าที่ความรับผิดชอบ', fAchv: 'ผลงานที่ภาคภูมิใจ', fCourse: 'ชื่อหลักสูตร', fOrganizer: 'ผู้จัด', fInstructor: 'วิทยากร',
+      fHours: 'ระยะเวลา (ชั่วโมง)', fDate: 'วันที่', fAward: 'ชื่อรางวัล', fAwarding: 'หน่วยงานที่มอบรางวัล', fLevel: 'ระดับ',
+      fResult: 'อันดับ / ผลการแข่งขัน', fSkill: 'ชื่อทักษะ', fCategory: 'หมวดหมู่', fYears: 'จำนวนปีที่มีประสบการณ์', fProject: 'ชื่อโครงงาน',
+      fRole: 'บทบาท', fObjective: 'วัตถุประสงค์', fSkillsUsed: 'ทักษะที่ใช้', fOutcome: 'ผลลัพธ์', fLinks: 'ลิงก์',
+      titleReq: 'กรุณากรอกชื่อหรือหัวข้อ (ภาษาอังกฤษหรือไทย)',
+      x_employment: 'งานประจำ', x_internship: 'ฝึกงาน', x_volunteer: 'อาสาสมัคร', x_leadership: 'ผู้นำ', x_research: 'วิจัย', x_teaching: 'สอน', x_other: 'อื่น ๆ',
+      x_workshop: 'เวิร์กช็อป', x_professional: 'อบรมวิชาชีพ', x_online: 'คอร์สออนไลน์', x_certification: 'หลักสูตรรับรอง', x_seminar: 'สัมมนา', x_conference: 'ประชุมวิชาการ',
+      x_technical: 'ทักษะเทคนิค', x_soft: 'ทักษะทางสังคม',
+      photos: 'รูปภาพ', addPhoto: 'เพิ่มรูปภาพ', noPhotos: 'ยังไม่มีรูปภาพ',
+      photoBad: 'กรุณาเลือกไฟล์รูปภาพ (JPG, PNG หรือ WebP)', photoBig: 'ไฟล์รูปใหญ่เกินไป (สูงสุด 15 MB)',
+      pCurrent: 'ปัจจุบัน', pPrevious: 'ก่อนหน้า', pPassport: 'หนังสือเดินทาง', pProfessional: 'ทางการ', pSchool: 'โรงเรียน', pOther: 'อื่น ๆ',
+      contacts: 'ข้อมูลติดต่อ', addContact: 'เพิ่มข้อมูลติดต่อ', noContacts: 'ยังไม่มีข้อมูลติดต่อ',
+      kHome: 'ที่อยู่บ้าน', kWork: 'ที่อยู่ที่ทำงาน', kSchool: 'ที่อยู่โรงเรียน', kMail: 'ที่อยู่สำหรับส่งไปรษณีย์',
+      kMobile: 'โทรศัพท์มือถือ', kPhone: 'โทรศัพท์', kEmail: 'อีเมล', kWeb: 'เว็บไซต์', kLinked: 'LinkedIn', kOther: 'ลิงก์อื่น ๆ',
+      kindF: 'ประเภท', detailsF: 'รายละเอียด', addrLine: 'ที่อยู่', district: 'เขต/อำเภอ', province: 'จังหวัด',
+      postal: 'รหัสไปรษณีย์', country: 'ประเทศ', preferredC: 'ช่องทางที่ต้องการใช้', newContact: 'เพิ่มข้อมูลติดต่อใหม่', editContact: 'แก้ไขข้อมูลติดต่อ',
+      contactReq: 'กรุณากรอกรายละเอียดการติดต่อ', tapDelete: 'แตะอีกครั้งเพื่อลบ'
+    }
+  };
+  var APP_VERSION = '0.6 (step 6: documents)';
+
+  // ---------- Database (IndexedDB) ----------
+  var DB_NAME = 'profilevault', DB_VERSION = 1;
+  var STORES = {
+    workspace: {},
+    persons: {},
+    photos: { idx: [['personId', 'personId']] },
+    contacts: { idx: [['personId', 'personId']] },
+    records: { idx: [['personId', 'personId'], ['type', 'type']] },
+    documents: { idx: [['personId', 'personId'], ['category', 'category']] },
+    recordDocs: { idx: [['personId', 'personId'], ['recordId', 'recordId'], ['documentId', 'documentId']] },
+    tags: { idx: [['name', 'name']] },
+    resumeProfiles: { idx: [['personId', 'personId']] },
+    generated: { idx: [['personId', 'personId']] },
+    blobs: {}
+  };
+  var PERSON_SCOPED = ['photos', 'contacts', 'records', 'documents', 'recordDocs', 'resumeProfiles', 'generated'];
+  var PRIVACY_STORES = PERSON_SCOPED.concat(['persons']);
+  var PRIVACY = ['public', 'private', 'highly_private'];
+  var RECORD_TYPES = ['education', 'experience', 'training', 'award', 'project', 'skill', 'language',
+                      'membership', 'activity', 'studyVisit', 'publication', 'reference'];
+
+  // Each future schema change is a new numbered migration; never edit old ones.
+  var MIGRATIONS = {
+    1: function (db) {
+      Object.keys(STORES).forEach(function (name) {
+        var s = db.createObjectStore(name, { keyPath: 'id' });
+        (STORES[name].idx || []).forEach(function (i) { s.createIndex(i[0], i[1]); });
+      });
+    }
+  };
+
+  var dbPromise = null;
+  function openDb() {
+    if (dbPromise) return dbPromise;
+    dbPromise = new Promise(function (resolve, reject) {
+      if (!window.indexedDB) { reject(new Error('IndexedDB is not available in this browser.')); return; }
+      var req = indexedDB.open(DB_NAME, DB_VERSION);
+      req.onupgradeneeded = function (ev) {
+        for (var v = ev.oldVersion + 1; v <= ev.newVersion; v++) if (MIGRATIONS[v]) MIGRATIONS[v](req.result, req.transaction);
+      };
+      req.onsuccess = function () { var db = req.result; db.onversionchange = function () { db.close(); dbPromise = null; }; resolve(db); };
+      req.onerror = function () { dbPromise = null; reject(req.error); };
+      req.onblocked = function () { dbPromise = null; reject(new Error('Database upgrade blocked. Close other tabs of this app.')); };
+    });
+    return dbPromise;
+  }
+  function reqP(r) { return new Promise(function (res, rej) { r.onsuccess = function () { res(r.result); }; r.onerror = function () { rej(r.error); }; }); }
+  function txDone(tx) {
+    return new Promise(function (res, rej) {
+      tx.oncomplete = function () { res(); };
+      tx.onerror = function () { rej(tx.error); };
+      tx.onabort = function () { rej(tx.error || new Error('Transaction aborted')); };
+    });
+  }
+  function uuid() {
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    var b = crypto.getRandomValues(new Uint8Array(16)); b[6] = (b[6] & 15) | 64; b[8] = (b[8] & 63) | 128;
+    var h = Array.prototype.map.call(b, function (x) { return ('0' + x.toString(16)).slice(-2); }).join('');
+    return h.slice(0, 8) + '-' + h.slice(8, 12) + '-' + h.slice(12, 16) + '-' + h.slice(16, 20) + '-' + h.slice(20);
+  }
+  function nowIso() { return new Date().toISOString(); }
+
+  var CONTACT_KINDS = ['address_home', 'address_work', 'address_school', 'address_mailing', 'mobile', 'phone', 'email', 'website', 'linkedin', 'other'];
+  var KIND_KEYS = { address_home: 'kHome', address_work: 'kWork', address_school: 'kSchool', address_mailing: 'kMail',
+                    mobile: 'kMobile', phone: 'kPhone', email: 'kEmail', website: 'kWeb', linkedin: 'kLinked', other: 'kOther' };
+  function isAddr(k) { return String(k).indexOf('address_') === 0; }
+  function contactText(c) {
+    if (isAddr(c.kind)) { var d = c.data || {}; return [d.line, d.district, d.province, d.postalCode, d.country].filter(Boolean).join(', '); }
+    return c.value || '';
+  }
+  function titleText(x) { return typeof x === 'string' ? x : (x && (x.en || x.th)) || ''; }
+  function hasName(o) {
+    var n = o && o.names;
+    return !!n && ['en', 'th'].some(function (l) { return n[l] && typeof n[l] === 'object' && (n[l].first || n[l].last); });
+  }
+  function validate(store, o) {
+    if (store === 'persons' && !hasName(o)) throw new Error('A first or last name is required');
+    if (PRIVACY_STORES.indexOf(store) >= 0 && PRIVACY.indexOf(o.privacy) < 0) throw new Error('Invalid privacy level');
+    if (PERSON_SCOPED.indexOf(store) >= 0 && typeof o.personId !== 'string') throw new Error('personId is required');
+    if (store === 'records') {
+      if (RECORD_TYPES.indexOf(o.type) < 0) throw new Error('Invalid record type: ' + o.type);
+      if (!titleText(o.title)) throw new Error('Record title is required');
+    }
+    if (store === 'contacts') {
+      if (CONTACT_KINDS.indexOf(o.kind) < 0) throw new Error('Invalid contact type');
+      if (!contactText(o)) throw new Error('Contact details are required');
+    }
+    if (store === 'photos' && !o.blobId) throw new Error('blobId is required');
+    if (store === 'documents' && !o.fileName) throw new Error('fileName is required');
+    if (store === 'recordDocs' && (!o.recordId || !o.documentId)) throw new Error('recordId and documentId are required');
+  }
+
+  var repo = {
+    create: async function (store, data) {
+      if (!STORES[store]) throw new Error('Unknown store: ' + store);
+      var db = await openDb(), now = nowIso();
+      var o = Object.assign({}, data, { id: data.id || uuid(), createdAt: data.createdAt || now, updatedAt: now, deletedAt: null });
+      if (PRIVACY_STORES.indexOf(store) >= 0) o.privacy = o.privacy || 'private';
+      validate(store, o);
+      var scoped = PERSON_SCOPED.indexOf(store) >= 0;
+      var tx = db.transaction(scoped ? [store, 'persons'] : [store], 'readwrite');
+      if (scoped) {
+        var p = await reqP(tx.objectStore('persons').get(o.personId));
+        if (!p || p.deletedAt) throw new Error('Person not found');
+      }
+      tx.objectStore(store).add(o);
+      await txDone(tx);
+      return o;
+    },
+    get: async function (store, id) {
+      var db = await openDb();
+      return (await reqP(db.transaction(store).objectStore(store).get(id))) || null;
+    },
+    list: async function (store, opts) {
+      opts = opts || {};
+      var db = await openDb(), os = db.transaction(store).objectStore(store);
+      var items = opts.personId ? await reqP(os.index('personId').getAll(opts.personId)) : await reqP(os.getAll());
+      return items.filter(function (x) {
+        return (opts.includeDeleted || !x.deletedAt) && (!opts.type || x.type === opts.type);
+      });
+    },
+    update: async function (store, id, patch) {
+      var db = await openDb(), tx = db.transaction(store, 'readwrite'), os = tx.objectStore(store);
+      var cur = await reqP(os.get(id));
+      if (!cur) throw new Error('Record not found');
+      var clean = Object.assign({}, patch);
+      ['id', 'createdAt', 'personId'].forEach(function (k) { delete clean[k]; });
+      var o = Object.assign({}, cur, clean, { updatedAt: nowIso() });
+      validate(store, o);
+      os.put(o);
+      await txDone(tx);
+      return o;
+    },
+    softDelete: async function (store, id) {
+      return repo.update(store, id, { deletedAt: nowIso() });
+    },
+    restore: async function (store, id) {
+      return repo.update(store, id, { deletedAt: null, deletedVia: null });
+    },
+    // Hides a person and everything that belongs to them (kept as tombstones so merges stay correct)
+    softDeletePerson: async function (personId) {
+      var db = await openDb(), tx = db.transaction(PERSON_SCOPED.concat(['persons']), 'readwrite'), now = nowIso();
+      var p = await reqP(tx.objectStore('persons').get(personId));
+      if (!p) throw new Error('Person not found');
+      p.deletedAt = now; p.updatedAt = now; tx.objectStore('persons').put(p);
+      for (var i = 0; i < PERSON_SCOPED.length; i++) {
+        var os = tx.objectStore(PERSON_SCOPED[i]);
+        var items = await reqP(os.index('personId').getAll(personId));
+        items.forEach(function (it) { if (!it.deletedAt) { it.deletedAt = now; it.deletedVia = personId; it.updatedAt = now; os.put(it); } });
+      }
+      await txDone(tx);
+    },
+    // Brings back a person and only the items that were hidden together with them
+    restorePerson: async function (personId) {
+      var db = await openDb(), tx = db.transaction(PERSON_SCOPED.concat(['persons']), 'readwrite'), now = nowIso();
+      var p = await reqP(tx.objectStore('persons').get(personId));
+      if (!p) throw new Error('Person not found');
+      p.deletedAt = null; p.updatedAt = now; tx.objectStore('persons').put(p);
+      for (var i = 0; i < PERSON_SCOPED.length; i++) {
+        var os = tx.objectStore(PERSON_SCOPED[i]);
+        var items = await reqP(os.index('personId').getAll(personId));
+        items.forEach(function (it) { if (it.deletedAt && it.deletedVia === personId) { it.deletedAt = null; it.deletedVia = null; it.updatedAt = now; os.put(it); } });
+      }
+      await txDone(tx);
+    },
+    // Permanently erases a person, their records and their files (used for "delete forever")
+    purgePerson: async function (personId) {
+      var db = await openDb(), tx = db.transaction(PERSON_SCOPED.concat(['persons', 'blobs']), 'readwrite');
+      var blobIds = [];
+      for (var i = 0; i < PERSON_SCOPED.length; i++) {
+        var os = tx.objectStore(PERSON_SCOPED[i]);
+        var items = await reqP(os.index('personId').getAll(personId));
+        items.forEach(function (it) { if (it.blobId) blobIds.push(it.blobId); os.delete(it.id); });
+      }
+      blobIds.forEach(function (b) { tx.objectStore('blobs').delete(b); });
+      tx.objectStore('persons').delete(personId);
+      await txDone(tx);
+    }
+  };
+
+  // Storage abstraction: today files live in IndexedDB; cloud providers can implement the same 3 methods later.
+  var storage = {
+    local: {
+      put: async function (blob) {
+        var db = await openDb(), id = uuid(), tx = db.transaction('blobs', 'readwrite');
+        tx.objectStore('blobs').add({ id: id, blob: blob, size: blob.size, type: blob.type, createdAt: nowIso() });
+        await txDone(tx);
+        return id;
+      },
+      get: async function (id) {
+        var db = await openDb();
+        var r = await reqP(db.transaction('blobs').objectStore('blobs').get(id));
+        return r ? r.blob : null;
+      },
+      remove: async function (id) {
+        var db = await openDb(), tx = db.transaction('blobs', 'readwrite');
+        tx.objectStore('blobs').delete(id);
+        await txDone(tx);
+      }
+    }
+  };
+
+  function guessDeviceName() {
+    var ua = navigator.userAgent || '';
+    if (/iPhone/i.test(ua)) return 'iPhone';
+    if (/iPad/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) return 'iPad';
+    if (/Android/i.test(ua)) return 'Android';
+    return 'Computer';
+  }
+  async function initWorkspace() {
+    var db = await openDb(), tx = db.transaction('workspace', 'readwrite'), os = tx.objectStore('workspace');
+    var ws = await reqP(os.get('main'));
+    if (!ws) {
+      var now = nowIso();
+      ws = { id: 'main', schemaVersion: DB_VERSION, deviceId: uuid(), deviceName: guessDeviceName(), lastBackupAt: null, createdAt: now, updatedAt: now, deletedAt: null };
+      os.put(ws);
+    }
+    await txDone(tx);
+    return ws;
+  }
+  async function updateWorkspace(patch) {
+    var db = await openDb(), tx = db.transaction('workspace', 'readwrite'), os = tx.objectStore('workspace');
+    var ws = await reqP(os.get('main'));
+    ws = Object.assign({}, ws, patch, { updatedAt: nowIso() });
+    os.put(ws);
+    await txDone(tx);
+    return ws;
+  }
+
+  // Self-test: creates temporary data, checks the rules, then erases it.
+  async function runSelfTest() {
+    var out = [], pid = null, blobId = null;
+    function ok(name, cond) { out.push({ name: name, pass: !!cond }); }
+    async function fails(fn) { try { await fn(); return false; } catch (e) { return true; } }
+    try {
+      var p = await repo.create('persons', { names: { en: { first: 'Test', last: 'Person' }, th: { first: 'ทดสอบ' } } });
+      pid = p.id;
+      ok('Person created, private by default', p.privacy === 'private' && p.deletedAt === null);
+      var r = await repo.create('records', { personId: pid, type: 'education', title: { en: 'Test School' }, data: {} });
+      ok('Rejects person without a name', await fails(function () { return repo.create('persons', { names: {} }); }));
+      ok('Record created with id and timestamps', !!r.id && !!r.createdAt && !!r.updatedAt);
+      ok('Rejects record without a title', await fails(function () { return repo.create('records', { personId: pid, type: 'award', title: { en: '', th: '' } }); }));
+      ok('Rejects invalid record type', await fails(function () { return repo.create('records', { personId: pid, type: 'nonsense', title: { en: 'x' } }); }));
+      ok('Rejects invalid privacy level', await fails(function () { return repo.create('records', { personId: pid, type: 'award', title: 'x', privacy: 'secret' }); }));
+      ok('Rejects record for unknown person', await fails(function () { return repo.create('records', { personId: 'nope', type: 'award', title: 'x' }); }));
+      var src = new Blob(['hello ProfileVault'], { type: 'text/plain' });
+      blobId = await storage.local.put(src);
+      var d = await repo.create('documents', { personId: pid, fileName: 'test.txt', mimeType: 'text/plain', size: src.size, category: 'other', blobId: blobId });
+      await repo.create('recordDocs', { personId: pid, recordId: r.id, documentId: d.id });
+      var back = await storage.local.get(blobId);
+      ok('File saved and read back', !!back && back.size === src.size);
+      var u = await repo.update('records', r.id, { title: { en: 'Test School 2' } });
+      ok('Update changes data, keeps createdAt', u.title.en === 'Test School 2' && u.createdAt === r.createdAt);
+      ok('List by person', (await repo.list('records', { personId: pid })).length === 1);
+      ok('List by type', (await repo.list('records', { personId: pid, type: 'education' })).length === 1);
+      await repo.softDelete('records', r.id);
+      ok('Soft delete hides the record', (await repo.list('records', { personId: pid })).length === 0);
+      ok('Deleted record kept as tombstone', (await repo.list('records', { personId: pid, includeDeleted: true })).length === 1);
+      await repo.restore('records', r.id);
+      ok('Restore brings it back', (await repo.list('records', { personId: pid })).length === 1);
+      var r2 = await repo.create('records', { personId: pid, type: 'award', title: { en: 'Deleted on its own' } });
+      await repo.softDelete('records', r2.id);
+      await repo.softDeletePerson(pid);
+      var people = await repo.list('persons');
+      ok('Deleting a person hides them and their data',
+         people.filter(function (x) { return x.id === pid; }).length === 0 &&
+         (await repo.list('records', { personId: pid })).length === 0 &&
+         (await repo.list('documents', { personId: pid })).length === 0);
+      ok('Cascade keeps tombstones for merging', (await repo.list('documents', { personId: pid, includeDeleted: true })).length === 1);
+      await repo.restorePerson(pid);
+      ok('Restoring a person brings back their data',
+         (await repo.list('persons')).some(function (x) { return x.id === pid; }) &&
+         (await repo.list('documents', { personId: pid })).length === 1);
+      ok('Restore keeps separately deleted items hidden', (await repo.list('records', { personId: pid })).length === 1);
+    } catch (e) {
+      ok('Unexpected error: ' + e.message, false);
+    } finally {
+      if (pid) {
+        try {
+          await repo.purgePerson(pid);
+          ok('Purge erases person, records and files',
+             (await repo.get('persons', pid)) === null &&
+             (await repo.list('records', { personId: pid, includeDeleted: true })).length === 0 &&
+             (await storage.local.get(blobId)) === null);
+        } catch (e2) { ok('Purge failed: ' + e2.message, false); }
+      }
+    }
+    return out;
+  }
+
+  function refreshDbInfo() {
+    var st = document.getElementById('dbState');
+    if (!st) return;
+    initWorkspace().then(async function (ws) {
+      st.textContent = t('dbReady'); st.className = 'pill ok';
+      document.getElementById('deviceName').value = ws.deviceName || '';
+      var n = await Promise.all([repo.list('persons'), repo.list('records'), repo.list('documents')]);
+      document.getElementById('cPeople').textContent = n[0].length;
+      document.getElementById('cRecords').textContent = n[1].length;
+      document.getElementById('cDocs').textContent = n[2].length;
+    }).catch(function (e) {
+      st.textContent = t('dbError'); st.className = 'pill warn';
+      document.getElementById('dbMsg').textContent = e.message;
+    });
+  }
+  var lang = 'en';
+  try { lang = localStorage.getItem('pv_lang') || ((navigator.language || '').indexOf('th') === 0 ? 'th' : 'en'); } catch (e) {}
+  function t(k) { return (I18N[lang] && I18N[lang][k]) || I18N.en[k] || k; }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
+
+  // ---------- Routes ----------
+  var ROUTES = [
+    { id: 'dashboard', icon: '🏠', view: dashboardView },
+    { id: 'people',    icon: '👥', view: peopleView },
+    { id: 'documents', icon: '📁', view: documentsView },
+    { id: 'resume',    icon: '📄', view: function () { return placeholder('📄', 'comingResume', 8); } },
+    { id: 'settings',  icon: '⚙️', view: settingsView }
+  ];
+  function parseHash() { return (location.hash || '#dashboard').slice(1).split('/'); }
+  function currentRoute() {
+    var id = parseHash()[0];
+    return ROUTES.filter(function (r) { return r.id === id; })[0] || ROUTES[0];
+  }
+
+  // ---------- Views ----------
+  function head(title, sub) { return '<h1>' + esc(title) + '</h1><p class="sub">' + esc(sub) + '</p>'; }
+
+  function placeholder(icon, nameKey, step) {
+    return head(t(nameKey), t('tagline')) +
+      '<div class="card empty"><div class="big">' + icon + '</div><p>' + esc(t('soon')) + ' ' + step + '</p></div>';
+  }
+
+  // ---------- People ----------
+  function nm(p, l) {
+    var n = (p.names || {})[l];
+    if (!n) return '';
+    if (typeof n === 'string') return n;
+    return [n.first, n.middle, n.last].filter(Boolean).join(' ');
+  }
+  function displayName(p) { return nm(p, lang) || nm(p, lang === 'th' ? 'en' : 'th') || p.preferredName || '—'; }
+  function otherName(p) { var o = nm(p, lang === 'th' ? 'en' : 'th'); return o === displayName(p) ? '' : o; }
+  function initial(p) { return esc(Array.from(displayName(p))[0] || '?'); }
+  function completeness(p, ctx) {
+    ctx = ctx || {};
+    var checks = [hasName(p), !!p.dateOfBirth, !!p.placeOfBirth, !!p.nationality, !!p.gender, !!ctx.photo, !!ctx.contact, !!ctx.record];
+    return Math.round(100 * checks.filter(Boolean).length / checks.length);
+  }
+  function fmtDate(iso) {
+    var m = iso.length === 7, d = new Date(iso + (iso.length === 10 ? 'T00:00:00Z' : (m ? '-01T00:00:00Z' : '')));
+    if (isNaN(d)) return iso;
+    return d.toLocaleDateString(lang === 'th' ? 'th-TH' : 'en-GB', m ? { month: 'short', year: 'numeric', timeZone: 'UTC' } : { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+  }
+  async function activePerson() {
+    var ws = await initWorkspace();
+    var list = (await repo.list('persons')).sort(function (a, b) { return a.createdAt < b.createdAt ? -1 : 1; });
+    var p = list.filter(function (x) { return x.id === ws.activePersonId; })[0] || null;
+    if (!p && list.length) { p = list[0]; ws = await updateWorkspace({ activePersonId: p.id }); }
+    else if (!p && ws.activePersonId) { ws = await updateWorkspace({ activePersonId: null }); }
+    return { active: p, list: list, ws: ws };
+  }
+
+  async function dashboardView() {
+    var d = await activePerson(), p = d.active, card, ctx = {};
+    if (p) ctx = { photo: (await repo.list('photos', { personId: p.id })).length > 0, contact: (await repo.list('contacts', { personId: p.id })).length > 0, record: (await repo.list('records', { personId: p.id })).length > 0 };
+    var pct = p ? completeness(p, ctx) : 0;
+    if (!p) {
+      card = '<div class="row"><span>' + esc(t('noPerson')) + '</span><span class="pill">—</span></div>' +
+             '<p class="sub" style="margin:8px 0 12px">' + esc(t('addPersonHint')) + '</p><a class="btn" href="#people/new">' + esc(t('addPerson')) + '</a>';
+    } else {
+      var opts = d.list.map(function (x) { return '<option value="' + esc(x.id) + '"' + (x.id === p.id ? ' selected' : '') + '>' + esc(displayName(x)) + '</option>'; }).join('');
+      card = '<label class="lbl" for="switchPerson">' + esc(t('person')) + '</label><select id="switchPerson" class="input">' + opts + '</select>' +
+             '<p style="margin:12px 0 0"><a href="#people/' + esc(p.id) + '">' + esc(t('openProfile')) + '</a></p>';
+    }
+    var last = d.ws.lastBackupAt ? '<span class="pill ok">' + esc(fmtDate(d.ws.lastBackupAt.slice(0, 10))) + '</span>' : '<span class="pill warn">' + esc(t('never')) + '</span>';
+    var others = [['addEducation', 5], ['addAward', 5], ['uploadDoc', 6], ['genResume', 8]].map(function (a) {
+      return '<button class="btn ghost" disabled title="' + esc(t('soon') + ' ' + a[1]) + '">' + esc(t(a[0])) + '</button>';
+    }).join('');
+    return head(t('welcome'), t('dashSub')) +
+      '<div class="card"><h2>' + esc(t('person')) + '</h2>' + card + '</div>' +
+      '<div class="grid two">' +
+        '<div class="card"><h2>' + esc(t('completeness')) + '</h2><div class="bar"><span style="width:' + pct + '%"></span></div><p class="sub" style="margin:8px 0 0">' + pct + '%</p></div>' +
+        '<div class="card"><h2>' + esc(t('lastBackup')) + '</h2>' + last + '<p class="sub" style="margin:8px 0 0">' + esc(t('backupNote')) + '</p></div>' +
+      '</div>' +
+      '<div class="card"><h2>' + esc(t('quick')) + '</h2><div class="actions"><a class="btn ghost" href="#people/new">' + esc(t('addPerson')) + '</a>' + others + '</div></div>';
+  }
+
+  async function peopleView() {
+    var parts = parseHash(), sub = parts[1];
+    if (sub === 'new') return personForm(null);
+    if (sub) {
+      var p = await repo.get('persons', sub);
+      if (!p || p.deletedAt) return head(t('people'), '') + '<div class="card empty">' + esc(t('notFound')) + '</div><a class="btn ghost" href="#people">' + esc(t('back')) + '</a>';
+      if (parts[2] === 'edit') return personForm(p);
+      if (parts[2] === 'rec') return recordsView(p, parts[3], parts[4]);
+      if (parts[2] === 'contact') return contactForm(p, parts[3] && parts[3] !== 'new' ? await repo.get('contacts', parts[3]) : null);
+      return personHome(p);
+    }
+    var d = await activePerson(), am = await activePhotos();
+    var items = d.list.map(function (x) {
+      var isA = d.active && d.active.id === x.id;
+      return '<a class="card item" href="#people/' + esc(x.id) + '">' + avatar(x, am[x.id]) + '<span class="txt"><b>' + esc(displayName(x)) +
+             '</b><span class="sub" style="margin:0">' + esc(otherName(x)) + '</span></span>' + (isA ? '<span class="pill ok">' + esc(t('activeLbl')) + '</span>' : '') + '</a>';
+    }).join('');
+    return head(t('people'), t('peopleSub')) + '<div class="toolbar"><a class="btn" href="#people/new">+ ' + esc(t('addPerson')) + '</a></div>' +
+      (items || '<div class="card empty"><div class="big">👥</div><p>' + esc(t('noPeopleYet')) + '</p></div>');
+  }
+
+  // ---------- Records (one form engine for every record type) ----------
+  var REC_TYPES = ['education', 'experience', 'training', 'award', 'skill', 'project'];
+  var OPT = {
+    kind: ['employment', 'internship', 'volunteer', 'leadership', 'research', 'teaching', 'other'],
+    ttype: ['workshop', 'professional', 'online', 'certification', 'seminar', 'conference'],
+    scat: ['professional', 'technical', 'soft']
+  };
+  var COMBO = { level: ['school', 'university', 'local', 'provincial', 'national', 'international', 'professional'],
+                slevel: ['Beginner', 'Intermediate', 'Advanced', 'Expert'] };
+  var TAGS = { n: 'tags', k: 'tags', l: 'fTags' }, DESC = { n: 'description', k: 'bita', l: 'fDesc' };
+  var TYPE_DEFS = {
+    education: { icon: '🎓', label: 'tEducation', one: 'sEducation', fields: [
+      { n: 'title', k: 'bi', l: 'fQualification' }, { n: 'organization', k: 'bi', l: 'fInstitution' },
+      { n: 'data.field', k: 'text', l: 'fMajor' }, { n: 'data.country', k: 'text', l: 'fCountry' },
+      { n: 'startDate', k: 'month', l: 'fStart' }, { n: 'endDate', k: 'month', l: 'fEnd' }, { n: 'current', k: 'bool', l: 'fCurrent' },
+      { n: 'data.gpa', k: 'text', l: 'fGpa' }, { n: 'data.honors', k: 'text', l: 'fHonors' }, DESC, TAGS ] },
+    experience: { icon: '💼', label: 'tExperience', one: 'sExperience', fields: [
+      { n: 'title', k: 'bi', l: 'fPosition' }, { n: 'organization', k: 'bi', l: 'fOrg' },
+      { n: 'data.kind', k: 'select', l: 'fType', o: 'kind' }, { n: 'data.location', k: 'text', l: 'fLocation' },
+      { n: 'startDate', k: 'month', l: 'fStart' }, { n: 'endDate', k: 'month', l: 'fEnd' }, { n: 'current', k: 'bool', l: 'fCurrent' },
+      { n: 'data.responsibilities', k: 'area', l: 'fResp' }, { n: 'data.achievements', k: 'area', l: 'fAchv' }, DESC, TAGS ] },
+    training: { icon: '📚', label: 'tTraining', one: 'sTraining', fields: [
+      { n: 'title', k: 'bi', l: 'fCourse' }, { n: 'organization', k: 'bi', l: 'fOrganizer' },
+      { n: 'data.trainingType', k: 'select', l: 'fType', o: 'ttype' }, { n: 'data.location', k: 'text', l: 'fLocation' },
+      { n: 'startDate', k: 'date', l: 'fStart' }, { n: 'endDate', k: 'date', l: 'fEnd' },
+      { n: 'data.instructor', k: 'text', l: 'fInstructor' }, { n: 'data.hours', k: 'num', l: 'fHours' }, DESC, TAGS ] },
+    award: { icon: '🏆', label: 'tAward', one: 'sAward', fields: [
+      { n: 'title', k: 'bi', l: 'fAward' }, { n: 'organization', k: 'bi', l: 'fAwarding' },
+      { n: 'startDate', k: 'date', l: 'fDate' }, { n: 'data.level', k: 'combo', l: 'fLevel', o: 'level' },
+      { n: 'data.category', k: 'text', l: 'fCategory' }, { n: 'data.result', k: 'text', l: 'fResult' }, DESC, TAGS ] },
+    skill: { icon: '🛠️', label: 'tSkill', one: 'sSkill', fields: [
+      { n: 'title', k: 'bi', l: 'fSkill' }, { n: 'data.category', k: 'select', l: 'fCategory', o: 'scat' },
+      { n: 'data.level', k: 'combo', l: 'fLevel', o: 'slevel' }, { n: 'data.years', k: 'num', l: 'fYears' }, DESC, TAGS ] },
+    project: { icon: '🔬', label: 'tProject', one: 'sProject', fields: [
+      { n: 'title', k: 'bi', l: 'fProject' }, { n: 'organization', k: 'bi', l: 'fOrg' }, { n: 'data.role', k: 'text', l: 'fRole' },
+      { n: 'startDate', k: 'month', l: 'fStart' }, { n: 'endDate', k: 'month', l: 'fEnd' }, { n: 'current', k: 'bool', l: 'fCurrent' },
+      { n: 'data.objective', k: 'area', l: 'fObjective' }, { n: 'data.skillsUsed', k: 'text', l: 'fSkillsUsed' },
+      { n: 'data.outcome', k: 'area', l: 'fOutcome' }, { n: 'data.links', k: 'text', l: 'fLinks' }, DESC, TAGS ] }
+  };
+  var SINGLE_DATE = { award: 1 };
+
+  function bi(o) { if (!o) return ''; if (typeof o === 'string') return o; return o[lang] || o[lang === 'th' ? 'en' : 'th'] || ''; }
+  function getPath(o, path) { return path.split('.').reduce(function (v, k) { return v == null ? undefined : v[k]; }, o); }
+  function setPath(o, path, v) {
+    var ks = path.split('.'), last = ks.pop(), cur = o;
+    ks.forEach(function (k) { cur[k] = cur[k] || {}; cur = cur[k]; });
+    cur[last] = v;
+  }
+  function ta(id, label, v) { return '<div class="fld"><label class="lbl" for="' + id + '">' + esc(label) + '</label><textarea class="input" id="' + id + '">' + esc(v || '') + '</textarea></div>'; }
+  function recRange(r) {
+    if (SINGLE_DATE[r.type]) return r.startDate ? fmtDate(r.startDate) : '';
+    var a = r.startDate ? fmtDate(r.startDate) : '', b = r.current ? t('present') : (r.endDate ? fmtDate(r.endDate) : '');
+    return a && b ? a + ' – ' + b : a || b;
+  }
+  function recField(f, r) {
+    var id = 'r_' + f.n.replace('.', '_'), v = getPath(r || {}, f.n), lab = t(f.l);
+    if (f.k === 'bi') { v = v || {}; return '<div class="full"><div class="grid two">' + fld(id + '_en', lab + ' (EN)', v.en) + fld(id + '_th', lab + ' (TH)', v.th) + '</div></div>'; }
+    if (f.k === 'bita') { v = v || {}; return '<div class="full"><div class="grid two">' + ta(id + '_en', lab + ' (EN)', v.en) + ta(id + '_th', lab + ' (TH)', v.th) + '</div></div>'; }
+    if (f.k === 'area') return '<div class="full">' + ta(id, lab, v) + '</div>';
+    if (f.k === 'bool') return '<div class="fld"><label class="chk"><input type="checkbox" id="' + id + '"' + (v ? ' checked' : '') + '> ' + esc(lab) + '</label></div>';
+    if (f.k === 'tags') return '<div class="full">' + fld(id, lab, (v || []).join(', ')) + '</div>';
+    if (f.k === 'select') {
+      var so = [''].concat(OPT[f.o]).map(function (o) { return '<option value="' + o + '"' + (v === o ? ' selected' : '') + '>' + esc(o ? t('x_' + o) : '—') + '</option>'; }).join('');
+      return '<div class="fld"><label class="lbl" for="' + id + '">' + esc(lab) + '</label><select class="input" id="' + id + '">' + so + '</select></div>';
+    }
+    if (f.k === 'combo') {
+      return fld(id, lab, v, 'list="dl_' + id + '"') + '<datalist id="dl_' + id + '">' + COMBO[f.o].map(function (o) { return '<option value="' + o + '">'; }).join('') + '</datalist>';
+    }
+    if (f.k === 'month' || f.k === 'date') return fld(id, lab, v, 'type="' + f.k + '"' + (f.n === 'endDate' && r && r.current ? ' disabled' : ''));
+    if (f.k === 'num') return fld(id, lab, v, 'inputmode="decimal"');
+    return fld(id, lab, v);
+  }
+  function recordForm(p, type, r) {
+    var def = TYPE_DEFS[type];
+    return head((r ? t('edit') : t('addNew')) + ': ' + t(def.one), t('privHint')) +
+      '<div class="card"><div class="grid two">' + def.fields.map(function (f) { return recField(f, r); }).join('') + '</div>' +
+      '<label class="chk"><input type="checkbox" id="r_priv"' + (r && r.privacy !== 'public' ? ' checked' : '') + '> ' + esc(t('privLbl')) + '</label></div>' +
+      '<p id="formMsg" class="msg" aria-live="polite"></p>' +
+      '<div class="toolbar"><button class="btn" data-action="save-record" data-person="' + esc(p.id) + '" data-type="' + type + '" data-id="' + esc(r ? r.id : '') + '">' + esc(t('save')) + '</button>' +
+      '<a class="btn ghost" href="#people/' + esc(p.id) + '/rec/' + type + '">' + esc(t('cancel')) + '</a></div>';
+  }
+  function collectRecord(type) {
+    var rec = { data: {} };
+    TYPE_DEFS[type].fields.forEach(function (f) {
+      var id = 'r_' + f.n.replace('.', '_'), v;
+      if (f.k === 'bi' || f.k === 'bita') v = { en: val(id + '_en'), th: val(id + '_th') };
+      else if (f.k === 'bool') v = on(id);
+      else if (f.k === 'tags') v = val(id).split(',').map(function (x) { return x.trim(); }).filter(Boolean);
+      else v = val(id);
+      setPath(rec, f.n, v);
+    });
+    if (rec.current) rec.endDate = '';
+    rec.privacy = on('r_priv') ? 'private' : 'public';
+    return rec;
+  }
+  async function saveRecord(personId, type, id) {
+    var data = collectRecord(type), msg = document.getElementById('formMsg');
+    if (!titleText(data.title)) { msg.textContent = t('titleReq'); return; }
+    if (id) await repo.update('records', id, data);
+    else await repo.create('records', Object.assign({ personId: personId, type: type }, data));
+    location.hash = '#people/' + personId + '/rec/' + type;
+  }
+  function nf(p) { return head(t('people'), '') + '<div class="card empty">' + esc(t('notFound')) + '</div><a class="btn ghost" href="#people' + (p ? '/' + esc(p.id) : '') + '">' + esc(t('back')) + '</a>'; }
+  async function recordsView(p, type, sub) {
+    var def = TYPE_DEFS[type];
+    if (!def) return nf(p);
+    var back = '<p><a href="#people/' + esc(p.id) + '">← ' + esc(displayName(p)) + '</a></p>';
+    if (sub === 'new') return back + recordForm(p, type, null);
+    if (sub) {
+      var r = await repo.get('records', sub);
+      if (!r || r.deletedAt || r.personId !== p.id || r.type !== type) return nf(p);
+      return back + recordForm(p, type, r) + (await recordDocsCard(p, r));
+    }
+    var list = (await repo.list('records', { personId: p.id, type: type })).sort(function (a, b) {
+      if (type === 'skill') return bi(a.title).localeCompare(bi(b.title));
+      return (b.startDate || '').localeCompare(a.startDate || '');
+    });
+    var cards = list.map(function (r) {
+      var sub2 = [bi(r.organization), recRange(r)].filter(Boolean).join(' · ');
+      if (type === 'skill') sub2 = [r.data && r.data.category ? t('x_' + r.data.category) : '', r.data && r.data.level].filter(Boolean).join(' · ');
+      return '<div class="card"><div class="row" style="border:0;padding:0"><span><b>' + esc(bi(r.title)) + '</b>' + (r.privacy !== 'public' ? ' <span class="pill">' + esc(t('privLbl')) + '</span>' : '') +
+        '<br><span class="sub" style="margin:0">' + esc(sub2) + '</span></span><span><a class="btn ghost sm" href="#people/' + esc(p.id) + '/rec/' + type + '/' + esc(r.id) + '">' + esc(t('edit')) + '</a> ' +
+        '<button class="btn ghost sm" data-action="del-record" data-id="' + esc(r.id) + '">' + esc(t('del')) + '</button></span></div>' +
+        ((r.tags || []).length ? '<div class="tagline">' + r.tags.map(function (g) { return '<span class="pill">#' + esc(g) + '</span>'; }).join('') + '</div>' : '') + '</div>';
+    }).join('');
+    return back + head(def.icon + ' ' + t(def.label), displayName(p)) +
+      '<div class="toolbar"><a class="btn" href="#people/' + esc(p.id) + '/rec/' + type + '/new">+ ' + esc(t('addNew')) + '</a></div>' +
+      (cards || '<div class="card empty"><p>' + esc(t('noRecs')) + '</p></div>');
+  }
+  async function recordsCard(p) {
+    var all = await repo.list('records', { personId: p.id }), n = {};
+    all.forEach(function (r) { n[r.type] = (n[r.type] || 0) + 1; });
+    return '<div class="card"><h2>' + esc(t('records')) + '</h2>' + REC_TYPES.map(function (k) {
+      var d = TYPE_DEFS[k];
+      return '<a class="row" style="text-decoration:none;color:inherit" href="#people/' + esc(p.id) + '/rec/' + k + '"><span>' + d.icon + ' ' + esc(t(d.label)) + '</span><span class="pill">' + (n[k] || 0) + '</span></a>';
+    }).join('') + '</div>';
+  }
+
+  // ---------- Documents (vault) ----------
+  var DOC_CATS = ['identity', 'education', 'certificate', 'award', 'training', 'employment', 'project', 'photo', 'publication', 'other'];
+  var CAT_KEYS = { identity: 'dcIdentity', education: 'dcEducation', certificate: 'dcCertificate', award: 'dcAward', training: 'dcTraining',
+                   employment: 'dcEmployment', project: 'dcProject', photo: 'dcPhoto', publication: 'dcPublication', other: 'dcOther' };
+  var OFFICE = 'application/vnd.openxmlformats-officedocument.';
+  var EXT = { pdf: ['application/pdf'], jpg: ['image/jpeg', 'image/jpg'], jpeg: ['image/jpeg', 'image/jpg'], png: ['image/png'], webp: ['image/webp'],
+              heic: ['image/heic', 'image/heif'], heif: ['image/heif', 'image/heic'],
+              docx: [OFFICE + 'wordprocessingml.document'], xlsx: [OFFICE + 'spreadsheetml.sheet'], pptx: [OFFICE + 'presentationml.presentation'],
+              doc: ['application/msword'], xls: ['application/vnd.ms-excel'], ppt: ['application/vnd.ms-powerpoint'],
+              txt: ['text/plain'], csv: ['text/csv', 'application/vnd.ms-excel', 'text/plain'], rtf: ['application/rtf', 'text/rtf'] };
+  var ACCEPT = Object.keys(EXT).map(function (e) { return '.' + e; }).join(',');
+  var MAX_DOC = 25 * 1048576;
+  var docCat = '';
+
+  function extOf(name) { var m = /\.([A-Za-z0-9]+)$/.exec(name || ''); return m ? m[1].toLowerCase() : ''; }
+  function safeName(n) {
+    n = String(n || 'file').split(/[\\/]/).pop().replace(/[\u0000-\u001f<>:"|?*]/g, '').replace(/\s+/g, ' ').trim();
+    if (n.length > 120) { var e = extOf(n); n = n.slice(0, 110) + (e ? '.' + e : ''); }
+    return n || 'file';
+  }
+  async function sniffOk(file, ext) {
+    var b = new Uint8Array(await file.slice(0, 8).arrayBuffer());
+    if (ext === 'pdf') return b[0] === 0x25 && b[1] === 0x50 && b[2] === 0x44 && b[3] === 0x46;
+    if (ext === 'png') return b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4E && b[3] === 0x47;
+    if (ext === 'jpg' || ext === 'jpeg') return b[0] === 0xFF && b[1] === 0xD8;
+    if (ext === 'docx' || ext === 'xlsx' || ext === 'pptx') return b[0] === 0x50 && b[1] === 0x4B;
+    return true;
+  }
+  async function validateUpload(file) {
+    var name = safeName(file.name), ext = extOf(name);
+    if (!EXT[ext]) throw new Error(name + ' ' + t('errType'));
+    if (file.size > MAX_DOC) throw new Error(name + ' ' + t('errSize'));
+    if (file.type && file.type !== 'application/octet-stream' && EXT[ext].indexOf(file.type) < 0) throw new Error(name + ' ' + t('errBad'));
+    if (!(await sniffOk(file, ext))) throw new Error(name + ' ' + t('errBad'));
+    return { name: name, mime: EXT[ext].indexOf(file.type) >= 0 ? file.type : EXT[ext][0] };
+  }
+  async function addDocuments(personId, files, category) {
+    var added = 0, errors = [];
+    for (var i = 0; i < files.length; i++) {
+      try {
+        var v = await validateUpload(files[i]);
+        var blobId = await storage.local.put(files[i].slice(0, files[i].size, v.mime));
+        await repo.create('documents', { personId: personId, fileName: v.name, mimeType: v.mime, size: files[i].size, category: category || 'other',
+                                         date: nowIso().slice(0, 10), blobId: blobId, tags: [], description: '', source: '', notes: '', expiryDate: '' });
+        added++;
+      } catch (e) { errors.push(e.message); }
+    }
+    return { added: added, errors: errors };
+  }
+  function fileIcon(d) {
+    var m = d.mimeType || '', e = extOf(d.fileName);
+    if (/^image\//.test(m)) return '🖼️';
+    if (m === 'application/pdf') return '📕';
+    if (/^(doc|docx|rtf)$/.test(e)) return '📝';
+    if (/^(xls|xlsx|csv)$/.test(e)) return '📊';
+    if (/^(ppt|pptx)$/.test(e)) return '📽️';
+    return e === 'txt' ? '📄' : '📎';
+  }
+  function fmtSize(n) { return n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB'; }
+  function expiryPill(d) {
+    if (!d.expiryDate) return '';
+    var days = Math.ceil((new Date(d.expiryDate + 'T00:00:00Z') - Date.now()) / 86400000);
+    if (isNaN(days)) return '';
+    if (days < 0) return ' <span class="pill warn">' + esc(t('expired')) + '</span>';
+    return days <= 30 ? ' <span class="pill warn">' + esc(t('expiresIn') + ' ' + days + ' ' + t('daysWord')) + '</span>' : '';
+  }
+  async function saveFile(blob, name) {
+    var ios = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    try {
+      var f = new File([blob], name, { type: blob.type || 'application/octet-stream' });
+      if (ios && navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f] }); return; }
+    } catch (e) { if (e && e.name === 'AbortError') return; }
+    var u = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(u); }, 30000);
+  }
+  async function linkDoc(personId, recordId, docId) {
+    var all = await repo.list('recordDocs', { personId: personId, includeDeleted: true });
+    var m = all.filter(function (x) { return x.recordId === recordId && x.documentId === docId; })[0];
+    if (m && !m.deletedAt) return m;
+    if (m) return repo.restore('recordDocs', m.id);
+    return repo.create('recordDocs', { personId: personId, recordId: recordId, documentId: docId });
+  }
+
+  async function documentsView() {
+    var parts = parseHash();
+    if (parts[1]) return docDetail(parts[1]);
+    var d = await activePerson(), p = d.active;
+    if (!p) return head(t('documents'), t('docsSub')) + '<div class="card empty"><div class="big">📁</div><p>' + esc(t('noPerson')) + '</p><a class="btn" href="#people/new">' + esc(t('addPerson')) + '</a></div>';
+    var docs = (await repo.list('documents', { personId: p.id })).sort(function (a, b) { return (b.date || '').localeCompare(a.date || '') || (a.createdAt < b.createdAt ? 1 : -1); });
+    var n = {}; docs.forEach(function (x) { n[x.category] = (n[x.category] || 0) + 1; });
+    var chips = '<button class="chip' + (docCat ? '' : ' on') + '" data-action="doc-cat" data-cat="">' + esc(t('allCats')) + ' ' + docs.length + '</button>' +
+      DOC_CATS.filter(function (c) { return n[c]; }).map(function (c) { return '<button class="chip' + (docCat === c ? ' on' : '') + '" data-action="doc-cat" data-cat="' + c + '">' + esc(t(CAT_KEYS[c])) + ' ' + n[c] + '</button>'; }).join('');
+    var shown = docCat ? docs.filter(function (x) { return x.category === docCat; }) : docs;
+    var items = shown.map(function (x) {
+      var q = (x.fileName + ' ' + (x.description || '') + ' ' + (x.tags || []).join(' ') + ' ' + (x.notes || '')).toLowerCase();
+      return '<a class="card item" href="#documents/' + esc(x.id) + '" data-q="' + esc(q) + '"><span class="avatar">' + fileIcon(x) + '</span><span class="txt"><b>' + esc(x.fileName) +
+        '</b><span class="sub" style="margin:0">' + esc([t(CAT_KEYS[x.category] || 'dcOther'), fmtSize(x.size), x.date ? fmtDate(x.date) : ''].filter(Boolean).join(' · ')) + '</span></span>' +
+        (x.privacy !== 'public' ? '<span class="pill">' + esc(t('privLbl')) + '</span>' : '') + expiryPill(x) + '</a>';
+    }).join('');
+    var sw = d.list.length > 1 ? '<select id="switchPerson" class="input" aria-label="' + esc(t('person')) + '">' + d.list.map(function (x) {
+      return '<option value="' + esc(x.id) + '"' + (x.id === p.id ? ' selected' : '') + '>' + esc(displayName(x)) + '</option>'; }).join('') + '</select>' : '';
+    var catOpts = DOC_CATS.map(function (c) { return '<option value="' + c + '"' + ((docCat || 'other') === c ? ' selected' : '') + '>' + esc(t(CAT_KEYS[c])) + '</option>'; }).join('');
+    return head(t('documents'), displayName(p) + ' · ' + t('docsSub')) + (sw ? '<div class="fld">' + sw + '</div>' : '') +
+      '<div class="card"><label class="lbl" for="upCat">' + esc(t('upCat')) + '</label><div style="display:flex;gap:8px;flex-wrap:wrap"><select id="upCat" class="input" style="flex:1;min-width:140px">' + catOpts + '</select>' +
+      '<button class="btn" data-action="pick-doc">+ ' + esc(t('uploadDocs')) + '</button></div>' +
+      '<input type="file" id="docInput" class="vh" multiple accept="' + ACCEPT + '" data-person="' + esc(p.id) + '" tabindex="-1">' +
+      '<p id="docMsg" class="msg" aria-live="polite"></p></div>' +
+      (docs.length ? '<div class="chips">' + chips + '</div><div class="fld"><input id="docQ" class="input" type="search" placeholder="' + esc(t('searchDocs')) + '" aria-label="' + esc(t('searchDocs')) + '"></div>' : '') +
+      (items || '<div class="card empty"><div class="big">📁</div><p>' + esc(t('noDocs')) + '</p></div>');
+  }
+
+  async function previewHtml(doc, blob) {
+    if (!blob) return '';
+    var m = doc.mimeType || '', u;
+    if (/^image\/(jpeg|jpg|png|webp|heic|heif)$/.test(m)) { u = URL.createObjectURL(blob); urlCache.push(u); return '<div class="preview"><img alt="' + esc(doc.fileName) + '" src="' + esc(u) + '"></div>'; }
+    if (m === 'application/pdf') {
+      u = URL.createObjectURL(blob); urlCache.push(u);
+      return '<div class="preview"><iframe title="' + esc(doc.fileName) + '" src="' + esc(u) + '"></iframe><p><a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(t('openTab')) + '</a></p></div>';
+    }
+    if (m === 'text/plain') return '<pre class="txt">' + esc((await blob.text()).slice(0, 20000)) + '</pre>';
+    return '<p class="sub" style="margin:0">' + esc(t('noPreview')) + '</p>';
+  }
+  async function linkedRows(doc) {
+    var links = (await repo.list('recordDocs', { personId: doc.personId })).filter(function (l) { return l.documentId === doc.id; });
+    var recs = await repo.list('records', { personId: doc.personId }), byId = {};
+    recs.forEach(function (r) { byId[r.id] = r; });
+    return { links: links.filter(function (l) { return byId[l.recordId]; }), recs: recs, byId: byId };
+  }
+  async function docDetail(id) {
+    var doc = await repo.get('documents', id);
+    if (!doc || doc.deletedAt) return head(t('documents'), '') + '<div class="card empty">' + esc(t('notFound')) + '</div><a class="btn ghost" href="#documents">' + esc(t('back')) + '</a>';
+    var blob = await storage.local.get(doc.blobId), lr = await linkedRows(doc), linkedIds = {};
+    lr.links.forEach(function (l) { linkedIds[l.recordId] = 1; });
+    var rows = lr.links.map(function (l) {
+      var r = lr.byId[l.recordId], d = TYPE_DEFS[r.type];
+      return '<div class="row"><a href="#people/' + esc(doc.personId) + '/rec/' + r.type + '/' + esc(r.id) + '">' + d.icon + ' ' + esc(bi(r.title)) + '</a>' +
+        '<button class="btn ghost sm" data-action="unlink" data-id="' + esc(l.id) + '">' + esc(t('unlink')) + '</button></div>';
+    }).join('');
+    var opts = REC_TYPES.map(function (k) {
+      var o = lr.recs.filter(function (r) { return r.type === k && !linkedIds[r.id]; }).map(function (r) { return '<option value="' + esc(r.id) + '">' + esc(bi(r.title)) + '</option>'; }).join('');
+      return o ? '<optgroup label="' + esc(t(TYPE_DEFS[k].label)) + '">' + o + '</optgroup>' : '';
+    }).join('');
+    var catOpts = DOC_CATS.map(function (c) { return '<option value="' + c + '"' + (doc.category === c ? ' selected' : '') + '>' + esc(t(CAT_KEYS[c])) + '</option>'; }).join('');
+    return '<p><a href="#documents">← ' + esc(t('documents')) + '</a></p>' +
+      '<div class="card item"><span class="avatar lg">' + fileIcon(doc) + '</span><span class="txt"><h1 style="margin:0;word-break:break-word">' + esc(doc.fileName) + '</h1><span class="sub" style="margin:0">' + esc(fmtSize(doc.size)) + expiryPill(doc).replace(/<[^>]+>/g, ' ') + '</span></span></div>' +
+      '<div class="toolbar"><button class="btn" data-action="download-doc" data-id="' + esc(doc.id) + '">' + esc(t('download')) + '</button>' +
+        '<button class="btn ghost" data-action="del-doc" data-id="' + esc(doc.id) + '">' + esc(t('del')) + '</button></div>' +
+      '<div class="card"><h2>' + esc(t('preview')) + '</h2>' + (await previewHtml(doc, blob)) + '</div>' +
+      '<div class="card"><h2>' + esc(t('linkedTo')) + '</h2>' + (rows || '<p class="sub">' + esc(t('noLinks')) + '</p>') +
+        (opts ? '<label class="lbl" for="attachSel" style="margin-top:10px">' + esc(t('linkRec')) + '</label><div style="display:flex;gap:8px"><select id="attachSel" class="input"><option value="">—</option>' + opts + '</select>' +
+          '<button class="btn ghost" data-action="link" data-sel="attachSel" data-person="' + esc(doc.personId) + '" data-doc="' + esc(doc.id) + '">' + esc(t('linkBtn')) + '</button></div>' : '<p class="sub">' + esc(t('noRecsToLink')) + '</p>') + '</div>' +
+      '<div class="card"><h2>' + esc(t('about')) + '</h2><div class="grid two">' +
+        '<div class="full">' + fld('d_name', t('dName'), doc.fileName) + '</div>' +
+        '<div class="fld"><label class="lbl" for="d_cat">' + esc(t('upCat')) + '</label><select id="d_cat" class="input">' + catOpts + '</select></div>' +
+        fld('d_date', t('dDate'), doc.date, 'type="date"') + fld('d_expiry', t('dExpiry'), doc.expiryDate, 'type="date"') + fld('d_source', t('dSource'), doc.source) +
+        '<div class="full">' + ta('d_desc', t('fDesc'), doc.description) + '</div>' + '<div class="full">' + fld('d_tags', t('fTags'), (doc.tags || []).join(', ')) + '</div>' +
+        '<div class="full">' + ta('d_notes', t('notes'), doc.notes) + '</div></div>' +
+      '<label class="chk"><input type="checkbox" id="d_priv"' + (doc.privacy !== 'public' ? ' checked' : '') + '> ' + esc(t('privLbl')) + '</label></div>' +
+      '<p id="formMsg" class="msg" aria-live="polite"></p><div class="toolbar"><button class="btn" data-action="save-doc" data-id="' + esc(doc.id) + '">' + esc(t('save')) + '</button></div>';
+  }
+  async function saveDoc(id) {
+    var name = safeName(val('d_name'));
+    await repo.update('documents', id, { fileName: name, category: val('d_cat'), date: val('d_date'), expiryDate: val('d_expiry'), source: val('d_source'),
+      description: val('d_desc'), notes: val('d_notes'), tags: val('d_tags').split(',').map(function (x) { return x.trim(); }).filter(Boolean), privacy: on('d_priv') ? 'private' : 'public' });
+    await render();
+    var m = document.getElementById('formMsg'); if (m) { m.style.color = 'var(--ok)'; m.textContent = t('saved'); }
+  }
+  // On a record page: documents attached to that record
+  async function recordDocsCard(p, r) {
+    var docs = await repo.list('documents', { personId: p.id }), byId = {};
+    docs.forEach(function (d) { byId[d.id] = d; });
+    var links = (await repo.list('recordDocs', { personId: p.id })).filter(function (l) { return l.recordId === r.id && byId[l.documentId]; }), linked = {};
+    links.forEach(function (l) { linked[l.documentId] = 1; });
+    var rows = links.map(function (l) {
+      var d = byId[l.documentId];
+      return '<div class="row"><a href="#documents/' + esc(d.id) + '">' + fileIcon(d) + ' ' + esc(d.fileName) + '</a><button class="btn ghost sm" data-action="unlink" data-id="' + esc(l.id) + '">' + esc(t('unlink')) + '</button></div>';
+    }).join('');
+    var opts = docs.filter(function (d) { return !linked[d.id]; }).map(function (d) { return '<option value="' + esc(d.id) + '">' + esc(d.fileName) + '</option>'; }).join('');
+    return '<div class="card"><h2>' + esc(t('supportDocs')) + '</h2>' + (rows || '<p class="sub">' + esc(t('noLinks')) + '</p>') +
+      (opts ? '<label class="lbl" for="attachSel">' + esc(t('attachDoc')) + '</label><div style="display:flex;gap:8px"><select id="attachSel" class="input"><option value="">—</option>' + opts + '</select>' +
+        '<button class="btn ghost" data-action="link" data-sel="attachSel" data-person="' + esc(p.id) + '" data-record="' + esc(r.id) + '">' + esc(t('linkBtn')) + '</button></div>'
+        : '<p class="sub">' + esc(t('uploadFirst')) + '</p>') + '</div>';
+  }
+  async function docsCard(p) {
+    var n = (await repo.list('documents', { personId: p.id })).length;
+    return '<div class="card"><div class="row" style="border:0;padding:0"><span>📁 ' + esc(t('documents')) + '</span><span><span class="pill">' + n + '</span> <button class="btn ghost sm" data-action="open-vault" data-id="' + esc(p.id) + '">' + esc(t('openVault')) + '</button></span></div></div>';
+  }
+
+  // ---------- Photos ----------
+  var PHOTO_LABELS = { current: 'pCurrent', previous: 'pPrevious', passport: 'pPassport', professional: 'pProfessional', school: 'pSchool', other: 'pOther' };
+  var urlCache = [];
+  function revokeUrls() { urlCache.forEach(function (u) { URL.revokeObjectURL(u); }); urlCache = []; }
+  async function photoUrl(ph) {
+    var b = await storage.local.get(ph.blobId);
+    if (!b) return '';
+    var u = URL.createObjectURL(b); urlCache.push(u); return u;
+  }
+  async function activePhotos() {
+    var m = {}, all = (await repo.list('photos')).filter(function (x) { return x.active; });
+    for (var i = 0; i < all.length; i++) m[all[i].personId] = await photoUrl(all[i]);
+    return m;
+  }
+  function avatar(p, url, big) {
+    return '<span class="avatar' + (big ? ' lg' : '') + '">' + (url ? '<img class="avatar-img" alt="" src="' + esc(url) + '">' : initial(p)) + '</span>';
+  }
+  // Shrinks big camera photos (max 1000 px, JPEG) so the vault stays small; falls back to the original file.
+  async function processImage(file) {
+    try {
+      var bmp;
+      try { bmp = await createImageBitmap(file, { imageOrientation: 'from-image' }); } catch (e1) { bmp = await createImageBitmap(file); }
+      var sc = Math.min(1, 1000 / Math.max(bmp.width, bmp.height));
+      var c = document.createElement('canvas');
+      c.width = Math.round(bmp.width * sc); c.height = Math.round(bmp.height * sc);
+      c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+      if (bmp.close) bmp.close();
+      var blob = await new Promise(function (res) { c.toBlob(res, 'image/jpeg', 0.85); });
+      if (blob) return { blob: blob, width: c.width, height: c.height };
+    } catch (e) { /* use original */ }
+    return { blob: file, width: null, height: null };
+  }
+  async function addPhoto(personId, file) {
+    if (!/^image\/(jpeg|png|webp|heic|heif)$/i.test(file.type)) throw new Error(t('photoBad'));
+    if (file.size > 15 * 1048576) throw new Error(t('photoBig'));
+    var img = await processImage(file);
+    var blobId = await storage.local.put(img.blob);
+    var has = (await repo.list('photos', { personId: personId })).some(function (x) { return x.active; });
+    return repo.create('photos', { personId: personId, blobId: blobId, label: 'current', date: nowIso().slice(0, 10),
+                                   mimeType: img.blob.type, width: img.width, height: img.height, active: !has });
+  }
+  async function setActivePhoto(personId, id) {
+    var list = await repo.list('photos', { personId: personId });
+    for (var i = 0; i < list.length; i++) {
+      var want = list[i].id === id;
+      if (list[i].active !== want) await repo.update('photos', list[i].id, { active: want });
+    }
+  }
+  async function deletePhoto(id) {
+    var ph = await repo.get('photos', id);
+    if (!ph) return;
+    await repo.softDelete('photos', id);
+    if (ph.active) {
+      var rest = (await repo.list('photos', { personId: ph.personId })).sort(function (a, b) { return a.createdAt < b.createdAt ? 1 : -1; });
+      if (rest.length) await setActivePhoto(ph.personId, rest[0].id);
+    }
+  }
+  async function photosCard(p) {
+    var list = (await repo.list('photos', { personId: p.id })).sort(function (a, b) { return a.createdAt < b.createdAt ? 1 : -1; });
+    var tiles = '';
+    for (var i = 0; i < list.length; i++) {
+      var ph = list[i], url = await photoUrl(ph);
+      var opts = Object.keys(PHOTO_LABELS).map(function (k) { return '<option value="' + k + '"' + (ph.label === k ? ' selected' : '') + '>' + esc(t(PHOTO_LABELS[k])) + '</option>'; }).join('');
+      tiles += '<div class="ph"><img alt="' + esc(t(PHOTO_LABELS[ph.label] || 'pOther')) + '" src="' + esc(url) + '">' +
+        '<select class="input photo-label" data-id="' + esc(ph.id) + '" aria-label="' + esc(t('photos')) + '">' + opts + '</select>' +
+        '<div class="btns">' + (ph.active ? '<span class="pill ok">' + esc(t('activeLbl')) + '</span>' : '<button class="btn ghost sm" data-action="photo-active" data-id="' + esc(ph.id) + '" data-person="' + esc(p.id) + '">' + esc(t('makeActive')) + '</button>') +
+        '<button class="btn ghost sm" data-action="photo-del" data-id="' + esc(ph.id) + '">' + esc(t('del')) + '</button></div></div>';
+    }
+    return '<div class="card"><h2>' + esc(t('photos')) + '</h2>' +
+      (tiles ? '<div class="photos">' + tiles + '</div>' : '<p class="sub">' + esc(t('noPhotos')) + '</p>') +
+      '<p id="photoMsg" class="msg" aria-live="polite"></p>' +
+      '<input type="file" id="photoInput" class="vh" accept="image/*" multiple data-person="' + esc(p.id) + '" tabindex="-1">' +
+      '<button class="btn ghost" data-action="pick-photo">+ ' + esc(t('addPhoto')) + '</button></div>';
+  }
+
+  // ---------- Contacts ----------
+  async function contactsCard(p) {
+    var order = CONTACT_KINDS;
+    var list = (await repo.list('contacts', { personId: p.id })).sort(function (a, b) { return order.indexOf(a.kind) - order.indexOf(b.kind); });
+    var rows = list.map(function (c) {
+      return '<div class="row"><span><b>' + esc(t(KIND_KEYS[c.kind])) + '</b>' + (c.preferred ? ' <span class="pill ok">' + esc(t('preferredC')) + '</span>' : '') +
+        (c.privacy !== 'public' ? ' <span class="pill">' + esc(t('privLbl')) + '</span>' : '') + '<br>' + esc(contactText(c)) + '</span>' +
+        '<span><a class="btn ghost sm" href="#people/' + esc(p.id) + '/contact/' + esc(c.id) + '">' + esc(t('edit')) + '</a> ' +
+        '<button class="btn ghost sm" data-action="del-contact" data-id="' + esc(c.id) + '">' + esc(t('del')) + '</button></span></div>';
+    }).join('');
+    return '<div class="card"><h2>' + esc(t('contacts')) + '</h2>' + (rows || '<p class="sub">' + esc(t('noContacts')) + '</p>') +
+      '<div style="margin-top:12px"><a class="btn ghost" href="#people/' + esc(p.id) + '/contact/new">+ ' + esc(t('addContact')) + '</a></div></div>';
+  }
+  function contactForm(p, c) {
+    var kind = c ? c.kind : 'mobile', d = (c && c.data) || {}, addr = isAddr(kind);
+    var opts = CONTACT_KINDS.map(function (k) { return '<option value="' + k + '"' + (k === kind ? ' selected' : '') + '>' + esc(t(KIND_KEYS[k])) + '</option>'; }).join('');
+    return '<p><a href="#people/' + esc(p.id) + '">← ' + esc(displayName(p)) + '</a></p>' + head(c ? t('editContact') : t('newContact'), '') +
+      '<div class="card"><div class="fld"><label class="lbl" for="c_kind">' + esc(t('kindF')) + '</label><select class="input" id="c_kind">' + opts + '</select></div>' +
+      '<div id="valBox"' + (addr ? ' hidden' : '') + '>' + fld('c_value', t('detailsF'), c && c.value) + '</div>' +
+      '<div id="addrBox"' + (addr ? '' : ' hidden') + '>' + fld('c_line', t('addrLine'), d.line) +
+        '<div class="grid two">' + fld('c_district', t('district'), d.district) + fld('c_province', t('province'), d.province) +
+        fld('c_postal', t('postal'), d.postalCode) + fld('c_country', t('country'), d.country) + '</div></div>' +
+      '<label class="chk"><input type="checkbox" id="c_pref"' + (c && c.preferred ? ' checked' : '') + '> ' + esc(t('preferredC')) + '</label>' +
+      '<label class="chk"><input type="checkbox" id="c_priv"' + (!c || c.privacy !== 'public' ? ' checked' : '') + '> ' + esc(t('privLbl')) + '</label></div>' +
+      '<p id="formMsg" class="msg" aria-live="polite"></p>' +
+      '<div class="toolbar"><button class="btn" data-action="save-contact" data-person="' + esc(p.id) + '" data-id="' + esc(c ? c.id : '') + '">' + esc(t('save')) + '</button>' +
+      '<a class="btn ghost" href="#people/' + esc(p.id) + '">' + esc(t('cancel')) + '</a></div>';
+  }
+  async function saveContact(personId, id) {
+    var kind = val('c_kind'), msg = document.getElementById('formMsg');
+    var data = { kind: kind, preferred: on('c_pref'), privacy: on('c_priv') ? 'private' : 'public' };
+    if (isAddr(kind)) { data.data = { line: val('c_line'), district: val('c_district'), province: val('c_province'), postalCode: val('c_postal'), country: val('c_country') }; data.value = ''; }
+    else { data.value = val('c_value'); data.data = {}; }
+    if (!contactText(data)) { msg.textContent = t('contactReq'); return; }
+    if (data.preferred) {
+      var others = await repo.list('contacts', { personId: personId });
+      for (var i = 0; i < others.length; i++) if (others[i].kind === kind && others[i].preferred && others[i].id !== id) await repo.update('contacts', others[i].id, { preferred: false });
+    }
+    if (id) await repo.update('contacts', id, data); else await repo.create('contacts', Object.assign({ personId: personId }, data));
+    location.hash = '#people/' + personId;
+  }
+  function armed(btn, label) {
+    if (btn.getAttribute('data-armed')) return true;
+    btn.setAttribute('data-armed', '1'); btn.textContent = label; btn.className = 'btn danger sm';
+    return false;
+  }
+
+  function fld(id, label, val, extra) {
+    return '<div class="fld"><label class="lbl" for="' + id + '">' + esc(label) + '</label><input class="input" id="' + id + '" value="' + esc(val || '') + '" ' + (extra || '') + ' autocomplete="off"></div>';
+  }
+  function nv(p, l, k) { var n = p && p.names && p.names[l]; return (n && typeof n === 'object' && n[k]) || ''; }
+  function chk(id, on) { return '<label class="chk"><input type="checkbox" id="' + id + '"' + (on ? ' checked' : '') + '> ' + esc(t('privLbl')) + '</label>'; }
+
+  function personForm(p) {
+    var priv = p ? (p.privateFields || []) : ['nationalId'];
+    var gopts = [['', '—'], ['female', t('gFemale')], ['male', t('gMale')], ['other', t('gOther')], ['undisclosed', t('gUndisclosed')]].map(function (g) {
+      return '<option value="' + g[0] + '"' + (p && p.gender === g[0] ? ' selected' : '') + '>' + esc(g[1]) + '</option>';
+    }).join('');
+    function nameCard(l, title) {
+      return '<div class="card"><h2>' + esc(title) + '</h2><div class="grid two">' +
+        fld('f_' + l + '_first', t('firstName'), nv(p, l, 'first')) + fld('f_' + l + '_middle', t('middleName'), nv(p, l, 'middle')) +
+        fld('f_' + l + '_last', t('lastName'), nv(p, l, 'last')) + '</div></div>';
+    }
+    return head(p ? t('editPerson') : t('newPerson'), t('privHint')) +
+      nameCard('en', t('nameEn')) + nameCard('th', t('nameTh')) +
+      '<div class="card"><h2>' + esc(t('about')) + '</h2><div class="grid two">' +
+        fld('f_pref', t('preferred'), p && p.preferredName) + fld('f_title', t('titleF'), p && p.title) +
+        '<div class="fld"><label class="lbl" for="f_gender">' + esc(t('gender')) + '</label><select class="input" id="f_gender">' + gopts + '</select></div>' +
+        '<div class="fld"><label class="lbl" for="f_dob">' + esc(t('dob')) + '</label><input class="input" type="date" id="f_dob" value="' + esc(p && p.dateOfBirth) + '">' + chk('pv_dob', priv.indexOf('dateOfBirth') >= 0) + '</div>' +
+        '<div class="fld">' + fld('f_pob', t('pob'), p && p.placeOfBirth).replace('</div>', chk('pv_pob', priv.indexOf('placeOfBirth') >= 0) + '</div>') + '</div>' +
+        fld('f_nat', t('nationality'), p && p.nationality) +
+        '<div class="fld">' + fld('f_nid', t('nid'), p && p.nationalId).replace('</div>', chk('pv_nid', priv.indexOf('nationalId') >= 0) + '</div>') + '</div>' +
+      '</div><div class="fld"><label class="lbl" for="f_notes">' + esc(t('notes')) + '</label><textarea class="input" id="f_notes">' + esc(p && p.notes) + '</textarea></div></div>' +
+      '<p id="formMsg" class="msg" aria-live="polite"></p>' +
+      '<div class="toolbar"><button class="btn" data-action="save-person" data-id="' + esc(p ? p.id : '') + '">' + esc(t('save')) + '</button>' +
+      '<a class="btn ghost" href="#people' + (p ? '/' + esc(p.id) : '') + '">' + esc(t('cancel')) + '</a></div>';
+  }
+
+  async function personHome(p) {
+    var d = await activePerson(), am = await activePhotos(), isA = d.active && d.active.id === p.id, pf = p.privateFields || [];
+    var g = { female: 'gFemale', male: 'gMale', other: 'gOther', undisclosed: 'gUndisclosed' };
+    var rows = [
+      ['preferred', p.preferredName, ''], ['titleF', p.title, ''], ['gender', p.gender && t(g[p.gender]), ''],
+      ['dob', p.dateOfBirth && fmtDate(p.dateOfBirth), 'dateOfBirth'], ['pob', p.placeOfBirth, 'placeOfBirth'],
+      ['nationality', p.nationality, ''], ['nid', p.nationalId && ('••••' + p.nationalId.slice(-3)), 'nationalId'], ['notes', p.notes, '']
+    ].filter(function (r) { return r[1]; }).map(function (r) {
+      return '<div class="row"><span class="sub" style="margin:0">' + esc(t(r[0])) + '</span><span>' + esc(r[1]) +
+             (r[2] && pf.indexOf(r[2]) >= 0 ? ' <span class="pill">' + esc(t('privLbl')) + '</span>' : '') + '</span></div>';
+    }).join('');
+    return '<p><a href="#people">← ' + esc(t('people')) + '</a></p>' +
+      '<div class="card item">' + avatar(p, am[p.id], true) + '<span class="txt"><h1 style="margin:0">' + esc(displayName(p)) + '</h1><span class="sub" style="margin:0">' + esc(otherName(p)) + '</span></span></div>' +
+      '<div class="toolbar"><a class="btn" href="#people/' + esc(p.id) + '/edit">' + esc(t('edit')) + '</a>' +
+        (isA ? '<span class="pill ok" style="align-self:center">' + esc(t('activeLbl')) + '</span>' : '<button class="btn ghost" data-action="make-active" data-id="' + esc(p.id) + '">' + esc(t('makeActive')) + '</button>') +
+        '<button class="btn ghost" data-action="ask-delete">' + esc(t('del')) + '</button></div>' +
+      '<div id="delBox" class="card" hidden><p><b>' + esc(t('delAsk')) + '</b></p><p class="sub">' + esc(t('delWarn')) + '</p>' +
+        '<button class="btn danger" data-action="do-delete" data-id="' + esc(p.id) + '">' + esc(t('yesDelete')) + '</button> ' +
+        '<button class="btn ghost" data-action="cancel-delete">' + esc(t('cancel')) + '</button></div>' +
+      '<div class="card"><h2>' + esc(t('basicInfo')) + '</h2>' + (rows || '<p class="sub" style="margin:0">—</p>') + '</div>' +
+      (await recordsCard(p)) + (await docsCard(p)) + (await photosCard(p)) + (await contactsCard(p));
+  }
+
+  function val(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
+  function on(id) { var el = document.getElementById(id); return !!(el && el.checked); }
+  function collectPerson() {
+    var priv = [];
+    if (on('pv_dob')) priv.push('dateOfBirth');
+    if (on('pv_pob')) priv.push('placeOfBirth');
+    if (on('pv_nid')) priv.push('nationalId');
+    function n(l) { return { first: val('f_' + l + '_first'), middle: val('f_' + l + '_middle'), last: val('f_' + l + '_last') }; }
+    return { names: { en: n('en'), th: n('th') }, preferredName: val('f_pref'), title: val('f_title'), gender: val('f_gender'),
+             dateOfBirth: val('f_dob'), placeOfBirth: val('f_pob'), nationality: val('f_nat'), nationalId: val('f_nid'),
+             privateFields: priv, notes: val('f_notes'), status: 'active' };
+  }
+  async function savePerson(id) {
+    var data = collectPerson(), msg = document.getElementById('formMsg');
+    if (!hasName(data)) { msg.textContent = t('nameReq'); return; }
+    if (id) { await repo.update('persons', id, data); location.hash = '#people/' + id; render(); return; }
+    var np = await repo.create('persons', data);
+    var d = await activePerson();
+    if (!d.active) await updateWorkspace({ activePersonId: np.id });
+    location.hash = '#people/' + np.id;
+  }
+
+  async function refreshDeletedList() {
+    var box = document.getElementById('deletedList');
+    if (!box) return;
+    var persons = await repo.list('persons', { includeDeleted: true }), gone = {};
+    var del = persons.filter(function (x) { if (x.deletedAt) gone[x.id] = 1; return x.deletedAt; });
+    var html = del.map(function (x) {
+      return '<div class="row"><span>' + esc(displayName(x)) + '</span><span><button class="btn ghost sm" data-action="restore-person" data-id="' + esc(x.id) + '">' + esc(t('restore')) +
+             '</button> <button class="btn ghost sm" data-action="purge-person" data-id="' + esc(x.id) + '">' + esc(t('forever')) + '</button></span></div>';
+    }).join('');
+    var stores = ['records', 'documents', 'contacts', 'photos'];
+    for (var i = 0; i < stores.length; i++) {
+      var items = (await repo.list(stores[i], { includeDeleted: true })).filter(function (x) { return x.deletedAt && !x.deletedVia && !gone[x.personId]; });
+      items.forEach(function (x) {
+        var label = stores[i] === 'records' ? TYPE_DEFS[x.type].icon + ' ' + bi(x.title) : stores[i] === 'documents' ? '📁 ' + x.fileName :
+                    stores[i] === 'contacts' ? '☎️ ' + t(KIND_KEYS[x.kind]) + ' ' + contactText(x) : '🖼️ ' + t(PHOTO_LABELS[x.label] || 'pOther');
+        html += '<div class="row"><span>' + esc(label) + '</span><button class="btn ghost sm" data-action="restore-item" data-store="' + stores[i] + '" data-id="' + esc(x.id) + '">' + esc(t('restore')) + '</button></div>';
+      });
+    }
+    box.innerHTML = html || '<p class="sub" style="margin:0">' + esc(t('nothingDeleted')) + '</p>';
+  }
+
+  function settingsView() {
+    var standalone = (window.navigator.standalone === true) || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+    var ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    var install = standalone ? '<span class="pill ok">' + esc(t('installed')) + '</span>'
+                             : (ios ? '<p style="margin:0">' + esc(t('installIos')) + '</p>' : '<p class="sub" style="margin:0">—</p>');
+    return head(t('settings'), t('deviceNote')) +
+      '<div class="card"><h2>' + esc(t('language')) + '</h2><div class="seg" role="group">' +
+        '<button data-lang="en" class="' + (lang === 'en' ? 'on' : '') + '">English</button>' +
+        '<button data-lang="th" class="' + (lang === 'th' ? 'on' : '') + '">ไทย</button></div></div>' +
+      '<div class="card"><h2>' + esc(t('appearance')) + '</h2><p style="margin:0">' + esc(t('autoTheme')) + '</p></div>' +
+      '<div class="card"><h2>' + esc(t('storage')) + '</h2>' +
+        '<div class="row"><span>' + esc(t('persistent')) + '</span><span id="persistState" class="pill">…</span></div>' +
+        '<div class="row"><span>' + esc(t('used')) + '</span><span id="usedState">…</span></div>' +
+        '<p id="persistMsg" class="sub" style="margin:8px 0"></p>' +
+        '<button class="btn ghost" id="persistBtn">' + esc(t('requestPersist')) + '</button></div>' +
+      '<div class="card"><h2>' + esc(t('installTitle')) + '</h2>' + install + '</div>' +
+      '<div class="card"><h2>' + esc(t('dbTitle')) + '</h2>' +
+        '<div class="row"><span>' + esc(t('dbTitle')) + '</span><span id="dbState" class="pill">…</span></div>' +
+        '<div class="row"><span>' + esc(t('cPeople')) + '</span><b id="cPeople">–</b></div>' +
+        '<div class="row"><span>' + esc(t('cRecords')) + '</span><b id="cRecords">–</b></div>' +
+        '<div class="row"><span>' + esc(t('cDocs')) + '</span><b id="cDocs">–</b></div>' +
+        '<p id="dbMsg" class="sub" style="margin:8px 0"></p>' +
+        '<label class="lbl" for="deviceName">' + esc(t('deviceName')) + '</label>' +
+        '<div style="display:flex;gap:8px"><input id="deviceName" class="input" maxlength="60" autocomplete="off">' +
+        '<button class="btn ghost" id="deviceSave">' + esc(t('save')) + '</button></div>' +
+        '<div style="margin-top:14px"><button class="btn" id="testBtn">' + esc(t('runTest')) + '</button></div>' +
+        '<div id="testOut" aria-live="polite"></div></div>' +
+      '<div class="card"><h2>' + esc(t('recentlyDeleted')) + '</h2><div id="deletedList"></div></div>' +
+      '<div class="card"><h2>' + esc(t('backup')) + '</h2><p class="sub" style="margin:0">' + esc(t('soon')) + ' 7</p></div>' +
+      '<p class="sub">' + esc(t('version')) + ': ' + esc(APP_VERSION) + '</p>';
+  }
+
+  function refreshStorageInfo() {
+    var ps = document.getElementById('persistState'), us = document.getElementById('usedState');
+    if (!ps) return;
+    if (navigator.storage && navigator.storage.persisted) {
+      navigator.storage.persisted().then(function (p) {
+        ps.textContent = p ? t('yes') : t('no'); ps.className = 'pill ' + (p ? 'ok' : 'warn');
+      });
+    } else { ps.textContent = t('unknown'); }
+    if (navigator.storage && navigator.storage.estimate) {
+      navigator.storage.estimate().then(function (e) {
+        us.textContent = (e.usage / 1048576).toFixed(1) + ' MB' + (e.quota ? ' / ' + Math.round(e.quota / 1048576) + ' MB' : '');
+      });
+    } else { us.textContent = t('unknown'); }
+  }
+
+  // ---------- Rendering ----------
+  function renderNav() {
+    var cur = currentRoute().id;
+    var html = '<span class="brand">' + esc(t('app')) + '</span><span class="tag">' + esc(t('tagline')) + '</span>';
+    ROUTES.forEach(function (r) {
+      html += '<a href="#' + r.id + '" class="' + (r.id === cur ? 'active' : '') + '"' + (r.id === cur ? ' aria-current="page"' : '') + '>' +
+              '<span class="ic" aria-hidden="true">' + r.icon + '</span><span>' + esc(t(r.id)) + '</span></a>';
+    });
+    document.getElementById('nav').innerHTML = html;
+  }
+  var renderToken = 0;
+  function render() {
+    document.documentElement.lang = lang;
+    document.title = t('app') + ' - ' + t(currentRoute().id);
+    renderNav();
+    var token = ++renderToken, route = currentRoute().id, view = document.getElementById('view');
+    revokeUrls();
+    return Promise.resolve().then(function () { return currentRoute().view(); }).then(function (html) {
+      if (token !== renderToken) return;
+      view.innerHTML = html;
+      window.scrollTo(0, 0);
+      if (route === 'settings') { refreshStorageInfo(); refreshDbInfo(); refreshDeletedList(); }
+    }).catch(function (err) {
+      if (token === renderToken) view.innerHTML = '<div class="card"><p class="msg">' + esc(err && err.message || err) + '</p></div>';
+    });
+  }
+
+  // ---------- Events ----------
+  window.addEventListener('hashchange', render);
+  document.addEventListener('input', function (e) {
+    if (e.target.id !== 'docQ') return;
+    var q = e.target.value.trim().toLowerCase();
+    Array.prototype.forEach.call(document.querySelectorAll('[data-q]'), function (el) { el.hidden = !!q && el.getAttribute('data-q').indexOf(q) < 0; });
+  });
+  document.addEventListener('change', function (e) {
+    var el = e.target;
+    if (el.id === 'switchPerson') updateWorkspace({ activePersonId: el.value }).then(render);
+    if (el.id === 'r_current') { var ed = document.getElementById('r_endDate'); if (ed) ed.disabled = el.checked; }
+    if (el.id === 'c_kind') { var ad = isAddr(el.value); document.getElementById('addrBox').hidden = !ad; document.getElementById('valBox').hidden = ad; }
+    if (el.classList && el.classList.contains('photo-label')) repo.update('photos', el.getAttribute('data-id'), { label: el.value });
+    if (el.id === 'docInput') {
+      var dfiles = Array.prototype.slice.call(el.files || []), dpid = el.getAttribute('data-person'), cat = document.getElementById('upCat').value;
+      addDocuments(dpid, dfiles, cat).then(function (res) {
+        el.value = '';
+        if (res.errors.length) { var m = document.getElementById('docMsg'); if (m) m.textContent = res.errors.join(' · '); }
+        if (res.added) { if (res.errors.length) { setTimeout(render, 2500); } else render(); }
+      });
+    }
+    if (el.id === 'photoInput') {
+      var files = Array.prototype.slice.call(el.files || []), pid = el.getAttribute('data-person');
+      (async function () {
+        for (var i = 0; i < files.length; i++) await addPhoto(pid, files[i]);
+        render();
+      })().catch(function (err) { var m = document.getElementById('photoMsg'); if (m) m.textContent = err.message; });
+    }
+  });
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-lang]');
+    if (b) {
+      lang = b.getAttribute('data-lang');
+      try { localStorage.setItem('pv_lang', lang); } catch (err) {}
+      render(); return;
+    }
+    var act = e.target.closest && e.target.closest('[data-action]');
+    if (act) {
+      var a = act.getAttribute('data-action'), id = act.getAttribute('data-id');
+      var fail = function (err) { var m = document.getElementById('formMsg'); if (m) m.textContent = err.message; };
+      if (a === 'save-person') { savePerson(id).catch(fail); return; }
+      if (a === 'restore-item') { repo.restore(act.getAttribute('data-store'), id).then(function () { refreshDeletedList(); refreshDbInfo(); }); return; }
+      if (a === 'pick-doc') { document.getElementById('docInput').click(); return; }
+      if (a === 'doc-cat') { docCat = act.getAttribute('data-cat'); render(); return; }
+      if (a === 'save-doc') { saveDoc(id).catch(fail); return; }
+      if (a === 'download-doc') { (async function () { var dd = await repo.get('documents', id), bb = await storage.local.get(dd.blobId); if (bb) await saveFile(bb, dd.fileName); })().catch(fail); return; }
+      if (a === 'del-doc') { if (armed(act, t('tapDelete'))) repo.softDelete('documents', id).then(function () { location.hash = '#documents'; render(); }); return; }
+      if (a === 'link') {
+        var sv = document.getElementById(act.getAttribute('data-sel')).value;
+        if (sv) linkDoc(act.getAttribute('data-person'), act.getAttribute('data-record') || sv, act.getAttribute('data-doc') || sv).then(render).catch(fail);
+        return;
+      }
+      if (a === 'unlink') { repo.softDelete('recordDocs', id).then(render); return; }
+      if (a === 'open-vault') { updateWorkspace({ activePersonId: id }).then(function () { location.hash = '#documents'; render(); }); return; }
+      if (a === 'save-record') { saveRecord(act.getAttribute('data-person'), act.getAttribute('data-type'), id).catch(fail); return; }
+      if (a === 'del-record') { if (armed(act, t('tapDelete'))) repo.softDelete('records', id).then(render); return; }
+      if (a === 'save-contact') { saveContact(act.getAttribute('data-person'), id).catch(fail); return; }
+      if (a === 'del-contact') { if (armed(act, t('tapDelete'))) repo.softDelete('contacts', id).then(render); return; }
+      if (a === 'pick-photo') { document.getElementById('photoInput').click(); return; }
+      if (a === 'photo-active') { setActivePhoto(act.getAttribute('data-person'), id).then(render); return; }
+      if (a === 'photo-del') { if (armed(act, t('tapDelete'))) deletePhoto(id).then(render); return; }
+      if (a === 'make-active') { updateWorkspace({ activePersonId: id }).then(render); return; }
+      if (a === 'ask-delete') { document.getElementById('delBox').hidden = false; return; }
+      if (a === 'cancel-delete') { document.getElementById('delBox').hidden = true; return; }
+      if (a === 'do-delete') { repo.softDeletePerson(id).then(function () { location.hash = '#people'; render(); }); return; }
+      if (a === 'restore-person') { repo.restorePerson(id).then(function () { refreshDeletedList(); refreshDbInfo(); }); return; }
+      if (a === 'purge-person') {
+        if (!act.getAttribute('data-armed')) { act.setAttribute('data-armed', '1'); act.textContent = t('tapAgain'); act.className = 'btn danger sm'; return; }
+        repo.purgePerson(id).then(function () { refreshDeletedList(); refreshDbInfo(); });
+        return;
+      }
+    }
+    if (e.target.id === 'deviceSave') {
+      var nm = document.getElementById('deviceName').value.trim().slice(0, 60);
+      updateWorkspace({ deviceName: nm || guessDeviceName() }).then(function () {
+        e.target.textContent = t('saved'); setTimeout(function () { e.target.textContent = t('save'); }, 1500);
+      });
+      return;
+    }
+    if (e.target.id === 'testBtn') {
+      var btn = e.target, out = document.getElementById('testOut');
+      btn.disabled = true; out.innerHTML = '<p class="sub">' + esc(t('testRunning')) + '</p>';
+      runSelfTest().then(function (res) {
+        var failed = res.filter(function (x) { return !x.pass; }).length;
+        out.innerHTML = '<p><span class="pill ' + (failed ? 'warn' : 'ok') + '">' + esc(failed ? t('testSomeFail') : t('testAllPass')) + '</span></p>' +
+          '<ul class="tests">' + res.map(function (x) { return '<li class="' + (x.pass ? '' : 'fail') + '">' + (x.pass ? '✓ ' : '✗ ') + esc(x.name) + '</li>'; }).join('') + '</ul>';
+      }).catch(function (err) { out.innerHTML = '<p class="sub">' + esc(err.message) + '</p>'; })
+        .then(function () { btn.disabled = false; refreshDbInfo(); });
+      return;
+    }
+    if (e.target.id === 'persistBtn') {
+      var msg = document.getElementById('persistMsg');
+      if (navigator.storage && navigator.storage.persist) {
+        navigator.storage.persist().then(function (ok) { msg.textContent = ok ? '' : t('persistDenied'); refreshStorageInfo(); });
+      } else { msg.textContent = t('persistDenied'); }
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
