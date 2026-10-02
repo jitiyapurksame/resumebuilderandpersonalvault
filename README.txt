@@ -1,4 +1,4 @@
-PROFILEVAULT - TEST VERSION 0.8 (step 8: resume builder)
+PROFILEVAULT - TEST VERSION 0.8.1 (resume builder + certificates on record forms)
 =============================================================
 
 WHAT IS IN THIS ZIP
@@ -57,6 +57,16 @@ HOW BACKUP WORKS (Settings page)
   files) resets the reminder.
 
 
+CERTIFICATES ON RECORD FORMS (new in 0.8.1)
+  When you add or edit an education, experience, training, award, skill
+  or project record there is a box "Supporting documents (optional)".
+  1. Tap "Add files" (on iPhone/iPad you can take a photo or choose a file).
+  2. Rename each file in the list if you want (the extension is kept).
+  3. Tap Save. The files are stored in Documents, filed under a matching
+     category, tagged like the record, and linked to the record.
+  4. Later, on the record's edit page, use "Rename" under a document,
+     or open it in Documents to edit its name, category, dates and notes.
+
 HOW THE RESUME BUILDER WORKS (Resume tab)
   1. Pick a document type: Full CV, Short resume or Student profile.
      Each starts with sensible sections and limits that you can change.
@@ -89,12 +99,14 @@ TEST CHECKLIST (please try on iPhone, iPad and computer)
   7. Try "Replace everything" on a test device, then undo it using
      the safety snapshot.
   8. Try restoring with a wrong passphrase: you should get a clear message.
-  9. Resume tab: build a Full CV, then a Short resume. Turn things on/off
+  9. Add an education record and attach a certificate while adding it.
+     Check it appears in Documents with the name you gave.
+ 10. Resume tab: build a Full CV, then a Short resume. Turn things on/off
      and check the preview follows. Try the Thai language option.
- 10. Save as PDF. Open the PDF and check: Thai vowels and tone marks sit
+ 11. Save as PDF. Open the PDF and check: Thai vowels and tone marks sit
      correctly, nothing is cut off, the photo shows, the layout is A4.
- 11. Save a preset, change something, reload the preset.
- 12. Note anything cut off, hard to tap, slow, or confusing.
+ 12. Save a preset, change something, reload the preset.
+ 13. Note anything cut off, hard to tap, slow, or confusing.
 
 IMPORTANT
   Each device still keeps its own separate data. Backup/restore is how you

@@ -206,6 +206,8 @@
       delAsk: 'Delete this person?', delWarn: 'They and all their data move to Recently deleted. You can restore them from Settings.',
       yesDelete: 'Yes, delete', recentlyDeleted: 'Recently deleted', restore: 'Restore', forever: 'Delete forever',
       tapAgain: 'Tap again to erase', nothingDeleted: 'Nothing deleted.', openProfile: 'Open profile',
+      stageTitle: 'Supporting documents (optional)', stageHint: 'Upload certificates or other evidence. They are saved in Documents and linked to this record. You can rename them here.',
+      stageAdd: 'Add files', stageRm: 'Remove', stageName: 'Document name', stageRename: 'Rename',
       rbTitle: 'Resume builder', rbSub: 'Choose what goes into each document', rbPreset: 'Saved presets', rbNewPreset: 'New (not saved)', rbName: 'Preset name',
       rbSave: 'Save preset', rbSaved: 'Saved.', rbDeletePreset: 'Delete preset', rbDocType: 'Document type', dtFull: 'Full CV', dtShort: 'Short resume', dtStudent: 'Student profile',
       rbLang: 'Document language', rbPhoto: 'Photo', rbNoPhoto: 'No photo', rbFilters: 'Filters', rbTags: 'Only items with these tags', rbFrom: 'Only items from this year on',
@@ -309,6 +311,8 @@
       delAsk: 'ลบบุคคลนี้หรือไม่?', delWarn: 'บุคคลนี้และข้อมูลทั้งหมดจะย้ายไปที่ "ลบล่าสุด" และกู้คืนได้จากหน้าตั้งค่า',
       yesDelete: 'ใช่ ลบเลย', recentlyDeleted: 'ลบล่าสุด', restore: 'กู้คืน', forever: 'ลบถาวร',
       tapAgain: 'แตะอีกครั้งเพื่อลบถาวร', nothingDeleted: 'ไม่มีรายการที่ถูกลบ', openProfile: 'เปิดโปรไฟล์',
+      stageTitle: 'เอกสารประกอบ (ไม่บังคับ)', stageHint: 'อัปโหลดใบประกาศนียบัตรหรือหลักฐานอื่น ๆ ระบบจะเก็บไว้ในหน้าเอกสารและเชื่อมโยงกับรายการนี้ คุณเปลี่ยนชื่อไฟล์ได้ที่นี่',
+      stageAdd: 'เพิ่มไฟล์', stageRm: 'เอาออก', stageName: 'ชื่อเอกสาร', stageRename: 'เปลี่ยนชื่อ',
       rbTitle: 'ตัวสร้างเรซูเม่', rbSub: 'เลือกสิ่งที่จะใส่ในแต่ละเอกสาร', rbPreset: 'ค่าที่บันทึกไว้', rbNewPreset: 'ใหม่ (ยังไม่บันทึก)', rbName: 'ชื่อค่าที่บันทึก',
       rbSave: 'บันทึกค่านี้', rbSaved: 'บันทึกแล้ว', rbDeletePreset: 'ลบค่าที่บันทึก', rbDocType: 'ประเภทเอกสาร', dtFull: 'ประวัติฉบับเต็ม (CV)', dtShort: 'เรซูเม่ฉบับสั้น', dtStudent: 'ประวัตินักเรียน',
       rbLang: 'ภาษาของเอกสาร', rbPhoto: 'รูปภาพ', rbNoPhoto: 'ไม่ใช้รูปภาพ', rbFilters: 'ตัวกรอง', rbTags: 'เฉพาะรายการที่มีแท็กเหล่านี้', rbFrom: 'เฉพาะรายการตั้งแต่ปีนี้เป็นต้นไป',
@@ -375,7 +379,7 @@
       contactReq: 'กรุณากรอกรายละเอียดการติดต่อ', tapDelete: 'แตะอีกครั้งเพื่อลบ'
     }
   };
-  var APP_VERSION = '0.8 (step 8: resume builder)';
+  var APP_VERSION = '0.8.1 (certificates on record forms)';
 
   // ---------- Database (IndexedDB) ----------
   var DB_NAME = 'profilevault', DB_VERSION = 2, DATA_SCHEMA = 1;
@@ -1431,6 +1435,9 @@
     return head((r ? t('edit') : t('addNew')) + ': ' + t(def.one), t('privHint')) +
       '<div class="card"><div class="grid two">' + def.fields.map(function (f) { return recField(f, r); }).join('') + '</div>' +
       '<label class="chk"><input type="checkbox" id="r_priv"' + (r && r.privacy !== 'public' ? ' checked' : '') + '> ' + esc(t('privLbl')) + '</label></div>' +
+      '<div class="card"><h2>' + esc(t('stageTitle')) + '</h2><p class="sub">' + esc(t('stageHint')) + '</p>' +
+        '<input type="file" id="stageInput" class="vh" multiple accept="' + ACCEPT + '" tabindex="-1"><button class="btn ghost" data-action="pick-stage">+ ' + esc(t('stageAdd')) + '</button>' +
+        '<div id="stageList"></div><p id="stageMsg" class="msg" aria-live="polite"></p></div>' +
       '<p id="formMsg" class="msg" aria-live="polite"></p>' +
       '<div class="toolbar"><button class="btn" data-action="save-record" data-person="' + esc(p.id) + '" data-type="' + type + '" data-id="' + esc(r ? r.id : '') + '">' + esc(t('save')) + '</button>' +
       '<a class="btn ghost" href="#people/' + esc(p.id) + '/rec/' + type + '">' + esc(t('cancel')) + '</a></div>';
@@ -1449,11 +1456,52 @@
     rec.privacy = on('r_priv') ? 'private' : 'public';
     return rec;
   }
+  var recStage = [], CAT_FOR = { education: 'education', experience: 'employment', training: 'training', award: 'award', project: 'project', skill: 'certificate' };
+  function finalName(name, origName) {
+    var n = safeName(name || origName);
+    if (!EXT[extOf(n)]) { var e = extOf(origName); if (e) n += '.' + e; }
+    return n;
+  }
+  function renderStage() {
+    var box = q('stageList');
+    if (!box) return;
+    box.innerHTML = recStage.map(function (it, i) {
+      return '<div class="row"><input class="input stageName" data-i="' + i + '" value="' + esc(it.name) + '" aria-label="' + esc(t('stageName')) + '" style="flex:1;min-width:160px" maxlength="120">' +
+        '<span class="sub" style="margin:0">' + esc(fmtSize(it.file.size)) + '</span><button class="btn ghost sm" data-action="stage-rm" data-i="' + i + '">' + esc(t('stageRm')) + '</button></div>';
+    }).join('');
+  }
+  async function stageAdd(files) {
+    var msg = q('stageMsg'), errs = [];
+    if (msg) msg.textContent = '';
+    for (var i = 0; i < files.length; i++) {
+      try { var v = await validateUpload(files[i]); recStage.push({ file: files[i], name: v.name, mime: v.mime }); }
+      catch (e) { errs.push(e.message); }
+    }
+    renderStage(); if (msg && errs.length) msg.textContent = errs.join(' · ');
+  }
+  async function attachStaged(personId, rec) {
+    var errs = [], items = recStage.slice(), desc = bi(rec.title);
+    for (var i = 0; i < items.length; i++) {
+      try {
+        var it = items[i], blobId = await storage.local.put(it.file.slice(0, it.file.size, it.mime));
+        var doc = await repo.create('documents', { personId: personId, fileName: finalName(it.name, it.file.name), mimeType: it.mime, size: it.file.size, category: CAT_FOR[rec.type] || 'other',
+          date: nowIso().slice(0, 10), blobId: blobId, tags: (rec.tags || []).slice(), description: desc, source: '', notes: '', expiryDate: '' });
+        await linkDoc(personId, rec.id, doc.id);
+        recStage.splice(recStage.indexOf(it), 1);
+      } catch (e) { errs.push(e.message); }
+    }
+    return errs;
+  }
   async function saveRecord(personId, type, id) {
-    var data = collectRecord(type), msg = document.getElementById('formMsg');
+    var data = collectRecord(type), msg = document.getElementById('formMsg'), rec;
     if (!titleText(data.title)) { msg.textContent = t('titleReq'); return; }
-    if (id) await repo.update('records', id, data);
-    else await repo.create('records', Object.assign({ personId: personId, type: type }, data));
+    if (id) rec = await repo.update('records', id, data);
+    else {
+      rec = await repo.create('records', Object.assign({ personId: personId, type: type }, data));
+      var sb = document.querySelector('[data-action="save-record"]'); if (sb) sb.setAttribute('data-id', rec.id);
+    }
+    var errs = await attachStaged(personId, rec);
+    if (errs.length) { msg.textContent = errs.join(' · '); renderStage(); return; }
     location.hash = '#people/' + personId + '/rec/' + type;
   }
   function nf(p) { return head(t('people'), '') + '<div class="card empty">' + esc(t('notFound')) + '</div><a class="btn ghost" href="#people' + (p ? '/' + esc(p.id) : '') + '">' + esc(t('back')) + '</a>'; }
@@ -1461,10 +1509,11 @@
     var def = TYPE_DEFS[type];
     if (!def) return nf(p);
     var back = '<p><a href="#people/' + esc(p.id) + '">← ' + esc(displayName(p)) + '</a></p>';
-    if (sub === 'new') return back + recordForm(p, type, null);
+    if (sub === 'new') { recStage = []; return back + recordForm(p, type, null); }
     if (sub) {
       var r = await repo.get('records', sub);
       if (!r || r.deletedAt || r.personId !== p.id || r.type !== type) return nf(p);
+      recStage = [];
       return back + recordForm(p, type, r) + (await recordDocsCard(p, r));
     }
     var list = (await repo.list('records', { personId: p.id, type: type })).sort(function (a, b) {
@@ -1669,7 +1718,9 @@
     links.forEach(function (l) { linked[l.documentId] = 1; });
     var rows = links.map(function (l) {
       var d = byId[l.documentId];
-      return '<div class="row"><a href="#documents/' + esc(d.id) + '">' + fileIcon(d) + ' ' + esc(d.fileName) + '</a><button class="btn ghost sm" data-action="unlink" data-id="' + esc(l.id) + '">' + esc(t('unlink')) + '</button></div>';
+      return '<div class="row"><span><a href="#documents/' + esc(d.id) + '">' + fileIcon(d) + ' ' + esc(d.fileName) + '</a>' +
+        '<details><summary>' + esc(t('stageRename')) + '</summary><input class="input recDocName" data-id="' + esc(d.id) + '" data-orig="' + esc(d.fileName) + '" value="' + esc(d.fileName) + '" maxlength="120" aria-label="' + esc(t('stageName')) + '"></details></span>' +
+        '<button class="btn ghost sm" data-action="unlink" data-id="' + esc(l.id) + '">' + esc(t('unlink')) + '</button></div>';
     }).join('');
     var opts = docs.filter(function (d) { return !linked[d.id]; }).map(function (d) { return '<option value="' + esc(d.id) + '">' + esc(d.fileName) + '</option>'; }).join('');
     return '<div class="card"><h2>' + esc(t('supportDocs')) + '</h2>' + (rows || '<p class="sub">' + esc(t('noLinks')) + '</p>') +
@@ -1980,6 +2031,7 @@
       if (token !== renderToken) return;
       view.innerHTML = html;
       window.scrollTo(0, 0);
+      if (route === 'people') renderStage();
       if (route === 'resume') { if (parseHash()[1] === 'snap') fitPaper(); else initResume(); }
       if (route === 'settings') { refreshStorageInfo(); refreshDbInfo(); refreshDeletedList(); refreshBackupUi(); }
     }).catch(function (err) {
@@ -1992,6 +2044,7 @@
   window.addEventListener('resize', function () { fitPaper(); });
   document.addEventListener('toggle', function (e) { if (e.target.tagName === 'DETAILS' && e.target.getAttribute('data-key')) rb.open[e.target.getAttribute('data-key')] = e.target.open; }, true);
   document.addEventListener('input', function (e) {
+    if (e.target.classList && e.target.classList.contains('stageName')) { var si = recStage[parseInt(e.target.getAttribute('data-i'), 10)]; if (si) si.name = e.target.value; return; }
     if (rbHandle(e.target, 'input')) return;
     if (e.target.id !== 'docQ') return;
     var q = e.target.value.trim().toLowerCase();
@@ -2000,6 +2053,11 @@
   document.addEventListener('change', function (e) {
     var el = e.target;
     if (rbHandle(el, 'change')) return;
+    if (el.id === 'stageInput') { var sf = Array.prototype.slice.call(el.files || []); el.value = ''; stageAdd(sf); return; }
+    if (el.classList && el.classList.contains('recDocName')) {
+      repo.update('documents', el.getAttribute('data-id'), { fileName: finalName(el.value, el.getAttribute('data-orig')) }).then(render);
+      return;
+    }
     if (el.id === 'switchPerson') updateWorkspace({ activePersonId: el.value }).then(render);
     if (el.id === 'r_current') { var ed = document.getElementById('r_endDate'); if (ed) ed.disabled = el.checked; }
     if (el.id === 'c_kind') { var ad = isAddr(el.value); document.getElementById('addrBox').hidden = !ad; document.getElementById('valBox').hidden = ad; }
@@ -2049,6 +2107,8 @@
       if (a === 'rb-print') { rbPrint().catch(fail); return; }
       if (a === 'print-snap') { repo.get('generated', id).then(function (g) { if (g) printAs(g.name); }); return; }
       if (a === 'del-snap') { if (armed(act, t('tapDelete'))) repo.softDelete('generated', id).then(render); return; }
+      if (a === 'pick-stage') { q('stageInput').click(); return; }
+      if (a === 'stage-rm') { recStage.splice(parseInt(act.getAttribute('data-i'), 10), 1); renderStage(); return; }
       if (a === 'make-backup') { doMakeBackup(act); return; }
       if (a === 'save-backup') { doSaveBackup(); return; }
       if (a === 'pick-restore') { q('rsInput').click(); return; }
