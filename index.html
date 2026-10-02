@@ -6,19 +6,26 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="ProfileVault">
-<meta name="theme-color" content="#1d4e89">
+<meta name="theme-color" content="#faf8f6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17181f" media="(prefers-color-scheme: dark)">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; frame-src blob:">
 <title>ProfileVault</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ink:#1f2933; --muted:#6b7785; --accent:#1d4e89; --accent-soft:#e6eef7;
-    --bg:#f6f4ef; --card:#ffffff; --line:#e2ddd2; --ok:#2f7d5b; --warn:#b26a00;
+    --ink:#3b4252; --muted:#6b7287; --accent:#5468bd; --accent-soft:#eef0fb;
+    --bg:#faf8f6; --card:#ffffff; --line:#eeeae4; --ok:#4a8a6e; --warn:#9a5f22;
+    --btn-bg:#d6ddfb; --btn-ink:#2c3873; --danger-bg:#fadcd7; --danger-ink:#8c2f26; --ring:rgba(84,104,189,.25);
+    --pill-bg:#eef0fb; --pill-ink:#4a5aa8; --pill-ok-bg:#ddf3e8; --pill-ok-ink:#2f6b4f; --pill-warn-bg:#fdebd8; --pill-warn-ink:#94571a;
+    --avatar-bg:#f1e8fa; --avatar-ink:#6a4fa3; --mint:#a9ddc6; --peach:#f6cfa8;
     --nav-w:230px; --bar-h:64px;
   }
   @media (prefers-color-scheme: dark) {
-    :root { --ink:#e8ecf0; --muted:#98a4b1; --accent:#7fb2ea; --accent-soft:#1d2b3b;
-            --bg:#12171d; --card:#1b222b; --line:#2b3540; --ok:#5cc39a; --warn:#e0a24a; }
+    :root { --ink:#e6e8f0; --muted:#9aa0b4; --accent:#aab6f2; --accent-soft:#262a3d;
+            --bg:#17181f; --card:#1f212b; --line:#2c2f3c; --ok:#7fcfa9; --warn:#e3b27a;
+            --btn-bg:#3b4378; --btn-ink:#e9ecff; --danger-bg:#5a2f2c; --danger-ink:#ffd9d3; --ring:rgba(170,182,242,.3);
+            --pill-bg:#2b3050; --pill-ink:#c3cbf5; --pill-ok-bg:#23403a; --pill-ok-ink:#a6e6c8; --pill-warn-bg:#4a3a26; --pill-warn-ink:#f1c995;
+            --avatar-bg:#33284a; --avatar-ink:#d6c3f5; --mint:#4f9c80; --peach:#8a6a45; }
   }
   * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html, body { margin:0; height:100%; }
@@ -31,8 +38,8 @@
   #nav .brand { display:none; }
   #nav a { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
            min-height:var(--bar-h); color:var(--muted); text-decoration:none; font-size:12px; }
-  #nav a .ic { font-size:22px; line-height:1; }
-  #nav a.active { color:var(--accent); font-weight:700; }
+  #nav a .ic { display:flex; } #nav a .ic svg { width:24px; height:24px; }
+  #nav a.active { color:var(--accent); font-weight:600; }
   #main { padding:16px; padding-top:calc(16px + env(safe-area-inset-top,0px));
           padding-bottom:calc(var(--bar-h) + 24px + env(safe-area-inset-bottom,0px)); max-width:900px; margin:0 auto; }
   @media (min-width:768px) {
@@ -52,27 +59,27 @@
   /* ---- components ---- */
   h1 { font-size:24px; margin:0 0 4px; }
   .sub { color:var(--muted); margin:0 0 18px; }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:14px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:18px; margin-bottom:14px; }
   .card h2 { font-size:17px; margin:0 0 10px; }
   .grid { display:grid; gap:12px; grid-template-columns:1fr; }
   @media (min-width:600px) { .grid.two { grid-template-columns:1fr 1fr; } }
   .btn { font:inherit; font-size:16px; min-height:46px; padding:10px 16px; border:0; border-radius:12px; cursor:pointer;
-         background:var(--accent); color:#fff; display:inline-flex; align-items:center; gap:8px; }
-  .btn.ghost { background:var(--accent-soft); color:var(--accent); }
+         background:var(--btn-bg); color:var(--btn-ink); font-weight:500; display:inline-flex; align-items:center; gap:8px; }
+  .btn.ghost { background:var(--accent-soft); color:var(--pill-ink); }
   .btn[disabled] { opacity:.55; cursor:default; }
   .actions { display:grid; gap:10px; grid-template-columns:1fr 1fr; }
   .bar { height:12px; background:var(--accent-soft); border-radius:99px; overflow:hidden; }
-  .bar > span { display:block; height:100%; background:var(--ok); }
-  .pill { display:inline-block; font-size:12px; padding:2px 10px; border-radius:99px; background:var(--accent-soft); color:var(--accent); }
-  .pill.warn { background:rgba(178,106,0,.15); color:var(--warn); }
-  .pill.ok { background:rgba(47,125,91,.15); color:var(--ok); }
+  .bar > span { display:block; height:100%; background:var(--mint); border-radius:99px; }
+  .pill { display:inline-block; font-size:12px; padding:2px 10px; border-radius:99px; background:var(--pill-bg); color:var(--pill-ink); }
+  .pill.warn { background:var(--pill-warn-bg); color:var(--pill-warn-ink); }
+  .pill.ok { background:var(--pill-ok-bg); color:var(--pill-ok-ink); }
   .empty { text-align:center; padding:28px 12px; color:var(--muted); }
   .empty .big { font-size:42px; }
   .row { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid var(--line); }
   .row:last-child { border-bottom:0; }
   .seg { display:inline-flex; border:1px solid var(--line); border-radius:12px; overflow:hidden; }
   .seg button { font:inherit; border:0; background:transparent; color:var(--ink); padding:10px 18px; min-height:44px; cursor:pointer; }
-  .seg button.on { background:var(--accent); color:#fff; }
+  .seg button.on { background:var(--btn-bg); color:var(--btn-ink); font-weight:600; }
   .input { font:inherit; width:100%; min-height:46px; padding:8px 12px; border:1px solid var(--line); border-radius:12px; background:var(--card); color:var(--ink); }
   label.lbl { display:block; font-size:14px; color:var(--muted); margin:0 0 4px; }
   .tests { list-style:none; margin:10px 0 0; padding:0; font-size:14px; }
@@ -80,13 +87,13 @@
   .tests li.fail { color:var(--warn); font-weight:700; }
   [hidden] { display:none !important; }
   a.btn { text-decoration:none; justify-content:center; }
-  .btn.danger { background:var(--warn); color:#fff; }
+  .btn.danger { background:var(--danger-bg); color:var(--danger-ink); }
   .btn.sm { min-height:38px; padding:6px 12px; font-size:14px; }
   .row { flex-wrap:wrap; }
   .item { display:flex; gap:12px; align-items:center; text-decoration:none; color:inherit; }
   .item .txt { flex:1; min-width:0; }
   .item .txt b, .item .txt span { display:block; overflow:hidden; text-overflow:ellipsis; }
-  .avatar { width:46px; height:46px; border-radius:50%; background:var(--accent-soft); color:var(--accent); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:19px; flex:none; }
+  .avatar { width:46px; height:46px; border-radius:50%; background:var(--avatar-bg); color:var(--avatar-ink); display:flex; align-items:center; justify-content:center; font-weight:600; font-size:19px; flex:none; }
   .avatar.lg { width:64px; height:64px; font-size:26px; }
   .fld { margin-bottom:12px; }
   textarea.input { min-height:90px; resize:vertical; }
@@ -106,11 +113,48 @@
   .tagline .pill { margin-right:4px; }
   .chips { display:flex; gap:8px; flex-wrap:wrap; margin:10px 0; }
   .chip { font:inherit; border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:99px; padding:6px 14px; min-height:38px; cursor:pointer; }
-  .chip.on { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .chip.on { background:var(--btn-bg); color:var(--btn-ink); border-color:var(--btn-bg); font-weight:500; }
   .preview { text-align:center; }
   .preview img { max-width:100%; max-height:70vh; border-radius:8px; }
   .preview iframe { width:100%; height:65vh; border:1px solid var(--line); border-radius:8px; background:#fff; }
   pre.txt { white-space:pre-wrap; text-align:left; max-height:60vh; overflow:auto; font-size:13px; margin:0; }
+  .warnbox { border-color:var(--peach); background:var(--pill-warn-bg); }
+  h1, h2 { font-weight:600; }
+  .input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--ring); }
+  .empty .big { opacity:.75; }
+  .avatar:not(:has(.avatar-img)) { filter:saturate(.7); }
+  .btn:active { filter:brightness(.97); }
+  .rb { display:grid; gap:16px; }
+  @media (min-width:1000px) { .rb { grid-template-columns:minmax(300px,380px) 1fr; align-items:start; } #rbPreviewCol { position:sticky; top:12px; } }
+  @media (max-width:999px) { .rb[data-tab="edit"] #rbPreviewCol { display:none; } .rb[data-tab="preview"] #rbControls { display:none; } }
+  @media (min-width:1000px) { .rbtabs { display:none; } }
+  details summary { cursor:pointer; padding:6px 0; color:var(--pill-ink); }
+  .paper-wrap { width:100%; overflow:hidden; }
+  .paper { width:793px; min-height:1122px; padding:57px; background:#fff; color:#1f2933; color-scheme:light; transform-origin:0 0;
+           font-size:11pt; line-height:1.45; border:1px solid #e6e2da; box-sizing:border-box; font-family:'Sarabun',-apple-system,'Noto Sans Thai',sans-serif; }
+  .paper * { color-scheme:light; }
+  .cv-head { display:flex; justify-content:space-between; gap:20px; align-items:flex-start; margin-bottom:8px; }
+  .cv-name { font-size:24pt; line-height:1.15; margin:0; color:#33408a; font-weight:600; }
+  .cv-line { color:#4a5160; font-size:10pt; margin-top:4px; }
+  .cv-photo { width:100px; height:120px; object-fit:cover; border-radius:8px; flex:none; }
+  .cv-sec { margin-top:14px; }
+  .cv-sec h2 { font-size:12pt; margin:0 0 6px; color:#33408a; border-bottom:1.5px solid #c9d2f3; padding-bottom:2px; font-weight:600; break-after:avoid; }
+  .cv-item { margin-bottom:7px; break-inside:avoid; }
+  .cv-row { display:flex; justify-content:space-between; gap:12px; }
+  .cv-date { color:#5b6475; white-space:nowrap; font-size:10pt; }
+  .cv-sub { color:#5b6475; font-size:10pt; }
+  .cv-item p, .paper p { margin:2px 0; } .cv-item ul { margin:2px 0 2px 18px; padding:0; }
+  @media print {
+    #nav, .noprint { display:none !important; }
+    body { background:#fff; }
+    #main { margin:0 !important; padding:0 !important; max-width:none !important; }
+    #main > .wrap { max-width:none !important; }
+    .rb { display:block !important; } #rbPreviewCol { display:block !important; position:static !important; }
+    .card.pvcard { border:0; padding:0; margin:0; background:transparent; }
+    .paper-wrap { height:auto !important; overflow:visible !important; }
+    .paper { transform:none !important; width:auto !important; min-height:0 !important; padding:0 !important; border:0 !important; }
+    @page { size:A4; margin:15mm; }
+  }
   a:focus-visible, button:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
 </style>
 </head>
@@ -132,7 +176,7 @@
       completeness: 'Profile completeness', quick: 'Quick actions',
       addPerson: 'Add person', addEducation: 'Add education', addAward: 'Add award',
       uploadDoc: 'Upload document', genResume: 'Generate resume',
-      lastBackup: 'Last backup', never: 'Never', backupNote: 'Backups arrive in step 7.',
+      lastBackup: 'Last backup', never: 'Never',
       soon: 'Coming in step', comingPeople: 'People and profiles', comingDocs: 'Document vault', comingResume: 'Resume generator',
       language: 'Language', appearance: 'Appearance', autoTheme: 'Follows your device (light / dark)',
       storage: 'Storage on this device', persistent: 'Protected from automatic clearing',
@@ -162,6 +206,36 @@
       delAsk: 'Delete this person?', delWarn: 'They and all their data move to Recently deleted. You can restore them from Settings.',
       yesDelete: 'Yes, delete', recentlyDeleted: 'Recently deleted', restore: 'Restore', forever: 'Delete forever',
       tapAgain: 'Tap again to erase', nothingDeleted: 'Nothing deleted.', openProfile: 'Open profile',
+      rbTitle: 'Resume builder', rbSub: 'Choose what goes into each document', rbPreset: 'Saved presets', rbNewPreset: 'New (not saved)', rbName: 'Preset name',
+      rbSave: 'Save preset', rbSaved: 'Saved.', rbDeletePreset: 'Delete preset', rbDocType: 'Document type', dtFull: 'Full CV', dtShort: 'Short resume', dtStudent: 'Student profile',
+      rbLang: 'Document language', rbPhoto: 'Photo', rbNoPhoto: 'No photo', rbFilters: 'Filters', rbTags: 'Only items with these tags', rbFrom: 'Only items from this year on',
+      rbHidePrivate: 'Leave out items marked Private', rbSections: 'Sections', rbMax: 'Show at most', rbAll: 'All', rbItems: 'Items', rbOf: '{a} of {b}', rbUp: 'Move up', rbDown: 'Move down',
+      rbTitleF: 'Section title', rbContact: 'Contact details to show', rbPersonal: 'Personal details to show', rbSumEn: 'Summary (English)', rbSumTh: 'Summary (Thai)',
+      rbFit1: 'Fits on 1 page', rbFitN: 'About {n} pages', rbPreview: 'Preview', rbPrint: 'Save as PDF / Print',
+      rbPrintHint: 'iPhone/iPad: in the print screen pinch OUT on the preview, then Share and Save to Files. A copy is kept under Saved documents.',
+      rbHistory: 'Saved documents', rbOpen: 'Open', rbNoHist: 'Nothing saved yet.', rbEditTab: 'Edit', rbPrevTab: 'Preview', secSummary: 'Summary', hrsWord: 'hrs',
+      rbNoContact: 'No contact details yet.', rbNoItems: 'No items.',
+      backupTitle: 'Backup', bkScope: 'What to back up', bkAll: 'Everyone', bkSel: 'Selected people',
+      bkFiles: 'Include files (documents and photos)', bkPass: 'Passphrase (optional)', bkPass2: 'Repeat passphrase',
+      bkPassWarn: 'If you forget the passphrase the backup cannot be opened. Recommended when it holds ID numbers.',
+      bkMake: 'Create backup', bkBuilding: 'Building backup…', bkVerify: 'Checking the backup…', bkEnc: 'Encrypting…', bkReady: 'Backup ready',
+      bkSave: 'Save / share backup', bkSaved: 'Backup saved.', bkNoPeople: 'Add a person first.', bkMismatch: 'The passphrases do not match.', bkPickOne: 'Choose at least one person.',
+      restoreTitle: 'Restore', rsPick: 'Choose backup file', rsRead: 'Read backup', rsPassAsk: 'This backup is encrypted. Enter its passphrase.',
+      rsWrong: 'Wrong passphrase, or the file is damaged.', rsBad: 'This is not a valid ProfileVault backup.',
+      rsNewer: 'This backup was made by a newer version of ProfileVault.', rsDamaged: 'The backup file is damaged (a file did not match its checksum).',
+      rsFrom: 'Made', rsPeople: 'People in this backup', rsNew: 'New here', rsHere: 'Already here', rsFilesIn: 'Includes files', rsFilesNo: 'Data only (no files)',
+      rsMode: 'How to restore', rsMerge: 'Merge (recommended)', rsReplace: 'Replace everything', rsAsNew: 'Import as new people',
+      rsMergeHint: 'Adds what is missing and keeps the newer version of anything found on both sides.',
+      rsReplaceHint: 'Erases this device first, then loads the backup. A safety snapshot is kept so you can undo.',
+      rsAsNewHint: 'Adds copies with new IDs. Nothing that exists here is touched.',
+      rsType: 'Type REPLACE to confirm', rsGo: 'Restore', rsWorking: 'Restoring…', rsDone: 'Restore complete',
+      rsAdded: 'Added', rsUpdated: 'Updated', rsSkipped: 'Skipped (same or newer here)', rsFilesAdded: 'Files added', rsConfirmWrong: 'Type REPLACE exactly to continue.',
+      rsPlanMerge: 'Will add {a}, update {u}, skip {s}.', rsPlanAll: 'Will load {n} items.',
+      snapTitle: 'Safety snapshot', snapNone: 'None yet. One is made automatically before "Replace everything".', snapLoad: 'Restore from it', snapSave: 'Save a copy',
+      fileMissing: 'This file was not included in the restored backup, so it is not on this device.',
+      bkOverdueNever: 'You have data but no backup yet.', bkOverdueAge: 'Last backup: {d} days ago.', bkChanges: '{c} changes since the last backup.', bkNow: 'Back up now',
+      backupNote: 'Back up from Settings.',
+      bkShort: 'Use at least 6 characters.', bkPartial: 'Only full backups (everyone, with files) reset the backup reminder.',
       docsSub: 'Certificates and supporting files', uploadDocs: 'Upload documents', upCat: 'Category', searchDocs: 'Search documents',
       allCats: 'All', noDocs: 'No documents yet.',
       dcIdentity: 'Identity', dcEducation: 'Education', dcCertificate: 'Certificates', dcAward: 'Awards', dcTraining: 'Training',
@@ -205,7 +279,7 @@
       completeness: 'ความสมบูรณ์ของโปรไฟล์', quick: 'ทางลัด',
       addPerson: 'เพิ่มบุคคล', addEducation: 'เพิ่มประวัติการศึกษา', addAward: 'เพิ่มรางวัล',
       uploadDoc: 'อัปโหลดเอกสาร', genResume: 'สร้างเรซูเม่',
-      lastBackup: 'สำรองข้อมูลล่าสุด', never: 'ยังไม่เคย', backupNote: 'ระบบสำรองข้อมูลจะมาในขั้นตอนที่ 7',
+      lastBackup: 'สำรองข้อมูลล่าสุด', never: 'ยังไม่เคย',
       soon: 'จะมาในขั้นตอนที่', comingPeople: 'บุคคลและโปรไฟล์', comingDocs: 'คลังเอกสาร', comingResume: 'ตัวสร้างเรซูเม่',
       language: 'ภาษา', appearance: 'การแสดงผล', autoTheme: 'ตามอุปกรณ์ (สว่าง / มืด)',
       storage: 'พื้นที่จัดเก็บบนอุปกรณ์นี้', persistent: 'ป้องกันการล้างข้อมูลอัตโนมัติแล้ว',
@@ -235,6 +309,36 @@
       delAsk: 'ลบบุคคลนี้หรือไม่?', delWarn: 'บุคคลนี้และข้อมูลทั้งหมดจะย้ายไปที่ "ลบล่าสุด" และกู้คืนได้จากหน้าตั้งค่า',
       yesDelete: 'ใช่ ลบเลย', recentlyDeleted: 'ลบล่าสุด', restore: 'กู้คืน', forever: 'ลบถาวร',
       tapAgain: 'แตะอีกครั้งเพื่อลบถาวร', nothingDeleted: 'ไม่มีรายการที่ถูกลบ', openProfile: 'เปิดโปรไฟล์',
+      rbTitle: 'ตัวสร้างเรซูเม่', rbSub: 'เลือกสิ่งที่จะใส่ในแต่ละเอกสาร', rbPreset: 'ค่าที่บันทึกไว้', rbNewPreset: 'ใหม่ (ยังไม่บันทึก)', rbName: 'ชื่อค่าที่บันทึก',
+      rbSave: 'บันทึกค่านี้', rbSaved: 'บันทึกแล้ว', rbDeletePreset: 'ลบค่าที่บันทึก', rbDocType: 'ประเภทเอกสาร', dtFull: 'ประวัติฉบับเต็ม (CV)', dtShort: 'เรซูเม่ฉบับสั้น', dtStudent: 'ประวัตินักเรียน',
+      rbLang: 'ภาษาของเอกสาร', rbPhoto: 'รูปภาพ', rbNoPhoto: 'ไม่ใช้รูปภาพ', rbFilters: 'ตัวกรอง', rbTags: 'เฉพาะรายการที่มีแท็กเหล่านี้', rbFrom: 'เฉพาะรายการตั้งแต่ปีนี้เป็นต้นไป',
+      rbHidePrivate: 'ไม่ใส่รายการที่ตั้งเป็นส่วนตัว', rbSections: 'ส่วนต่าง ๆ', rbMax: 'แสดงไม่เกิน', rbAll: 'ทั้งหมด', rbItems: 'รายการ', rbOf: '{a} จาก {b}', rbUp: 'เลื่อนขึ้น', rbDown: 'เลื่อนลง',
+      rbTitleF: 'ชื่อหัวข้อ', rbContact: 'ข้อมูลติดต่อที่จะแสดง', rbPersonal: 'ข้อมูลส่วนตัวที่จะแสดง', rbSumEn: 'สรุปสั้น ๆ (ภาษาอังกฤษ)', rbSumTh: 'สรุปสั้น ๆ (ภาษาไทย)',
+      rbFit1: 'พอดี 1 หน้า', rbFitN: 'ประมาณ {n} หน้า', rbPreview: 'ตัวอย่าง', rbPrint: 'บันทึกเป็น PDF / พิมพ์',
+      rbPrintHint: 'iPhone/iPad: ในหน้าพิมพ์ ให้ใช้สองนิ้วถ่างออกที่ตัวอย่าง แล้วแตะแชร์และบันทึกลงไฟล์ ระบบจะเก็บสำเนาไว้ใน "เอกสารที่บันทึก"',
+      rbHistory: 'เอกสารที่บันทึก', rbOpen: 'เปิด', rbNoHist: 'ยังไม่มีเอกสารที่บันทึก', rbEditTab: 'แก้ไข', rbPrevTab: 'ตัวอย่าง', secSummary: 'สรุป', hrsWord: 'ชม.',
+      rbNoContact: 'ยังไม่มีข้อมูลติดต่อ', rbNoItems: 'ไม่มีรายการ',
+      backupTitle: 'สำรองข้อมูล', bkScope: 'สิ่งที่จะสำรอง', bkAll: 'ทุกคน', bkSel: 'เฉพาะบุคคลที่เลือก',
+      bkFiles: 'รวมไฟล์ (เอกสารและรูปภาพ)', bkPass: 'รหัสผ่านป้องกันไฟล์ (ไม่บังคับ)', bkPass2: 'ยืนยันรหัสผ่านอีกครั้ง',
+      bkPassWarn: 'หากลืมรหัสผ่าน จะเปิดไฟล์สำรองไม่ได้ แนะนำให้ตั้งเมื่อมีเลขบัตรประชาชนหรือข้อมูลสำคัญ',
+      bkMake: 'สร้างไฟล์สำรอง', bkBuilding: 'กำลังสร้างไฟล์สำรอง…', bkVerify: 'กำลังตรวจสอบไฟล์สำรอง…', bkEnc: 'กำลังเข้ารหัส…', bkReady: 'ไฟล์สำรองพร้อมแล้ว',
+      bkSave: 'บันทึก / แชร์ไฟล์สำรอง', bkSaved: 'บันทึกไฟล์สำรองแล้ว', bkNoPeople: 'กรุณาเพิ่มบุคคลก่อน', bkMismatch: 'รหัสผ่านสองช่องไม่ตรงกัน', bkPickOne: 'กรุณาเลือกอย่างน้อยหนึ่งคน',
+      restoreTitle: 'กู้คืนข้อมูล', rsPick: 'เลือกไฟล์สำรอง', rsRead: 'อ่านไฟล์สำรอง', rsPassAsk: 'ไฟล์สำรองนี้ถูกเข้ารหัส กรุณากรอกรหัสผ่าน',
+      rsWrong: 'รหัสผ่านไม่ถูกต้อง หรือไฟล์เสียหาย', rsBad: 'ไม่ใช่ไฟล์สำรองของ ProfileVault',
+      rsNewer: 'ไฟล์สำรองนี้สร้างจาก ProfileVault เวอร์ชันที่ใหม่กว่า', rsDamaged: 'ไฟล์สำรองเสียหาย (ไฟล์ข้างในไม่ตรงกับค่าตรวจสอบ)',
+      rsFrom: 'สร้างเมื่อ', rsPeople: 'บุคคลในไฟล์สำรอง', rsNew: 'ยังไม่มีในเครื่อง', rsHere: 'มีอยู่แล้ว', rsFilesIn: 'รวมไฟล์', rsFilesNo: 'เฉพาะข้อมูล (ไม่มีไฟล์)',
+      rsMode: 'วิธีกู้คืน', rsMerge: 'รวมข้อมูล (แนะนำ)', rsReplace: 'แทนที่ทั้งหมด', rsAsNew: 'นำเข้าเป็นบุคคลใหม่',
+      rsMergeHint: 'เพิ่มสิ่งที่ยังไม่มี และเก็บฉบับที่ใหม่กว่าเมื่อพบทั้งสองฝั่ง',
+      rsReplaceHint: 'ลบข้อมูลในเครื่องก่อน แล้วโหลดจากไฟล์สำรอง โดยจะเก็บสแนปช็อตเพื่อความปลอดภัยไว้ให้ย้อนกลับได้',
+      rsAsNewHint: 'เพิ่มเป็นสำเนาใหม่ ไม่แตะต้องข้อมูลที่มีอยู่',
+      rsType: 'พิมพ์ REPLACE เพื่อยืนยัน', rsGo: 'กู้คืน', rsWorking: 'กำลังกู้คืน…', rsDone: 'กู้คืนเสร็จสิ้น',
+      rsAdded: 'เพิ่ม', rsUpdated: 'อัปเดต', rsSkipped: 'ข้าม (ในเครื่องเหมือนกันหรือใหม่กว่า)', rsFilesAdded: 'ไฟล์ที่เพิ่ม', rsConfirmWrong: 'กรุณาพิมพ์ REPLACE ให้ตรงเพื่อดำเนินการต่อ',
+      rsPlanMerge: 'จะเพิ่ม {a} อัปเดต {u} ข้าม {s}', rsPlanAll: 'จะโหลดข้อมูล {n} รายการ',
+      snapTitle: 'สแนปช็อตเพื่อความปลอดภัย', snapNone: 'ยังไม่มี ระบบจะสร้างให้อัตโนมัติก่อน "แทนที่ทั้งหมด"', snapLoad: 'กู้คืนจากสแนปช็อต', snapSave: 'บันทึกสำเนา',
+      fileMissing: 'ไฟล์นี้ไม่ได้รวมอยู่ในไฟล์สำรองที่กู้คืน จึงไม่มีในเครื่องนี้',
+      bkOverdueNever: 'คุณมีข้อมูลแล้วแต่ยังไม่เคยสำรองข้อมูล', bkOverdueAge: 'สำรองข้อมูลล่าสุดเมื่อ {d} วันก่อน', bkChanges: 'มีการเปลี่ยนแปลง {c} รายการนับจากการสำรองล่าสุด', bkNow: 'สำรองข้อมูลเลย',
+      backupNote: 'สำรองข้อมูลได้ที่หน้าตั้งค่า',
+      bkShort: 'ใช้อย่างน้อย 6 ตัวอักษร', bkPartial: 'เฉพาะการสำรองครบทุกคนพร้อมไฟล์เท่านั้น ที่จะรีเซ็ตการแจ้งเตือน',
       docsSub: 'ใบประกาศนียบัตรและไฟล์หลักฐาน', uploadDocs: 'อัปโหลดเอกสาร', upCat: 'หมวดหมู่', searchDocs: 'ค้นหาเอกสาร',
       allCats: 'ทั้งหมด', noDocs: 'ยังไม่มีเอกสาร',
       dcIdentity: 'เอกสารระบุตัวตน', dcEducation: 'การศึกษา', dcCertificate: 'ใบประกาศนียบัตร', dcAward: 'รางวัล', dcTraining: 'การอบรม',
@@ -271,10 +375,10 @@
       contactReq: 'กรุณากรอกรายละเอียดการติดต่อ', tapDelete: 'แตะอีกครั้งเพื่อลบ'
     }
   };
-  var APP_VERSION = '0.6 (step 6: documents)';
+  var APP_VERSION = '0.8 (step 8: resume builder)';
 
   // ---------- Database (IndexedDB) ----------
-  var DB_NAME = 'profilevault', DB_VERSION = 1;
+  var DB_NAME = 'profilevault', DB_VERSION = 2, DATA_SCHEMA = 1;
   var STORES = {
     workspace: {},
     persons: {},
@@ -301,7 +405,8 @@
         var s = db.createObjectStore(name, { keyPath: 'id' });
         (STORES[name].idx || []).forEach(function (i) { s.createIndex(i[0], i[1]); });
       });
-    }
+    },
+    2: function (db) { db.createObjectStore('snapshots', { keyPath: 'id' }); }
   };
 
   var dbPromise = null;
@@ -502,6 +607,569 @@
     return ws;
   }
 
+  // ---------- Backup engine: zip (store-only), encryption, backup, restore ----------
+  var TABLES = ['persons', 'photos', 'contacts', 'records', 'documents', 'recordDocs', 'tags', 'resumeProfiles', 'generated'];
+  var CRC_T = (function () {
+    var tb = new Uint32Array(256);
+    for (var n = 0; n < 256; n++) { var c = n; for (var k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); tb[n] = c >>> 0; }
+    return tb;
+  })();
+  function crc32(bytes, prev) {
+    var c = ((prev || 0) ^ 0xFFFFFFFF) >>> 0;
+    for (var i = 0; i < bytes.length; i++) c = (CRC_T[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8)) >>> 0;
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+  async function crcOf(blob) {
+    var crc = 0;
+    for (var pos = 0; pos < blob.size; pos += 4194304) crc = crc32(new Uint8Array(await blob.slice(pos, Math.min(blob.size, pos + 4194304)).arrayBuffer()), crc);
+    return crc;
+  }
+  async function sha256Hex(blob) {
+    var h = new Uint8Array(await crypto.subtle.digest('SHA-256', await blob.arrayBuffer()));
+    return Array.prototype.map.call(h, function (x) { return ('0' + x.toString(16)).slice(-2); }).join('');
+  }
+  function dosTime(d) { return [((d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1)) & 0xFFFF, (((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate()) & 0xFFFF]; }
+  async function buildZip(entries) {
+    var enc = new TextEncoder(), parts = [], central = [], off = 0, dt = dosTime(new Date());
+    for (var i = 0; i < entries.length; i++) {
+      var nm = enc.encode(entries[i].name), size = entries[i].blob.size, crc = await crcOf(entries[i].blob);
+      var lh = new DataView(new ArrayBuffer(30));
+      lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true);
+      lh.setUint16(10, dt[0], true); lh.setUint16(12, dt[1], true); lh.setUint32(14, crc, true); lh.setUint32(18, size, true); lh.setUint32(22, size, true); lh.setUint16(26, nm.length, true);
+      parts.push(new Uint8Array(lh.buffer), nm, entries[i].blob);
+      var ch = new DataView(new ArrayBuffer(46));
+      ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true);
+      ch.setUint16(12, dt[0], true); ch.setUint16(14, dt[1], true); ch.setUint32(16, crc, true); ch.setUint32(20, size, true); ch.setUint32(24, size, true);
+      ch.setUint16(28, nm.length, true); ch.setUint32(42, off, true);
+      central.push(new Uint8Array(ch.buffer), nm);
+      off += 30 + nm.length + size;
+    }
+    var cdSize = central.reduce(function (a, b) { return a + b.length; }, 0), eo = new DataView(new ArrayBuffer(22));
+    eo.setUint32(0, 0x06054b50, true); eo.setUint16(8, entries.length, true); eo.setUint16(10, entries.length, true); eo.setUint32(12, cdSize, true); eo.setUint32(16, off, true);
+    return new Blob(parts.concat(central, [new Uint8Array(eo.buffer)]), { type: 'application/zip' });
+  }
+  async function readZip(blob) {
+    var tl = Math.min(blob.size, 65557), tail = new DataView(await blob.slice(blob.size - tl).arrayBuffer()), i;
+    for (i = tl - 22; i >= 0; i--) if (tail.getUint32(i, true) === 0x06054b50) break;
+    if (i < 0) throw new Error('not a zip');
+    var count = tail.getUint16(i + 10, true), cdSize = tail.getUint32(i + 12, true), cdOff = tail.getUint32(i + 16, true);
+    var cd = new DataView(await blob.slice(cdOff, cdOff + cdSize).arrayBuffer()), dec = new TextDecoder(), entries = {}, p = 0;
+    for (var n = 0; n < count; n++) {
+      if (cd.getUint32(p, true) !== 0x02014b50) throw new Error('bad directory');
+      var nl = cd.getUint16(p + 28, true), el = cd.getUint16(p + 30, true), cl = cd.getUint16(p + 32, true);
+      entries[dec.decode(new Uint8Array(cd.buffer, p + 46, nl))] = { method: cd.getUint16(p + 10, true), crc: cd.getUint32(p + 16, true), csize: cd.getUint32(p + 20, true), usize: cd.getUint32(p + 24, true), off: cd.getUint32(p + 42, true) };
+      p += 46 + nl + el + cl;
+    }
+    return { entries: entries, blob: blob };
+  }
+  async function zipEntry(z, name) {
+    var e = z.entries[name];
+    if (!e) return null;
+    var lh = new DataView(await z.blob.slice(e.off, e.off + 30).arrayBuffer()), start = e.off + 30 + lh.getUint16(26, true) + lh.getUint16(28, true);
+    var raw = z.blob.slice(start, start + e.csize);
+    if (e.method === 0) return raw;
+    if (e.method === 8 && typeof DecompressionStream !== 'undefined') return new Response(raw.stream().pipeThrough(new DecompressionStream('deflate-raw'))).blob();
+    throw new Error('unsupported compression');
+  }
+  async function verifyZip(zip, manifest) {
+    var z = await readZip(zip), names = Object.keys(z.entries);
+    for (var i = 0; i < names.length; i++) {
+      var b = await zipEntry(z, names[i]);
+      if (!b || b.size !== z.entries[names[i]].usize || (await crcOf(b)) !== z.entries[names[i]].crc) throw new Error('Backup verification failed: ' + names[i]);
+    }
+    (manifest.files || []).forEach(function (f) { if (!z.entries['blobs/' + f.id]) throw new Error('Backup verification failed: missing file'); });
+    var data = JSON.parse(await (await zipEntry(z, 'data.json')).text());
+    TABLES.forEach(function (k) { if ((data.tables[k] || []).length !== manifest.counts[k]) throw new Error('Backup verification failed: counts'); });
+  }
+
+  // Optional encryption: AES-GCM in 1 MB chunks, key from passphrase (PBKDF2-SHA256)
+  var ENC_MAGIC = 'PVENC001', CHUNK = 1048576, PBKDF2_ITER = 200000;
+  async function deriveKey(pass, salt, iter) {
+    var km = await crypto.subtle.importKey('raw', new TextEncoder().encode(pass), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: salt, iterations: iter, hash: 'SHA-256' }, km, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+  }
+  function chunkIv(base, i) { var iv = new Uint8Array(base), dv = new DataView(iv.buffer); dv.setUint32(8, (dv.getUint32(8) ^ i) >>> 0); return iv; }
+  function chunkAad(i, total) { var b = new Uint8Array(8), dv = new DataView(b.buffer); dv.setUint32(0, i); dv.setUint32(4, total); return b; }
+  async function isEncrypted(blob) { return new TextDecoder().decode(new Uint8Array(await blob.slice(0, 8).arrayBuffer())) === ENC_MAGIC; }
+  async function encryptBlob(blob, pass) {
+    var salt = crypto.getRandomValues(new Uint8Array(16)), base = crypto.getRandomValues(new Uint8Array(12)), key = await deriveKey(pass, salt, PBKDF2_ITER);
+    var hdr = new Uint8Array(48), dv = new DataView(hdr.buffer);
+    hdr.set(new TextEncoder().encode(ENC_MAGIC), 0); hdr.set(salt, 8); hdr.set(base, 24); dv.setUint32(36, PBKDF2_ITER); dv.setUint32(40, CHUNK); dv.setUint32(44, blob.size);
+    var parts = [hdr];
+    for (var pos = 0, i = 0; pos < blob.size; pos += CHUNK, i++) {
+      var plain = new Uint8Array(await blob.slice(pos, pos + CHUNK).arrayBuffer());
+      parts.push(new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv: chunkIv(base, i), additionalData: chunkAad(i, blob.size) }, key, plain)));
+    }
+    return new Blob(parts, { type: 'application/octet-stream' });
+  }
+  async function decryptBlob(blob, pass) {
+    var hdr = new Uint8Array(await blob.slice(0, 48).arrayBuffer()), dv = new DataView(hdr.buffer);
+    var iter = dv.getUint32(36), csz = dv.getUint32(40), total = dv.getUint32(44), n = Math.ceil(total / csz);
+    if (blob.size !== 48 + total + 16 * n) throw new Error('WRONG_PASS');
+    var key = await deriveKey(pass, hdr.slice(8, 24), iter), parts = [], pos = 48;
+    for (var i = 0; i < n; i++) {
+      var plainLen = Math.min(csz, total - i * csz);
+      try {
+        parts.push(new Uint8Array(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: chunkIv(hdr.slice(24, 36), i), additionalData: chunkAad(i, total) }, key, await blob.slice(pos, pos + plainLen + 16).arrayBuffer())));
+      } catch (e) { throw new Error('WRONG_PASS'); }
+      pos += plainLen + 16;
+    }
+    return new Blob(parts, { type: 'application/zip' });
+  }
+
+  var snap = {
+    put: async function (blob, name) {
+      var db = await openDb(), tx = db.transaction('snapshots', 'readwrite');
+      tx.objectStore('snapshots').put({ id: 'safety', blob: blob, name: name, size: blob.size, createdAt: nowIso() });
+      await txDone(tx);
+    },
+    get: async function () { var db = await openDb(); return (await reqP(db.transaction('snapshots').objectStore('snapshots').get('safety'))) || null; }
+  };
+
+  async function collectBackup(ids) {
+    var tables = {}, blobIds = {};
+    tables.persons = (await repo.list('persons', { includeDeleted: true })).filter(function (x) { return !ids || ids.indexOf(x.id) >= 0; });
+    for (var i = 0; i < PERSON_SCOPED.length; i++) {
+      tables[PERSON_SCOPED[i]] = (await repo.list(PERSON_SCOPED[i], { includeDeleted: true })).filter(function (x) { return !ids || ids.indexOf(x.personId) >= 0; });
+    }
+    tables.tags = ids ? [] : await repo.list('tags', { includeDeleted: true });
+    ['documents', 'photos', 'generated'].forEach(function (k) { tables[k].forEach(function (x) { if (x.blobId) blobIds[x.blobId] = 1; }); });
+    return { tables: tables, blobIds: Object.keys(blobIds) };
+  }
+  async function createBackup(o) {
+    var say = o.say || function () {}, ws = await initWorkspace(), c = await collectBackup(o.ids), files = [], entries = [];
+    if (o.withFiles) {
+      for (var i = 0; i < c.blobIds.length; i++) {
+        say(t('bkBuilding') + ' ' + (i + 1) + '/' + c.blobIds.length);
+        var b = await storage.local.get(c.blobIds[i]);
+        if (!b) continue;
+        files.push({ id: c.blobIds[i], size: b.size, type: b.type, sha256: await sha256Hex(b) });
+        entries.push({ name: 'blobs/' + c.blobIds[i], blob: b });
+      }
+    }
+    var counts = {}; TABLES.forEach(function (k) { counts[k] = c.tables[k].length; }); counts.files = files.length;
+    var manifest = { format: 'profilevault', formatVersion: 1, appVersion: APP_VERSION, schemaVersion: DATA_SCHEMA, createdAt: nowIso(), deviceName: ws.deviceName, deviceId: ws.deviceId,
+                     scope: o.ids ? 'selected' : 'all', withFiles: !!o.withFiles,
+                     persons: c.tables.persons.map(function (x) { return { id: x.id, name: displayName(x) }; }), counts: counts, files: files };
+    var zip = await buildZip([{ name: 'manifest.json', blob: new Blob([JSON.stringify(manifest, null, 1)]) }, { name: 'data.json', blob: new Blob([JSON.stringify({ tables: c.tables })]) }].concat(entries));
+    say(t('bkVerify')); await verifyZip(zip, manifest);
+    var out = zip;
+    if (o.pass) { say(t('bkEnc')); out = await encryptBlob(zip, o.pass); }
+    var name = 'ProfileVault_' + manifest.scope + '_' + manifest.createdAt.slice(0, 16).replace('T', '_').replace(':', '') + '.profilevault';
+    return { blob: out, name: name, manifest: manifest, encrypted: !!o.pass };
+  }
+  async function readBackup(file, pass) {
+    var blob = file;
+    if (await isEncrypted(file)) { if (!pass) throw new Error('NEED_PASS'); blob = await decryptBlob(file, pass); }
+    var z, manifest, data;
+    try {
+      z = await readZip(blob);
+      manifest = JSON.parse(await (await zipEntry(z, 'manifest.json')).text());
+      data = JSON.parse(await (await zipEntry(z, 'data.json')).text());
+    } catch (e) { throw new Error(t('rsBad')); }
+    if (manifest.format !== 'profilevault' || !data.tables) throw new Error(t('rsBad'));
+    if (manifest.formatVersion > 1 || manifest.schemaVersion > DATA_SCHEMA) throw new Error(t('rsNewer'));
+    return { z: z, manifest: manifest, data: data };
+  }
+  async function localIndex() {
+    var rows = {}, db = await openDb();
+    for (var i = 0; i < TABLES.length; i++) { rows[TABLES[i]] = {}; (await repo.list(TABLES[i], { includeDeleted: true })).forEach(function (x) { rows[TABLES[i]][x.id] = x; }); }
+    var keys = await reqP(db.transaction('blobs').objectStore('blobs').getAllKeys()), blobs = {};
+    keys.forEach(function (k) { blobs[k] = 1; });
+    return { rows: rows, blobs: blobs };
+  }
+  function planMerge(bk, local) {
+    var r = { added: 0, updated: 0, skipped: 0, total: 0 };
+    TABLES.forEach(function (k) {
+      (bk.data.tables[k] || []).forEach(function (x) {
+        r.total++; var l = local.rows[k][x.id];
+        if (!l) r.added++; else if (x.updatedAt > l.updatedAt) r.updated++; else r.skipped++;
+      });
+    });
+    return r;
+  }
+  async function takeSafetySnapshot(say) { var b = await createBackup({ ids: null, withFiles: true, say: say }); await snap.put(b.blob, b.name); }
+  async function normalizePhotos() {
+    var all = await repo.list('photos'), by = {};
+    all.forEach(function (x) { if (x.active) (by[x.personId] = by[x.personId] || []).push(x); });
+    for (var pid in by) {
+      var l = by[pid].sort(function (a, b) { return a.updatedAt < b.updatedAt ? 1 : -1; });
+      for (var i = 1; i < l.length; i++) await repo.update('photos', l[i].id, { active: false });
+    }
+  }
+  async function applyRestore(bk, mode, say) {
+    var files = bk.manifest.files || [], fileBlobs = [];
+    for (var i = 0; i < files.length; i++) {
+      say(t('rsWorking') + ' ' + (i + 1) + '/' + files.length);
+      var b = await zipEntry(bk.z, 'blobs/' + files[i].id);
+      if (!b || b.size !== files[i].size || (await sha256Hex(b)) !== files[i].sha256) throw new Error(t('rsDamaged'));
+      fileBlobs.push({ f: files[i], blob: b });
+    }
+    if (mode === 'replace') { say(t('bkBuilding')); await takeSafetySnapshot(say); }
+    var local = mode === 'merge' ? await localIndex() : null, db = await openDb();
+    var tx = db.transaction(TABLES.concat(['blobs']), 'readwrite'), st = { added: 0, updated: 0, skipped: 0, files: 0 }, idMap = {};
+    function nid(o) { return o ? (idMap[o] = idMap[o] || uuid()) : o; }
+    if (mode === 'replace') TABLES.concat(['blobs']).forEach(function (n) { tx.objectStore(n).clear(); });
+    fileBlobs.forEach(function (fb) {
+      if (mode === 'merge' && local.blobs[fb.f.id]) return;
+      tx.objectStore('blobs').put({ id: mode === 'new' ? nid(fb.f.id) : fb.f.id, blob: fb.blob, size: fb.blob.size, type: fb.f.type || fb.blob.type, createdAt: nowIso() });
+      st.files++;
+    });
+    TABLES.forEach(function (k) {
+      (bk.data.tables[k] || []).forEach(function (x) {
+        var os = tx.objectStore(k);
+        if (mode === 'replace') { os.put(x); st.added++; return; }
+        if (mode === 'merge') {
+          var l = local.rows[k][x.id];
+          if (!l) { os.put(x); st.added++; } else if (x.updatedAt > l.updatedAt) { os.put(x); st.updated++; } else st.skipped++;
+          return;
+        }
+        var c = Object.assign({}, x, { id: nid(x.id), updatedAt: nowIso() });
+        ['personId', 'recordId', 'documentId', 'blobId', 'deletedVia'].forEach(function (f) { if (x[f]) c[f] = nid(x[f]); });
+        os.put(c); st.added++;
+      });
+    });
+    await txDone(tx);
+    if (mode === 'replace') await updateWorkspace({ activePersonId: null });
+    await normalizePhotos();
+    return st;
+  }
+  async function backupStatus() {
+    var ws = await initWorkspace(), last = ws.lastBackupAt, changes = 0, stores = ['persons'].concat(PERSON_SCOPED);
+    var people = (await repo.list('persons')).length;
+    for (var i = 0; i < stores.length; i++) (await repo.list(stores[i], { includeDeleted: true })).forEach(function (x) { if (!last || x.updatedAt > last) changes++; });
+    var days = last ? Math.floor((Date.now() - new Date(last).getTime()) / 86400000) : null;
+    return { last: last, days: days, changes: changes, people: people, overdue: people > 0 && (!last || days >= 14 || changes >= 25) };
+  }
+
+  // ---------- Resume builder ----------
+  var SEC_LABEL = { summary: 'secSummary', education: 'tEducation', experience: 'tExperience', training: 'tTraining', award: 'tAward', project: 'tProject', skill: 'tSkill' };
+  var DOCS = {
+    full: { order: ['summary', 'education', 'experience', 'training', 'award', 'project', 'skill'], on: { summary: 1, education: 1, experience: 1, training: 1, award: 1, project: 1, skill: 1 }, max: {} },
+    short: { order: ['summary', 'experience', 'education', 'skill', 'award', 'training', 'project'], on: { summary: 1, experience: 1, education: 1, skill: 1, award: 1 }, max: { experience: 4, education: 2, award: 3 } },
+    student: { order: ['summary', 'education', 'award', 'project', 'training', 'experience', 'skill'], on: { summary: 1, education: 1, award: 1, project: 1, training: 1, experience: 1, skill: 1 }, max: { award: 6, project: 5, training: 4, experience: 3 } }
+  };
+  var DT_KEYS = { full: 'dtFull', short: 'dtShort', student: 'dtStudent' };
+  var rb = { pid: null, draft: null, preset: '', open: {}, tab: 'edit', cache: null, tok: 0 };
+
+  function tt(k, L) { return (I18N[L] && I18N[L][k]) || I18N.en[k] || k; }
+  function cvText(o, L) { if (!o) return ''; if (typeof o === 'string') return o; return o[L] || o[L === 'th' ? 'en' : 'th'] || ''; }
+  function sectionsFor(docType) {
+    var D = DOCS[docType];
+    return D.order.map(function (k) { return { key: k, on: !!D.on[k], max: D.max[k] || 0, title: '' }; });
+  }
+  function newDraft(docType, c) {
+    var ids = [];
+    ['email', 'mobile'].forEach(function (k) {
+      var l = c.contacts.filter(function (x) { return x.kind === k; }), pick = l.filter(function (x) { return x.preferred; })[0] || l[0];
+      if (pick) ids.push(pick.id);
+    });
+    var act = c.photos.filter(function (x) { return x.active; })[0];
+    return { docType: docType, lang: lang, name: '', sections: sectionsFor(docType), exclude: {}, filters: { tags: [], from: '', hidePrivate: true },
+             photoId: act ? act.id : '', contactIds: ids, personal: { dob: false, pob: false, nationality: false, nid: false }, summary: { en: '', th: '' } };
+  }
+  function secItems(key) {
+    var f = rb.draft.filters, list = rb.cache.recs.filter(function (r) { return r.type === key; });
+    if (f.hidePrivate) list = list.filter(function (r) { return r.privacy === 'public'; });
+    if (f.tags.length) list = list.filter(function (r) { return (r.tags || []).some(function (g) { return f.tags.indexOf(g) >= 0; }); });
+    if (f.from) list = list.filter(function (r) { var d = r.current ? '9999' : (r.endDate || r.startDate || ''); return !d || d.slice(0, 4) >= f.from; });
+    return list.sort(function (a, b) { return key === 'skill' ? bi(a.title).localeCompare(bi(b.title)) : (b.startDate || '').localeCompare(a.startDate || ''); });
+  }
+  function secIncluded(sec) {
+    var l = secItems(sec.key).filter(function (r) { return !rb.draft.exclude[r.id]; });
+    return sec.max ? l.slice(0, sec.max) : l;
+  }
+
+  function cvRange(r, L) {
+    var a = r.startDate ? fmtDate(r.startDate, L) : '', b = r.current ? tt('present', L) : (r.endDate ? fmtDate(r.endDate, L) : '');
+    if (r.type === 'award') return a;
+    return a && b && a !== b ? a + ' – ' + b : (a || b);
+  }
+  function cvList(txt) { var l = String(txt || '').split(/\r?\n/).map(function (x) { return x.trim(); }).filter(Boolean); return l.length ? '<ul>' + l.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : ''; }
+  function cvItem(r, L) {
+    var d = r.data || {}, T = function (k) { return tt(k, L); }, org = cvText(r.organization, L), sub = [], extra = '';
+    if (r.type === 'education') sub = [d.field, d.country, d.gpa ? T('fGpa') + ': ' + d.gpa : '', d.honors];
+    if (r.type === 'experience') { sub = [d.kind ? T('x_' + d.kind) : '', d.location]; extra = cvList(d.responsibilities) + cvList(d.achievements); }
+    if (r.type === 'training') sub = [d.trainingType ? T('x_' + d.trainingType) : '', d.location, d.instructor, d.hours ? d.hours + ' ' + T('hrsWord') : ''];
+    if (r.type === 'award') sub = [d.level, d.category, d.result];
+    if (r.type === 'project') {
+      sub = [d.role, d.skillsUsed];
+      extra = (d.objective ? '<p><i>' + esc(T('fObjective')) + ':</i> ' + esc(d.objective) + '</p>' : '') + (d.outcome ? '<p><i>' + esc(T('fOutcome')) + ':</i> ' + esc(d.outcome) + '</p>' : '') + (d.links ? '<p>' + esc(d.links) + '</p>' : '');
+    }
+    sub = sub.filter(Boolean); var desc = cvText(r.description, L);
+    return '<div class="cv-item"><div class="cv-row"><span><b>' + esc(cvText(r.title, L)) + '</b>' + (org ? ', ' + esc(org) : '') + '</span><span class="cv-date">' + esc(cvRange(r, L)) + '</span></div>' +
+      (sub.length ? '<div class="cv-sub">' + esc(sub.join(' · ')) + '</div>' : '') + extra + (desc ? '<p>' + esc(desc) + '</p>' : '') + '</div>';
+  }
+  function cvSkills(items, L) {
+    var g = {}, order = [];
+    items.forEach(function (r) { var k = (r.data && r.data.category) || 'other'; if (!g[k]) { g[k] = []; order.push(k); } g[k].push(cvText(r.title, L) + (r.data && r.data.level ? ' (' + r.data.level + ')' : '')); });
+    return order.map(function (k) { return '<p><b>' + esc(k === 'other' ? tt('x_other', L) : tt('x_' + k, L)) + ':</b> ' + esc(g[k].join(', ')) + '</p>'; }).join('');
+  }
+  function renderCv(L, photoSrc) {
+    var c = rb.cache, d = rb.draft, p = c.p, name = (p.title ? p.title + ' ' : '') + (nm(p, L) || nm(p, L === 'th' ? 'en' : 'th') || p.preferredName || '');
+    var contacts = CONTACT_KINDS.reduce(function (acc, k) { return acc.concat(c.contacts.filter(function (x) { return x.kind === k && d.contactIds.indexOf(x.id) >= 0; })); }, []).map(contactText);
+    var pd = [];
+    if (d.personal.dob && p.dateOfBirth) pd.push(tt('dob', L) + ': ' + fmtDate(p.dateOfBirth, L));
+    if (d.personal.pob && p.placeOfBirth) pd.push(tt('pob', L) + ': ' + p.placeOfBirth);
+    if (d.personal.nationality && p.nationality) pd.push(tt('nationality', L) + ': ' + p.nationality);
+    if (d.personal.nid && p.nationalId) pd.push(tt('nid', L) + ': ' + p.nationalId);
+    var ph = photoSrc ? '<img class="cv-photo" alt="" src="' + esc(photoSrc) + '">' : '';
+    var html = '<div class="cv-head"><div><h1 class="cv-name">' + esc(name) + '</h1>' + (contacts.length ? '<div class="cv-line">' + esc(contacts.join(' · ')) + '</div>' : '') +
+      (pd.length ? '<div class="cv-line">' + esc(pd.join(' · ')) + '</div>' : '') + '</div>' + ph + '</div>';
+    d.sections.forEach(function (sec) {
+      if (!sec.on) return;
+      var title = esc(sec.title || tt(SEC_LABEL[sec.key], L)), body = '';
+      if (sec.key === 'summary') { var tx = d.summary[L] || d.summary[L === 'th' ? 'en' : 'th']; if (tx) body = '<p>' + esc(tx) + '</p>'; }
+      else { var items = secIncluded(sec); body = !items.length ? '' : sec.key === 'skill' ? cvSkills(items, L) : items.map(function (r) { return cvItem(r, L); }).join(''); }
+      if (body) html += '<section class="cv-sec"><h2>' + title + '</h2>' + body + '</section>';
+    });
+    return html;
+  }
+
+  function fitPaper() {
+    var box = q('pvBox'), paper = q('paper'), wrap = q('paperWrap');
+    if (!box || !paper) return;
+    var sc = Math.min(1, (box.clientWidth || 793) / 793);
+    paper.style.transform = 'scale(' + sc + ')'; wrap.style.height = Math.ceil(paper.offsetHeight * sc) + 'px';
+    var fit = q('rbFit'), h = paper.offsetHeight;
+    if (fit && h) { var pages = Math.max(1, Math.ceil((h - 114) / 1009)); fit.textContent = pages === 1 ? t('rbFit1') : fillT(t('rbFitN'), { n: pages }); fit.className = 'pill ' + (pages === 1 ? 'ok' : 'warn'); }
+  }
+  function refreshPreview() {
+    var paper = q('paper');
+    if (!paper || !rb.cache) return;
+    var c = rb.cache, d = rb.draft;
+    paper.innerHTML = renderCv(d.lang, d.photoId ? c.urls[d.photoId] : '');
+    d.sections.forEach(function (sec) {
+      var el = q('cnt_' + sec.key); if (el) el.textContent = fillT(t('rbOf'), { a: secIncluded(sec).length, b: secItems(sec.key).length });
+    });
+    fitPaper();
+  }
+  function rbControls() {
+    var c = rb.cache, d = rb.draft, h = '';
+    var po = '<option value="">' + esc(t('rbNewPreset')) + '</option>' + c.presets.map(function (x) { return '<option value="' + esc(x.id) + '"' + (rb.preset === x.id ? ' selected' : '') + '>' + esc(x.name) + '</option>'; }).join('');
+    h += '<div class="card"><h2>' + esc(t('rbPreset')) + '</h2><select id="rbPreset" class="input" aria-label="' + esc(t('rbPreset')) + '">' + po + '</select>' +
+      '<div class="fld" style="margin-top:10px"><label class="lbl" for="rbName">' + esc(t('rbName')) + '</label><input id="rbName" class="input" value="' + esc(d.name) + '" maxlength="60" autocomplete="off"></div>' +
+      '<div class="toolbar" style="margin:0"><button class="btn sm" data-action="rb-save">' + esc(t('rbSave')) + '</button>' +
+      (rb.preset ? '<button class="btn ghost sm" data-action="rb-del">' + esc(t('rbDeletePreset')) + '</button>' : '') + '<span id="rbMsg" class="sub" style="align-self:center;margin:0"></span></div></div>';
+    var dto = Object.keys(DOCS).map(function (k) { return '<option value="' + k + '"' + (d.docType === k ? ' selected' : '') + '>' + esc(t(DT_KEYS[k])) + '</option>'; }).join('');
+    var pho = '<option value="">' + esc(t('rbNoPhoto')) + '</option>' + c.photos.map(function (x) { return '<option value="' + esc(x.id) + '"' + (d.photoId === x.id ? ' selected' : '') + '>' + esc(t(PHOTO_LABELS[x.label] || 'pOther') + ' ' + (x.date || '')) + '</option>'; }).join('');
+    h += '<div class="card"><div class="grid two"><div class="fld"><label class="lbl" for="rbDoc">' + esc(t('rbDocType')) + '</label><select id="rbDoc" class="input">' + dto + '</select></div>' +
+      '<div class="fld"><label class="lbl" for="rbLang">' + esc(t('rbLang')) + '</label><select id="rbLang" class="input"><option value="en"' + (d.lang === 'en' ? ' selected' : '') + '>English</option><option value="th"' + (d.lang === 'th' ? ' selected' : '') + '>ไทย</option></select></div>' +
+      '<div class="fld full"><label class="lbl" for="rbPhoto">' + esc(t('rbPhoto')) + '</label><select id="rbPhoto" class="input">' + pho + '</select></div></div></div>';
+    var tg = c.tagsAll.map(function (g) { return '<label class="chk" style="display:inline-flex;margin-right:12px"><input type="checkbox" class="rbTag" value="' + esc(g) + '"' + (d.filters.tags.indexOf(g) >= 0 ? ' checked' : '') + '> #' + esc(g) + '</label>'; }).join('');
+    h += '<div class="card"><h2>' + esc(t('rbFilters')) + '</h2>' + (tg ? '<label class="lbl">' + esc(t('rbTags')) + '</label><div>' + tg + '</div>' : '') +
+      '<div class="fld" style="margin-top:10px"><label class="lbl" for="rbFrom">' + esc(t('rbFrom')) + '</label><input id="rbFrom" class="input" inputmode="numeric" maxlength="4" placeholder="2022" value="' + esc(d.filters.from) + '"></div>' +
+      '<label class="chk"><input type="checkbox" id="rbHP"' + (d.filters.hidePrivate ? ' checked' : '') + '> ' + esc(t('rbHidePrivate')) + '</label></div>';
+    var maxOpts = function (v) { return [0, 1, 2, 3, 4, 5, 6, 8, 10].map(function (n) { return '<option value="' + n + '"' + (v === n ? ' selected' : '') + '>' + (n ? n : esc(t('rbAll'))) + '</option>'; }).join(''); };
+    d.sections.forEach(function (sec, i) {
+      var items = secItems(sec.key);
+      h += '<div class="card"><div class="row" style="border:0;padding:0"><label class="chk" style="margin:0"><input type="checkbox" class="rbSecOn" data-key="' + sec.key + '"' + (sec.on ? ' checked' : '') + '> <b>' + esc(sec.title || t(SEC_LABEL[sec.key])) + '</b></label>' +
+        '<span><button class="btn ghost sm" data-action="rb-move" data-key="' + sec.key + '" data-dir="-1" aria-label="' + esc(t('rbUp')) + '"' + (i === 0 ? ' disabled' : '') + '>↑</button> ' +
+        '<button class="btn ghost sm" data-action="rb-move" data-key="' + sec.key + '" data-dir="1" aria-label="' + esc(t('rbDown')) + '"' + (i === d.sections.length - 1 ? ' disabled' : '') + '>↓</button></span></div>' +
+        '<div class="fld" style="margin-top:8px"><label class="lbl" for="rbT_' + sec.key + '">' + esc(t('rbTitleF')) + '</label><input id="rbT_' + sec.key + '" class="input rbTitle" data-key="' + sec.key + '" value="' + esc(sec.title) + '" placeholder="' + esc(t(SEC_LABEL[sec.key])) + '" maxlength="60" autocomplete="off"></div>';
+      if (sec.key === 'summary') {
+        h += '<div class="fld"><label class="lbl" for="rbSumEn">' + esc(t('rbSumEn')) + '</label><textarea id="rbSumEn" class="input">' + esc(d.summary.en) + '</textarea></div>' +
+             '<div class="fld"><label class="lbl" for="rbSumTh">' + esc(t('rbSumTh')) + '</label><textarea id="rbSumTh" class="input">' + esc(d.summary.th) + '</textarea></div>';
+      } else {
+        h += '<div class="fld"><label class="lbl" for="rbM_' + sec.key + '">' + esc(t('rbMax')) + '</label><select id="rbM_' + sec.key + '" class="input rbMax" data-key="' + sec.key + '">' + maxOpts(sec.max) + '</select></div>' +
+          '<details data-key="' + sec.key + '"' + (rb.open[sec.key] ? ' open' : '') + '><summary>' + esc(t('rbItems')) + ' <span id="cnt_' + sec.key + '"></span></summary>' +
+          (items.length ? items.map(function (r) { return '<label class="chk"><input type="checkbox" class="rbItem" data-id="' + esc(r.id) + '"' + (d.exclude[r.id] ? '' : ' checked') + '> ' + esc(bi(r.title)) + '</label>'; }).join('') : '<p class="sub">' + esc(t('rbNoItems')) + '</p>') + '</details>';
+      }
+      h += '</div>';
+    });
+    var ck = c.contacts.map(function (x) { return '<label class="chk"><input type="checkbox" class="rbContact" data-id="' + esc(x.id) + '"' + (d.contactIds.indexOf(x.id) >= 0 ? ' checked' : '') + '> ' + esc(t(KIND_KEYS[x.kind]) + ': ' + contactText(x)) + (x.privacy !== 'public' ? ' (' + esc(t('privLbl')) + ')' : '') + '</label>'; }).join('');
+    var pers = [['dob', 'dob'], ['pob', 'pob'], ['nationality', 'nationality'], ['nid', 'nid']].map(function (k) {
+      return '<label class="chk"><input type="checkbox" class="rbPers" data-k="' + k[0] + '"' + (d.personal[k[0]] ? ' checked' : '') + '> ' + esc(t(k[1])) + '</label>'; }).join('');
+    h += '<div class="card"><h2>' + esc(t('rbContact')) + '</h2>' + (ck || '<p class="sub">' + esc(t('rbNoContact')) + '</p>') + '<h2 style="margin-top:14px">' + esc(t('rbPersonal')) + '</h2>' + pers + '</div>';
+    return h;
+  }
+  function initResume() {
+    if (!q('rbControls')) return;
+    q('rbControls').innerHTML = rbControls();
+    q('rbPreviewCol').innerHTML = '<div class="card pvcard"><div class="noprint" style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px"><h2 style="margin:0">' + esc(t('rbPreview')) + '</h2><span id="rbFit" class="pill"></span></div>' +
+      '<div id="pvBox"><div class="paper-wrap" id="paperWrap"><div class="paper" id="paper"></div></div></div></div>' +
+      '<div class="noprint"><button class="btn" data-action="rb-print">' + esc(t('rbPrint')) + '</button><p class="sub" style="margin-top:8px">' + esc(t('rbPrintHint')) + '</p></div>';
+    refreshPreview();
+  }
+  function histHtml() {
+    var h = rb.cache.snaps.map(function (x) {
+      return '<div class="row"><span><b>' + esc(x.name) + '</b><br><span class="sub" style="margin:0">' + esc(fmtDate(x.createdAt.slice(0, 10))) + '</span></span><span><a class="btn ghost sm" href="#resume/snap/' + esc(x.id) + '">' + esc(t('rbOpen')) + '</a> ' +
+        '<button class="btn ghost sm" data-action="del-snap" data-id="' + esc(x.id) + '">' + esc(t('del')) + '</button></span></div>'; }).join('');
+    return h || '<p class="sub" style="margin:0">' + esc(t('rbNoHist')) + '</p>';
+  }
+  async function resumeView() {
+    var parts = parseHash();
+    if (parts[1] === 'snap') return snapView(parts[2]);
+    var d = await activePerson(), p = d.active;
+    if (!p) return head(t('resume'), t('rbSub')) + '<div class="card empty"><div class="big">📄</div><p>' + esc(t('noPerson')) + '</p><a class="btn" href="#people/new">' + esc(t('addPerson')) + '</a></div>';
+    var recs = await repo.list('records', { personId: p.id }), contacts = await repo.list('contacts', { personId: p.id }), photos = await repo.list('photos', { personId: p.id });
+    var presets = (await repo.list('resumeProfiles', { personId: p.id })).sort(function (a, b) { return a.name.localeCompare(b.name); });
+    var snaps = (await repo.list('generated', { personId: p.id })).sort(function (a, b) { return a.createdAt < b.createdAt ? 1 : -1; }), urls = {}, tags = {};
+    for (var i = 0; i < photos.length; i++) urls[photos[i].id] = await photoUrl(photos[i]);
+    recs.forEach(function (r) { (r.tags || []).forEach(function (g) { tags[g] = 1; }); });
+    rb.cache = { p: p, recs: recs, contacts: contacts, photos: photos, urls: urls, presets: presets, snaps: snaps, tagsAll: Object.keys(tags).sort() };
+    if (rb.pid !== p.id || !rb.draft) { rb.pid = p.id; rb.preset = ''; rb.draft = newDraft('full', rb.cache); }
+    else {
+      var dr = rb.draft; if (dr.photoId && !urls[dr.photoId]) dr.photoId = '';
+      dr.contactIds = dr.contactIds.filter(function (id) { return contacts.some(function (x) { return x.id === id; }); });
+    }
+
+    return '<div class="noprint">' + head(t('rbTitle'), displayName(p) + ' · ' + t('rbSub')) +
+      '<div class="seg rbtabs" role="group" style="margin-bottom:12px"><button data-action="rb-tab" data-tab="edit" class="' + (rb.tab === 'edit' ? 'on' : '') + '">' + esc(t('rbEditTab')) + '</button><button data-action="rb-tab" data-tab="preview" class="' + (rb.tab === 'preview' ? 'on' : '') + '">' + esc(t('rbPrevTab')) + '</button></div></div>' +
+      '<div class="rb" data-tab="' + rb.tab + '"><div id="rbControls" class="noprint"></div><div id="rbPreviewCol"></div></div>' +
+      '<div class="card noprint" style="margin-top:16px"><h2>' + esc(t('rbHistory')) + '</h2>' + '<div id="rbHist">' + histHtml() + '</div></div>';
+  }
+  async function snapView(id) {
+    var g = id ? await repo.get('generated', id) : null;
+    if (!g || g.deletedAt) return head(t('resume'), '') + '<div class="card empty">' + esc(t('notFound')) + '</div><a class="btn ghost" href="#resume">' + esc(t('back')) + '</a>';
+    return '<div class="noprint"><p><a href="#resume">← ' + esc(t('resume')) + '</a></p><h1 style="word-break:break-word">' + esc(g.name) + '</h1><div class="toolbar"><button class="btn" data-action="print-snap" data-id="' + esc(g.id) + '">' + esc(t('rbPrint')) + '</button></div></div>' +
+      '<div class="card pvcard"><div id="pvBox"><div class="paper-wrap" id="paperWrap"><div class="paper" id="paper">' + g.html + '</div></div></div></div>';
+  }
+  async function blobDataUrl(blob) {
+    var b = new Uint8Array(await blob.arrayBuffer()), s = '';
+    for (var i = 0; i < b.length; i += 8192) s += String.fromCharCode.apply(null, b.subarray(i, i + 8192));
+    return 'data:' + (blob.type || 'image/jpeg') + ';base64,' + btoa(s);
+  }
+  function printAs(title) {
+    var old = document.title; document.title = title;
+    var done = function () { document.title = old; window.removeEventListener('afterprint', done); };
+    window.addEventListener('afterprint', done); setTimeout(done, 60000);
+    window.print();
+  }
+  async function rbPrint() {
+    var c = rb.cache, d = rb.draft, photo = '';
+    if (d.photoId) { var ph = c.photos.filter(function (x) { return x.id === d.photoId; })[0], bl = ph && await storage.local.get(ph.blobId); if (bl) photo = await blobDataUrl(bl); }
+    var base = (nm(c.p, d.lang) || nm(c.p, d.lang === 'th' ? 'en' : 'th') || 'CV').replace(/[^\p{L}\p{N}]+/gu, '_') + '_' + tt(DT_KEYS[d.docType], 'en').replace(/\s+/g, '_') + '_' + nowIso().slice(0, 10);
+    var g = await repo.create('generated', { personId: c.p.id, name: base, docType: d.docType, lang: d.lang, resumeProfileId: rb.preset || '', html: renderCv(d.lang, photo) });
+    c.snaps.unshift(g); var hb = q('rbHist'); if (hb) hb.innerHTML = histHtml(); printAs(base);
+  }
+  async function rbSavePreset() {
+    var c = rb.cache, d = rb.draft, nmv = d.name.trim(), msg = q('rbMsg');
+    if (!nmv) { d.name = tt(DT_KEYS[d.docType], lang); nmv = d.name; if (q('rbName')) q('rbName').value = nmv; }
+    var row = rb.preset ? await repo.update('resumeProfiles', rb.preset, { name: nmv, draft: JSON.parse(JSON.stringify(d)) }) :
+                          await repo.create('resumeProfiles', { personId: c.p.id, name: nmv, draft: JSON.parse(JSON.stringify(d)) });
+    rb.preset = row.id; c.presets = (await repo.list('resumeProfiles', { personId: c.p.id })).sort(function (a, b) { return a.name.localeCompare(b.name); });
+    initResume(); var m2 = q('rbMsg'); if (m2) m2.textContent = t('rbSaved');
+  }
+  function rbHandle(el, type) {
+    if (!rb.draft || !el || !q('rbControls') || !q('rbControls').contains(el)) return false;
+    var d = rb.draft, sec = function () { return d.sections.filter(function (x) { return x.key === el.getAttribute('data-key'); })[0]; };
+    if (el.id === 'rbName') { d.name = el.value; return true; }
+    if (el.id === 'rbPreset') {
+      var pr = rb.cache.presets.filter(function (x) { return x.id === el.value; })[0];
+      rb.preset = pr ? pr.id : ''; rb.draft = pr ? Object.assign(newDraft('full', rb.cache), pr.draft, { name: pr.name }) : newDraft(d.docType, rb.cache);
+      initResume(); return true;
+    }
+    if (el.id === 'rbDoc') { d.docType = el.value; d.sections = sectionsFor(el.value); initResume(); return true; }
+    if (el.id === 'rbLang') { d.lang = el.value; refreshPreview(); return true; }
+    if (el.id === 'rbPhoto') { d.photoId = el.value; refreshPreview(); return true; }
+    if (el.classList.contains('rbSecOn')) { sec().on = el.checked; refreshPreview(); return true; }
+    if (el.classList.contains('rbMax')) { sec().max = parseInt(el.value, 10) || 0; refreshPreview(); return true; }
+    if (el.classList.contains('rbTitle')) { sec().title = el.value; refreshPreview(); return true; }
+    if (el.classList.contains('rbItem')) { if (el.checked) delete d.exclude[el.getAttribute('data-id')]; else d.exclude[el.getAttribute('data-id')] = 1; refreshPreview(); return true; }
+    if (el.classList.contains('rbTag')) { d.filters.tags = Array.prototype.map.call(document.querySelectorAll('.rbTag:checked'), function (x) { return x.value; }); initResume(); return true; }
+    if (el.id === 'rbFrom') { d.filters.from = /^\d{4}$/.test(el.value.trim()) ? el.value.trim() : ''; if (type === 'change') initResume(); else refreshPreview(); return true; }
+    if (el.id === 'rbHP') { d.filters.hidePrivate = el.checked; initResume(); return true; }
+    if (el.classList.contains('rbContact')) { var id = el.getAttribute('data-id'), i = d.contactIds.indexOf(id); if (el.checked && i < 0) d.contactIds.push(id); if (!el.checked && i >= 0) d.contactIds.splice(i, 1); refreshPreview(); return true; }
+    if (el.classList.contains('rbPers')) { d.personal[el.getAttribute('data-k')] = el.checked; refreshPreview(); return true; }
+    if (el.id === 'rbSumEn' || el.id === 'rbSumTh') { d.summary[el.id === 'rbSumEn' ? 'en' : 'th'] = el.value; refreshPreview(); return true; }
+    return false;
+  }
+
+  // ---------- Backup & restore screens ----------
+  var bkState = { pending: null, file: null, loaded: null, plan: null };
+  function q(id) { return document.getElementById(id); }
+  function fillT(str, o) { return str.replace(/\{(\w+)\}/g, function (m, k) { return o[k]; }); }
+  function errMsg(e) { return e && e.message === 'WRONG_PASS' ? t('rsWrong') : (e && e.message) || String(e); }
+  function warnP(m) { return '<p class="msg">' + esc(m) + '</p>'; }
+
+  async function refreshBackupUi() {
+    if (!q('bkScope')) return;
+    var list = (await repo.list('persons')).sort(function (a, b) { return a.createdAt < b.createdAt ? -1 : 1; });
+    q('bkPeople').innerHTML = list.length ? list.map(function (x) {
+      return '<label class="chk"><input type="checkbox" class="bkP" value="' + esc(x.id) + '" checked> ' + esc(displayName(x)) + '</label>';
+    }).join('') : '<p class="sub">' + esc(t('bkNoPeople')) + '</p>';
+    var sn = await snap.get();
+    q('snapBox').innerHTML = sn ? '<p>' + esc(fmtDate(sn.createdAt.slice(0, 10)) + ' · ' + fmtSize(sn.size)) + '</p><button class="btn ghost sm" data-action="snap-load">' + esc(t('snapLoad')) +
+      '</button> <button class="btn ghost sm" data-action="snap-save">' + esc(t('snapSave')) + '</button>' : '<p class="sub" style="margin:0">' + esc(t('snapNone')) + '</p>';
+  }
+  async function doMakeBackup(btn) {
+    var out = q('bkOut'), ids = null;
+    if ((await repo.list('persons')).length === 0) { out.innerHTML = warnP(t('bkNoPeople')); return; }
+    if (q('bkScope').value === 'selected') {
+      ids = Array.prototype.map.call(document.querySelectorAll('.bkP:checked'), function (x) { return x.value; });
+      if (!ids.length) { out.innerHTML = warnP(t('bkPickOne')); return; }
+    }
+    var pass = q('bkPass').value, withFiles = q('bkFiles').checked;
+    if (pass && pass.length < 6) { out.innerHTML = warnP(t('bkShort')); return; }
+    if (pass !== q('bkPass2').value) { out.innerHTML = warnP(t('bkMismatch')); return; }
+    btn.disabled = true; bkState.pending = null;
+    try {
+      var b = await createBackup({ ids: ids, withFiles: withFiles, pass: pass, say: function (m) { out.innerHTML = '<p class="sub">' + esc(m) + '</p>'; } });
+      bkState.pending = { b: b, counts: !ids && withFiles };
+      var c = b.manifest.counts;
+      out.innerHTML = '<p><span class="pill ok">' + esc(t('bkReady')) + '</span></p><p class="sub">' + esc(b.name + ' · ' + fmtSize(b.blob.size) + ' · ' + c.persons + ' / ' + c.records + ' / ' + c.documents + ' / ' + c.files) + '</p>' +
+        (bkState.pending.counts ? '' : '<p class="sub">' + esc(t('bkPartial')) + '</p>') +
+        '<button class="btn" data-action="save-backup">' + esc(t('bkSave')) + '</button><p id="bkSaved" class="sub" style="margin-top:8px"></p>';
+    } catch (e) { out.innerHTML = warnP(errMsg(e)); }
+    btn.disabled = false;
+  }
+  async function doSaveBackup() {
+    var pb = bkState.pending;
+    if (!pb) return;
+    var ok = await saveFile(pb.b.blob, pb.b.name);
+    if (ok) { if (pb.counts) await updateWorkspace({ lastBackupAt: nowIso() }); var m = q('bkSaved'); if (m) m.textContent = t('bkSaved'); }
+  }
+  async function loadBackupFile(file) {
+    var out = q('rsOut'); bkState.file = file; bkState.loaded = null;
+    try {
+      if (await isEncrypted(file)) {
+        out.innerHTML = '<p>' + esc(t('rsPassAsk')) + '</p><div class="fld"><input id="rsPass" type="password" class="input" autocomplete="off" aria-label="' + esc(t('bkPass')) + '"></div>' +
+          '<button class="btn" data-action="read-backup">' + esc(t('rsRead')) + '</button><p id="rsMsg" class="msg"></p>';
+        return;
+      }
+      bkState.loaded = await readBackup(file, ''); await showRestorePreview();
+    } catch (e) { out.innerHTML = warnP(errMsg(e)); }
+  }
+  async function doReadBackup() {
+    var m = q('rsMsg');
+    try { bkState.loaded = await readBackup(bkState.file, q('rsPass').value); await showRestorePreview(); }
+    catch (e) { if (m) m.textContent = errMsg(e); }
+  }
+  function planText(mode) {
+    var pl = bkState.plan;
+    return mode === 'merge' ? fillT(t('rsPlanMerge'), { a: pl.added, u: pl.updated, s: pl.skipped }) : fillT(t('rsPlanAll'), { n: pl.total });
+  }
+  async function showRestorePreview() {
+    var bk = bkState.loaded, local = await localIndex(), m = bk.manifest;
+    bkState.plan = planMerge(bk, local);
+    var people = (m.persons || []).map(function (x) {
+      var here = !!local.rows.persons[x.id];
+      return '<div class="row"><span>' + esc(x.name) + '</span><span class="pill' + (here ? '' : ' ok') + '">' + esc(here ? t('rsHere') : t('rsNew')) + '</span></div>';
+    }).join('');
+    q('rsOut').innerHTML = '<p><b>' + esc(t('rsFrom')) + ':</b> ' + esc(fmtDate(m.createdAt.slice(0, 10)) + ' · ' + (m.deviceName || '') + ' · ' + (m.withFiles ? t('rsFilesIn') + ' (' + m.counts.files + ')' : t('rsFilesNo'))) + '</p>' +
+      '<h2 style="font-size:15px">' + esc(t('rsPeople')) + '</h2>' + people +
+      '<div class="fld" style="margin-top:12px"><label class="lbl" for="rsMode">' + esc(t('rsMode')) + '</label><select id="rsMode" class="input"><option value="merge">' + esc(t('rsMerge')) + '</option><option value="replace">' + esc(t('rsReplace')) +
+      '</option><option value="new">' + esc(t('rsAsNew')) + '</option></select></div>' +
+      '<p id="rsHint" class="sub" style="margin:0 0 6px">' + esc(t('rsMergeHint')) + '</p><p id="rsPlan" class="sub" style="margin:0 0 10px">' + esc(planText('merge')) + '</p>' +
+      '<div id="rsConfirmBox" class="fld" hidden><label class="lbl" for="rsConfirm">' + esc(t('rsType')) + '</label><input id="rsConfirm" class="input" autocomplete="off"></div>' +
+      '<button class="btn" data-action="do-restore">' + esc(t('rsGo')) + '</button><p id="rsMsg" class="msg"></p>';
+    var el = q('rsOut'); if (el.scrollIntoView) el.scrollIntoView({ block: 'nearest' });
+  }
+  async function doRestore(btn) {
+    var mode = q('rsMode').value, out = q('rsOut'), bk = bkState.loaded;
+    if (mode === 'replace' && q('rsConfirm').value.trim() !== 'REPLACE') { q('rsMsg').textContent = t('rsConfirmWrong'); return; }
+    btn.disabled = true;
+    try {
+      var st = await applyRestore(bk, mode, function (m) { q('rsMsg').className = 'sub'; q('rsMsg').textContent = m; });
+      bkState.loaded = null;
+      out.innerHTML = '<p><span class="pill ok">' + esc(t('rsDone')) + '</span></p>' +
+        [['rsAdded', st.added], ['rsUpdated', st.updated], ['rsSkipped', st.skipped], ['rsFilesAdded', st.files]].map(function (r) {
+          return '<div class="row"><span>' + esc(t(r[0])) + '</span><b>' + r[1] + '</b></div>'; }).join('');
+      refreshBackupUi(); refreshDbInfo(); refreshDeletedList();
+    } catch (e) { btn.disabled = false; var mm = q('rsMsg'); if (mm) { mm.className = 'msg'; mm.textContent = errMsg(e); } }
+  }
+
   // Self-test: creates temporary data, checks the rules, then erases it.
   async function runSelfTest() {
     var out = [], pid = null, blobId = null;
@@ -585,12 +1253,13 @@
 
   // ---------- Routes ----------
   var ROUTES = [
-    { id: 'dashboard', icon: '🏠', view: dashboardView },
-    { id: 'people',    icon: '👥', view: peopleView },
-    { id: 'documents', icon: '📁', view: documentsView },
-    { id: 'resume',    icon: '📄', view: function () { return placeholder('📄', 'comingResume', 8); } },
-    { id: 'settings',  icon: '⚙️', view: settingsView }
+    { id: 'dashboard', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>', view: dashboardView },
+    { id: 'people',    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14.2c2.9 0 5 2 5 5.2"/></svg>', view: peopleView },
+    { id: 'documents', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>', view: documentsView },
+    { id: 'resume',    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h6"/></svg>', view: resumeView },
+    { id: 'settings',  icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>', view: settingsView }
   ];
+  var RESUME_ROUTE_DUMMY = 0;
   function parseHash() { return (location.hash || '#dashboard').slice(1).split('/'); }
   function currentRoute() {
     var id = parseHash()[0];
@@ -620,10 +1289,10 @@
     var checks = [hasName(p), !!p.dateOfBirth, !!p.placeOfBirth, !!p.nationality, !!p.gender, !!ctx.photo, !!ctx.contact, !!ctx.record];
     return Math.round(100 * checks.filter(Boolean).length / checks.length);
   }
-  function fmtDate(iso) {
+  function fmtDate(iso, L2) {
     var m = iso.length === 7, d = new Date(iso + (iso.length === 10 ? 'T00:00:00Z' : (m ? '-01T00:00:00Z' : '')));
     if (isNaN(d)) return iso;
-    return d.toLocaleDateString(lang === 'th' ? 'th-TH' : 'en-GB', m ? { month: 'short', year: 'numeric', timeZone: 'UTC' } : { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+    return d.toLocaleDateString((L2 || lang) === 'th' ? 'th-TH' : 'en-GB', m ? { month: 'short', year: 'numeric', timeZone: 'UTC' } : { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
   }
   async function activePerson() {
     var ws = await initWorkspace();
@@ -647,10 +1316,15 @@
              '<p style="margin:12px 0 0"><a href="#people/' + esc(p.id) + '">' + esc(t('openProfile')) + '</a></p>';
     }
     var last = d.ws.lastBackupAt ? '<span class="pill ok">' + esc(fmtDate(d.ws.lastBackupAt.slice(0, 10))) + '</span>' : '<span class="pill warn">' + esc(t('never')) + '</span>';
-    var others = [['addEducation', 5], ['addAward', 5], ['uploadDoc', 6], ['genResume', 8]].map(function (a) {
-      return '<button class="btn ghost" disabled title="' + esc(t('soon') + ' ' + a[1]) + '">' + esc(t(a[0])) + '</button>';
-    }).join('');
+    var bs = await backupStatus(), banner = '';
+    if (bs.overdue) {
+      banner = '<div class="card warnbox"><p style="margin:0 0 10px"><b>' + esc(!bs.last ? t('bkOverdueNever') : fillT(t('bkOverdueAge'), { d: bs.days })) + '</b>' +
+        (bs.last && bs.changes ? ' ' + esc(fillT(t('bkChanges'), { c: bs.changes })) : '') + '</p><a class="btn" href="#settings">' + esc(t('bkNow')) + '</a></div>';
+    }
+    var qa = p ? [['addEducation', '#people/' + p.id + '/rec/education/new'], ['addAward', '#people/' + p.id + '/rec/award/new'], ['uploadDoc', '#documents'], ['genResume', '#resume']] : [];
+    var others = qa.map(function (x) { return '<a class="btn ghost" href="' + esc(x[1]) + '">' + esc(t(x[0])) + '</a>'; }).join('');
     return head(t('welcome'), t('dashSub')) +
+      banner +
       '<div class="card"><h2>' + esc(t('person')) + '</h2>' + card + '</div>' +
       '<div class="grid two">' +
         '<div class="card"><h2>' + esc(t('completeness')) + '</h2><div class="bar"><span style="width:' + pct + '%"></span></div><p class="sub" style="margin:8px 0 0">' + pct + '%</p></div>' +
@@ -888,11 +1562,12 @@
     var ios = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     try {
       var f = new File([blob], name, { type: blob.type || 'application/octet-stream' });
-      if (ios && navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f] }); return; }
-    } catch (e) { if (e && e.name === 'AbortError') return; }
+      if (ios && navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f] }); return true; }
+    } catch (e) { if (e && e.name === 'AbortError') return false; }
     var u = URL.createObjectURL(blob), a = document.createElement('a');
     a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function () { URL.revokeObjectURL(u); }, 30000);
+    return true;
   }
   async function linkDoc(personId, recordId, docId) {
     var all = await repo.list('recordDocs', { personId: personId, includeDeleted: true });
@@ -931,7 +1606,7 @@
   }
 
   async function previewHtml(doc, blob) {
-    if (!blob) return '';
+    if (!blob) return '<p class="sub" style="margin:0">' + esc(t('fileMissing')) + '</p>';
     var m = doc.mimeType || '', u;
     if (/^image\/(jpeg|jpg|png|webp|heic|heif)$/.test(m)) { u = URL.createObjectURL(blob); urlCache.push(u); return '<div class="preview"><img alt="' + esc(doc.fileName) + '" src="' + esc(u) + '"></div>'; }
     if (m === 'application/pdf') {
@@ -1254,7 +1929,18 @@
         '<div style="margin-top:14px"><button class="btn" id="testBtn">' + esc(t('runTest')) + '</button></div>' +
         '<div id="testOut" aria-live="polite"></div></div>' +
       '<div class="card"><h2>' + esc(t('recentlyDeleted')) + '</h2><div id="deletedList"></div></div>' +
-      '<div class="card"><h2>' + esc(t('backup')) + '</h2><p class="sub" style="margin:0">' + esc(t('soon')) + ' 7</p></div>' +
+      '<div class="card" id="backupCard"><h2>' + esc(t('backupTitle')) + '</h2>' +
+        '<div class="fld"><label class="lbl" for="bkScope">' + esc(t('bkScope')) + '</label><select id="bkScope" class="input"><option value="all">' + esc(t('bkAll')) + '</option><option value="selected">' + esc(t('bkSel')) + '</option></select></div>' +
+        '<div id="bkPeople" hidden></div>' +
+        '<label class="chk"><input type="checkbox" id="bkFiles" checked> ' + esc(t('bkFiles')) + '</label>' +
+        '<div class="grid two" style="margin-top:10px"><div class="fld"><label class="lbl" for="bkPass">' + esc(t('bkPass')) + '</label><input id="bkPass" type="password" class="input" autocomplete="new-password"></div>' +
+        '<div class="fld"><label class="lbl" for="bkPass2">' + esc(t('bkPass2')) + '</label><input id="bkPass2" type="password" class="input" autocomplete="new-password"></div></div>' +
+        '<p class="sub">' + esc(t('bkPassWarn')) + '</p>' +
+        '<button class="btn" data-action="make-backup">' + esc(t('bkMake')) + '</button><div id="bkOut" aria-live="polite" style="margin-top:10px"></div></div>' +
+      '<div class="card"><h2>' + esc(t('restoreTitle')) + '</h2>' +
+        '<input type="file" id="rsInput" class="vh" tabindex="-1"><button class="btn ghost" data-action="pick-restore">' + esc(t('rsPick')) + '</button>' +
+        '<div id="rsOut" aria-live="polite" style="margin-top:10px"></div></div>' +
+      '<div class="card"><h2>' + esc(t('snapTitle')) + '</h2><div id="snapBox"></div></div>' +
       '<p class="sub">' + esc(t('version')) + ': ' + esc(APP_VERSION) + '</p>';
   }
 
@@ -1294,7 +1980,8 @@
       if (token !== renderToken) return;
       view.innerHTML = html;
       window.scrollTo(0, 0);
-      if (route === 'settings') { refreshStorageInfo(); refreshDbInfo(); refreshDeletedList(); }
+      if (route === 'resume') { if (parseHash()[1] === 'snap') fitPaper(); else initResume(); }
+      if (route === 'settings') { refreshStorageInfo(); refreshDbInfo(); refreshDeletedList(); refreshBackupUi(); }
     }).catch(function (err) {
       if (token === renderToken) view.innerHTML = '<div class="card"><p class="msg">' + esc(err && err.message || err) + '</p></div>';
     });
@@ -1302,17 +1989,27 @@
 
   // ---------- Events ----------
   window.addEventListener('hashchange', render);
+  window.addEventListener('resize', function () { fitPaper(); });
+  document.addEventListener('toggle', function (e) { if (e.target.tagName === 'DETAILS' && e.target.getAttribute('data-key')) rb.open[e.target.getAttribute('data-key')] = e.target.open; }, true);
   document.addEventListener('input', function (e) {
+    if (rbHandle(e.target, 'input')) return;
     if (e.target.id !== 'docQ') return;
     var q = e.target.value.trim().toLowerCase();
     Array.prototype.forEach.call(document.querySelectorAll('[data-q]'), function (el) { el.hidden = !!q && el.getAttribute('data-q').indexOf(q) < 0; });
   });
   document.addEventListener('change', function (e) {
     var el = e.target;
+    if (rbHandle(el, 'change')) return;
     if (el.id === 'switchPerson') updateWorkspace({ activePersonId: el.value }).then(render);
     if (el.id === 'r_current') { var ed = document.getElementById('r_endDate'); if (ed) ed.disabled = el.checked; }
     if (el.id === 'c_kind') { var ad = isAddr(el.value); document.getElementById('addrBox').hidden = !ad; document.getElementById('valBox').hidden = ad; }
     if (el.classList && el.classList.contains('photo-label')) repo.update('photos', el.getAttribute('data-id'), { label: el.value });
+    if (el.id === 'rsInput') { if (el.files && el.files[0]) loadBackupFile(el.files[0]); el.value = ''; }
+    if (el.id === 'bkScope') q('bkPeople').hidden = el.value !== 'selected';
+    if (el.id === 'rsMode') {
+      var hints = { merge: 'rsMergeHint', replace: 'rsReplaceHint', new: 'rsAsNewHint' };
+      q('rsHint').textContent = t(hints[el.value]); q('rsPlan').textContent = planText(el.value); q('rsConfirmBox').hidden = el.value !== 'replace';
+    }
     if (el.id === 'docInput') {
       var dfiles = Array.prototype.slice.call(el.files || []), dpid = el.getAttribute('data-person'), cat = document.getElementById('upCat').value;
       addDocuments(dpid, dfiles, cat).then(function (res) {
@@ -1341,6 +2038,24 @@
       var a = act.getAttribute('data-action'), id = act.getAttribute('data-id');
       var fail = function (err) { var m = document.getElementById('formMsg'); if (m) m.textContent = err.message; };
       if (a === 'save-person') { savePerson(id).catch(fail); return; }
+      if (a === 'rb-tab') { rb.tab = act.getAttribute('data-tab'); var rbx = document.querySelector('.rb'); if (rbx) rbx.setAttribute('data-tab', rb.tab); Array.prototype.forEach.call(document.querySelectorAll('[data-action="rb-tab"]'), function (b2) { b2.className = b2.getAttribute('data-tab') === rb.tab ? 'on' : ''; }); fitPaper(); return; }
+      if (a === 'rb-move') {
+        var ds = rb.draft.sections, ix = ds.findIndex(function (x) { return x.key === act.getAttribute('data-key'); }), j = ix + parseInt(act.getAttribute('data-dir'), 10);
+        if (ix >= 0 && j >= 0 && j < ds.length) { var tmp = ds[ix]; ds[ix] = ds[j]; ds[j] = tmp; initResume(); }
+        return;
+      }
+      if (a === 'rb-save') { rbSavePreset().catch(fail); return; }
+      if (a === 'rb-del') { if (armed(act, t('tapDelete'))) repo.softDelete('resumeProfiles', rb.preset).then(function () { rb.preset = ''; render(); }); return; }
+      if (a === 'rb-print') { rbPrint().catch(fail); return; }
+      if (a === 'print-snap') { repo.get('generated', id).then(function (g) { if (g) printAs(g.name); }); return; }
+      if (a === 'del-snap') { if (armed(act, t('tapDelete'))) repo.softDelete('generated', id).then(render); return; }
+      if (a === 'make-backup') { doMakeBackup(act); return; }
+      if (a === 'save-backup') { doSaveBackup(); return; }
+      if (a === 'pick-restore') { q('rsInput').click(); return; }
+      if (a === 'read-backup') { doReadBackup(); return; }
+      if (a === 'do-restore') { doRestore(act); return; }
+      if (a === 'snap-load') { snap.get().then(function (sn) { if (sn) { bkState.file = sn.blob; return readBackup(sn.blob, '').then(function (bk) { bkState.loaded = bk; return showRestorePreview(); }); } }).catch(function (e) { q('rsOut').innerHTML = warnP(errMsg(e)); }); return; }
+      if (a === 'snap-save') { snap.get().then(function (sn) { if (sn) saveFile(sn.blob, sn.name); }); return; }
       if (a === 'restore-item') { repo.restore(act.getAttribute('data-store'), id).then(function () { refreshDeletedList(); refreshDbInfo(); }); return; }
       if (a === 'pick-doc') { document.getElementById('docInput').click(); return; }
       if (a === 'doc-cat') { docCat = act.getAttribute('data-cat'); render(); return; }
