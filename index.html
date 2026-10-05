@@ -155,6 +155,11 @@
     .paper { transform:none !important; width:auto !important; min-height:0 !important; padding:0 !important; border:0 !important; }
     @page { size:A4; margin:15mm; }
   }
+  .tl { border-left:2px solid var(--line); margin-left:8px; padding-left:18px; }
+  .tl-year { font-weight:600; color:var(--pill-ink); margin:16px 0 4px; }
+  .tl-item { display:block; position:relative; padding:6px 0; text-decoration:none; color:inherit; }
+  .tl-item:before { content:''; position:absolute; left:-25px; top:13px; width:10px; height:10px; border-radius:50%; background:var(--mint); border:2px solid var(--bg); }
+  #nav a { min-width:0; } @media (max-width:420px) { #nav a { font-size:11px; } }
   a:focus-visible, button:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
 </style>
 </head>
@@ -206,6 +211,13 @@
       delAsk: 'Delete this person?', delWarn: 'They and all their data move to Recently deleted. You can restore them from Settings.',
       yesDelete: 'Yes, delete', recentlyDeleted: 'Recently deleted', restore: 'Restore', forever: 'Delete forever',
       tapAgain: 'Tap again to erase', nothingDeleted: 'Nothing deleted.', openProfile: 'Open profile',
+      search: 'Search', searchPh: 'Search people, records, documents, tags…', srEveryone: 'Everyone', srThis: 'This person', srTags: 'Tags', srNone: 'No results.',
+      srPeople: 'People', srRecordsH: 'Records', srDocsH: 'Documents', srContactsH: 'Contacts', srHint: 'Tip: type #tag to find everything with that tag.',
+      srCount: '{n} results', srMore: 'Showing the first 60.', timeline: 'Timeline', tlAll: 'All types', tlNoDate: 'No date', tlEmpty: 'Nothing to show yet.', tlTag: 'Tag',
+      expTitle: 'Expiring soon', expDays: 'in {n} days',
+      xlTitle: 'Excel export', xlHint: 'Structured data with one sheet per module (column headings are in English). Dates are text such as 2026-06 or 2026-06-10.',
+      xlScope: 'Who to export', xlThis: 'This person', xlAllPeople: 'Everyone', xlPrivate: 'Include items and details marked Private',
+      xlGo: 'Download Excel', xlSkipped: '{n} rows marked Private were left out. Tick the box above to include them.', xlWorking: 'Building…', xlDone: 'Excel file ready', xlSheets: 'Sheets', xlRows: 'rows', xlNone: 'Nothing to export.',
       stageTitle: 'Supporting documents (optional)', stageHint: 'Upload certificates or other evidence. They are saved in Documents and linked to this record. You can rename them here.',
       stageAdd: 'Add files', stageRm: 'Remove', stageName: 'Document name', stageRename: 'Rename',
       rbTitle: 'Resume builder', rbSub: 'Choose what goes into each document', rbPreset: 'Saved presets', rbNewPreset: 'New (not saved)', rbName: 'Preset name',
@@ -217,6 +229,31 @@
       rbPrintHint: 'iPhone/iPad: in the print screen pinch OUT on the preview, then Share and Save to Files. A copy is kept under Saved documents.',
       rbHistory: 'Saved documents', rbOpen: 'Open', rbNoHist: 'Nothing saved yet.', rbEditTab: 'Edit', rbPrevTab: 'Preview', secSummary: 'Summary', hrsWord: 'hrs',
       rbNoContact: 'No contact details yet.', rbNoItems: 'No items.',
+      secCurrent: 'Current position / study', curTitle: 'Current work & study', curHint: 'Shown at the top of resumes. Fill in only what applies: work, study, or both.',
+      curWorkH: 'Current work', curStudyH: 'Current study', curJob: 'Job title / position', curOrg: 'Workplace / organization', curSince: 'Working here since',
+      curDuties: 'Main responsibilities (one per line)', curSchool: 'School / institution', curGrade: 'Grade / year level', curMajor: 'Specialization / program / track',
+      lblGrade: 'Grade', lblMajor: 'Specialization', addrLbl: 'Address', rbAddr: 'Address to show', rbAddrNone: 'Do not show an address',
+      rbCurWork: 'Show current work', rbCurStudy: 'Show current study', rbHead: 'One-line headline under the name',
+      rbCurEdit: 'Edit these details in the person profile (Edit, then Current work & study).',
+      tLanguage: 'Languages', sLanguage: 'Language', tPublication: 'Publications', sPublication: 'Publication', tTalk: 'Talks & presentations', sTalk: 'Talk',
+      tMembership: 'Memberships', sMembership: 'Membership', tReference: 'References', sReference: 'Referee', tActivity: 'Activities', sActivity: 'Activity',
+      fLanguage: 'Language', fOverall: 'Overall level', fSpeaking: 'Speaking', fWriting: 'Writing', fLangTest: 'Test / certificate (e.g. IELTS 7.0, HSK 1)',
+      fPubTitle: 'Title', fPublisher: 'Publisher / journal', fPubDate: 'Published', fAuthors: 'Authors',
+      fTalkTitle: 'Talk title', fEvent: 'Event / host', fAudience: 'Audience (who and how many)', fTalkLang: 'Language of the talk',
+      fMemberRole: 'Position / membership', fMemberOrg: 'Organization / committee',
+      fRefName: 'Name', fRefPos: 'Position', fRelation: 'Relationship to you', fRefEmail: 'Email', fRefPhone: 'Phone', fConsent: 'Has agreed to be listed as a referee',
+      fActivity: 'Activity / club / team', fActOrg: 'School / organization',
+      x_article: 'Article', x_book: 'Book', x_chapter: 'Book chapter', x_report: 'Report', x_paper: 'Conference paper', x_brief: 'Policy brief',
+      x_keynote: 'Keynote', x_panel: 'Panel', x_lecture: 'Lecture', x_webinar: 'Webinar', x_poster: 'Poster',
+      x_club: 'Club / society', x_sport: 'Sport', x_arts: 'Music / arts', x_competition: 'Competition',
+      dtSpeaker: 'Speaker profile', dtJob: 'Job / promotion application', dtScholar: 'Scholarship / school application',
+      rbRefHint: 'Only referees marked as having agreed to be listed appear here.',
+      pkgTitle: 'Application package', pkgHint: 'See what is ready for this application, then download the resume and the supporting documents together as one zip folder.',
+      pkgList: 'Checklist', pkgAuto: 'Automatic (follows the document type)', pkgNone: 'No checklist', pkgNoneHint: 'No checklist chosen. The package will contain only the resume.',
+      pkgSt: 'Status', pkgAutoOpt: 'Automatic', pkgDone: 'Mark as done', pkgNA: 'Not needed', pkgReady: 'Ready', pkgMissing: 'Missing', pkgMarked: 'Marked done', pkgNAs: 'Not needed',
+      pkgOptional: 'optional', pkgNotSel: 'Tick a file below', pkgProgress: 'required items ready', pkgNoDocs: 'No documents in this category yet. Add them in Documents.', pkgMake: 'Download package (.zip)',
+      pkgBuilt: 'Package downloaded', pkgFiles: 'files', pkgWorking: 'Preparing the package…', pkgPick: 'Tick the files to include:', pkgTxtTitle: 'Application package checklist', pkgTxtDate: 'Prepared',
+      pkgTxtFiles: 'Files', pkgTxtMissing: 'Still missing', pkgTxtNone: 'Nothing missing.', pkgResumeNote: 'Open Resume.html in a browser, then Print and Save as PDF.',
       backupTitle: 'Backup', bkScope: 'What to back up', bkAll: 'Everyone', bkSel: 'Selected people',
       bkFiles: 'Include files (documents and photos)', bkPass: 'Passphrase (optional)', bkPass2: 'Repeat passphrase',
       bkPassWarn: 'If you forget the passphrase the backup cannot be opened. Recommended when it holds ID numbers.',
@@ -255,7 +292,7 @@
       fQualification: 'Qualification / degree', fInstitution: 'Institution', fMajor: 'Field of study / major', fCountry: 'Country',
       fStart: 'Start', fEnd: 'End', fCurrent: 'Current / ongoing', fGpa: 'GPA / grade', fHonors: 'Honors', fDesc: 'Description',
       fTags: 'Tags (comma separated)', fPosition: 'Position', fOrg: 'Organization', fType: 'Type', fLocation: 'Location',
-      fResp: 'Responsibilities', fAchv: 'Achievements', fCourse: 'Course name', fOrganizer: 'Organizer', fInstructor: 'Instructor',
+      fResp: 'Responsibilities', fAchv: 'Achievements (one per line; use numbers: %, amounts, people, time saved)', fTeamSize: 'Team size / people led (e.g. 12 people)', fBudget: 'Budget / scale managed (e.g. THB 50M)', lblTeam: 'Team', lblBudget: 'Budget', fCourse: 'Course name', fOrganizer: 'Organizer', fInstructor: 'Instructor',
       fHours: 'Duration (hours)', fDate: 'Date', fAward: 'Award name', fAwarding: 'Awarding organization', fLevel: 'Level',
       fResult: 'Ranking / result', fSkill: 'Skill name', fCategory: 'Category', fYears: 'Years of experience', fProject: 'Project name',
       fRole: 'Role', fObjective: 'Objective', fSkillsUsed: 'Skills used', fOutcome: 'Outcome', fLinks: 'Links',
@@ -311,6 +348,13 @@
       delAsk: 'ลบบุคคลนี้หรือไม่?', delWarn: 'บุคคลนี้และข้อมูลทั้งหมดจะย้ายไปที่ "ลบล่าสุด" และกู้คืนได้จากหน้าตั้งค่า',
       yesDelete: 'ใช่ ลบเลย', recentlyDeleted: 'ลบล่าสุด', restore: 'กู้คืน', forever: 'ลบถาวร',
       tapAgain: 'แตะอีกครั้งเพื่อลบถาวร', nothingDeleted: 'ไม่มีรายการที่ถูกลบ', openProfile: 'เปิดโปรไฟล์',
+      search: 'ค้นหา', searchPh: 'ค้นหาบุคคล รายการ เอกสาร แท็ก…', srEveryone: 'ทุกคน', srThis: 'บุคคลนี้', srTags: 'แท็ก', srNone: 'ไม่พบผลลัพธ์',
+      srPeople: 'บุคคล', srRecordsH: 'รายการข้อมูล', srDocsH: 'เอกสาร', srContactsH: 'ข้อมูลติดต่อ', srHint: 'เคล็ดลับ: พิมพ์ #แท็ก เพื่อค้นหาทุกอย่างที่มีแท็กนั้น',
+      srCount: 'พบ {n} รายการ', srMore: 'แสดง 60 รายการแรก', timeline: 'ไทม์ไลน์', tlAll: 'ทุกประเภท', tlNoDate: 'ไม่ระบุวันที่', tlEmpty: 'ยังไม่มีข้อมูลให้แสดง', tlTag: 'แท็ก',
+      expTitle: 'ใกล้หมดอายุ', expDays: 'ใน {n} วัน',
+      xlTitle: 'ส่งออกเป็น Excel', xlHint: 'ข้อมูลแบบมีโครงสร้าง แยกเป็นหนึ่งชีตต่อหนึ่งหมวด (หัวตารางเป็นภาษาอังกฤษ) วันที่เก็บเป็นข้อความ เช่น 2026-06 หรือ 2026-06-10',
+      xlScope: 'ส่งออกของใคร', xlThis: 'บุคคลนี้', xlAllPeople: 'ทุกคน', xlPrivate: 'รวมรายการและข้อมูลที่ตั้งเป็นส่วนตัว',
+      xlGo: 'ดาวน์โหลด Excel', xlSkipped: 'ไม่ได้รวม {n} แถวที่ตั้งเป็นส่วนตัว หากต้องการให้รวม ให้ติ๊กช่องด้านบน', xlWorking: 'กำลังสร้าง…', xlDone: 'ไฟล์ Excel พร้อมแล้ว', xlSheets: 'ชีต', xlRows: 'แถว', xlNone: 'ไม่มีข้อมูลให้ส่งออก',
       stageTitle: 'เอกสารประกอบ (ไม่บังคับ)', stageHint: 'อัปโหลดใบประกาศนียบัตรหรือหลักฐานอื่น ๆ ระบบจะเก็บไว้ในหน้าเอกสารและเชื่อมโยงกับรายการนี้ คุณเปลี่ยนชื่อไฟล์ได้ที่นี่',
       stageAdd: 'เพิ่มไฟล์', stageRm: 'เอาออก', stageName: 'ชื่อเอกสาร', stageRename: 'เปลี่ยนชื่อ',
       rbTitle: 'ตัวสร้างเรซูเม่', rbSub: 'เลือกสิ่งที่จะใส่ในแต่ละเอกสาร', rbPreset: 'ค่าที่บันทึกไว้', rbNewPreset: 'ใหม่ (ยังไม่บันทึก)', rbName: 'ชื่อค่าที่บันทึก',
@@ -322,6 +366,31 @@
       rbPrintHint: 'iPhone/iPad: ในหน้าพิมพ์ ให้ใช้สองนิ้วถ่างออกที่ตัวอย่าง แล้วแตะแชร์และบันทึกลงไฟล์ ระบบจะเก็บสำเนาไว้ใน "เอกสารที่บันทึก"',
       rbHistory: 'เอกสารที่บันทึก', rbOpen: 'เปิด', rbNoHist: 'ยังไม่มีเอกสารที่บันทึก', rbEditTab: 'แก้ไข', rbPrevTab: 'ตัวอย่าง', secSummary: 'สรุป', hrsWord: 'ชม.',
       rbNoContact: 'ยังไม่มีข้อมูลติดต่อ', rbNoItems: 'ไม่มีรายการ',
+      secCurrent: 'ตำแหน่ง / การศึกษาปัจจุบัน', curTitle: 'งานและการศึกษาปัจจุบัน', curHint: 'จะแสดงไว้ส่วนบนของเรซูเม่ กรอกเฉพาะที่เกี่ยวข้อง: งาน การเรียน หรือทั้งสองอย่าง',
+      curWorkH: 'งานปัจจุบัน', curStudyH: 'การศึกษาปัจจุบัน', curJob: 'ตำแหน่งงาน', curOrg: 'สถานที่ทำงาน / องค์กร', curSince: 'ทำงานที่นี่ตั้งแต่',
+      curDuties: 'หน้าที่ความรับผิดชอบหลัก (บรรทัดละข้อ)', curSchool: 'โรงเรียน / สถาบัน', curGrade: 'ชั้นปี / ระดับชั้น', curMajor: 'ความเชี่ยวชาญ / สาขา / แผนการเรียน',
+      lblGrade: 'ชั้น', lblMajor: 'สาขา/แผนการเรียน', addrLbl: 'ที่อยู่', rbAddr: 'ที่อยู่ที่จะแสดง', rbAddrNone: 'ไม่แสดงที่อยู่',
+      rbCurWork: 'แสดงงานปัจจุบัน', rbCurStudy: 'แสดงการศึกษาปัจจุบัน', rbHead: 'บรรทัดสรุปใต้ชื่อ',
+      rbCurEdit: 'แก้ไขข้อมูลเหล่านี้ได้ที่โปรไฟล์ของบุคคล (แก้ไข แล้วเลือก งานและการศึกษาปัจจุบัน)',
+      tLanguage: 'ภาษา', sLanguage: 'ภาษา', tPublication: 'ผลงานตีพิมพ์', sPublication: 'ผลงานตีพิมพ์', tTalk: 'การบรรยายและการนำเสนอ', sTalk: 'การบรรยาย',
+      tMembership: 'สมาชิกภาพและคณะกรรมการ', sMembership: 'สมาชิกภาพ', tReference: 'ผู้รับรอง', sReference: 'ผู้รับรอง', tActivity: 'กิจกรรม', sActivity: 'กิจกรรม',
+      fLanguage: 'ภาษา', fOverall: 'ระดับโดยรวม', fSpeaking: 'การพูด', fWriting: 'การเขียน', fLangTest: 'การสอบ / ใบรับรอง (เช่น IELTS 7.0, HSK 1)',
+      fPubTitle: 'ชื่อผลงาน', fPublisher: 'สำนักพิมพ์ / วารสาร', fPubDate: 'เผยแพร่เมื่อ', fAuthors: 'ผู้เขียน',
+      fTalkTitle: 'ชื่อการบรรยาย', fEvent: 'งาน / ผู้จัด', fAudience: 'ผู้ฟัง (กลุ่มใดและจำนวน)', fTalkLang: 'ภาษาที่ใช้บรรยาย',
+      fMemberRole: 'ตำแหน่ง / สมาชิกภาพ', fMemberOrg: 'องค์กร / คณะกรรมการ',
+      fRefName: 'ชื่อ', fRefPos: 'ตำแหน่ง', fRelation: 'ความสัมพันธ์กับคุณ', fRefEmail: 'อีเมล', fRefPhone: 'โทรศัพท์', fConsent: 'ยินยอมให้ระบุชื่อเป็นผู้รับรองแล้ว',
+      fActivity: 'กิจกรรม / ชมรม / ทีม', fActOrg: 'โรงเรียน / องค์กร',
+      x_article: 'บทความ', x_book: 'หนังสือ', x_chapter: 'บทในหนังสือ', x_report: 'รายงาน', x_paper: 'บทความประชุมวิชาการ', x_brief: 'บทสรุปเชิงนโยบาย',
+      x_keynote: 'ปาฐกถาพิเศษ', x_panel: 'เสวนา', x_lecture: 'บรรยาย', x_webinar: 'เว็บบินาร์', x_poster: 'โปสเตอร์',
+      x_club: 'ชมรม / สมาคม', x_sport: 'กีฬา', x_arts: 'ดนตรี / ศิลปะ', x_competition: 'การแข่งขัน',
+      dtSpeaker: 'ประวัติวิทยากร', dtJob: 'สมัครงาน / เลื่อนตำแหน่ง', dtScholar: 'สมัครทุนการศึกษา / สมัครเรียน',
+      rbRefHint: 'แสดงเฉพาะผู้รับรองที่ยินยอมให้ระบุชื่อแล้ว',
+      pkgTitle: 'ชุดเอกสารสมัคร', pkgHint: 'ดูว่าอะไรพร้อมแล้วสำหรับการสมัครนี้ แล้วดาวน์โหลดเรซูเม่และเอกสารประกอบรวมเป็นโฟลเดอร์ zip เดียว',
+      pkgList: 'รายการตรวจสอบ', pkgAuto: 'อัตโนมัติ (ตามประเภทเอกสาร)', pkgNone: 'ไม่ใช้รายการตรวจสอบ', pkgNoneHint: 'ยังไม่ได้เลือกรายการตรวจสอบ ชุดเอกสารจะมีเฉพาะเรซูเม่',
+      pkgSt: 'สถานะ', pkgAutoOpt: 'อัตโนมัติ', pkgDone: 'ทำแล้ว', pkgNA: 'ไม่จำเป็น', pkgReady: 'พร้อม', pkgMissing: 'ยังขาด', pkgMarked: 'ทำแล้ว (ยืนยันเอง)', pkgNAs: 'ไม่จำเป็น',
+      pkgOptional: 'ไม่บังคับ', pkgNotSel: 'ติ๊กเลือกไฟล์ด้านล่าง', pkgProgress: 'รายการที่จำเป็นพร้อมแล้ว', pkgNoDocs: 'ยังไม่มีเอกสารในหมวดนี้ เพิ่มได้ที่หน้าเอกสาร', pkgMake: 'ดาวน์โหลดชุดเอกสาร (.zip)',
+      pkgBuilt: 'ดาวน์โหลดชุดเอกสารแล้ว', pkgFiles: 'ไฟล์', pkgWorking: 'กำลังเตรียมชุดเอกสาร…', pkgPick: 'เลือกไฟล์ที่จะรวมไว้:', pkgTxtTitle: 'รายการตรวจสอบชุดเอกสารสมัคร', pkgTxtDate: 'จัดทำเมื่อ',
+      pkgTxtFiles: 'ไฟล์', pkgTxtMissing: 'ที่ยังขาด', pkgTxtNone: 'ไม่มีรายการที่ขาด', pkgResumeNote: 'เปิด Resume.html ในเบราว์เซอร์ แล้วสั่งพิมพ์และบันทึกเป็น PDF',
       backupTitle: 'สำรองข้อมูล', bkScope: 'สิ่งที่จะสำรอง', bkAll: 'ทุกคน', bkSel: 'เฉพาะบุคคลที่เลือก',
       bkFiles: 'รวมไฟล์ (เอกสารและรูปภาพ)', bkPass: 'รหัสผ่านป้องกันไฟล์ (ไม่บังคับ)', bkPass2: 'ยืนยันรหัสผ่านอีกครั้ง',
       bkPassWarn: 'หากลืมรหัสผ่าน จะเปิดไฟล์สำรองไม่ได้ แนะนำให้ตั้งเมื่อมีเลขบัตรประชาชนหรือข้อมูลสำคัญ',
@@ -360,7 +429,7 @@
       fQualification: 'วุฒิการศึกษา / ปริญญา', fInstitution: 'สถาบัน', fMajor: 'สาขาวิชา', fCountry: 'ประเทศ',
       fStart: 'เริ่ม', fEnd: 'สิ้นสุด', fCurrent: 'ปัจจุบัน / ยังดำเนินอยู่', fGpa: 'เกรดเฉลี่ย', fHonors: 'เกียรตินิยม', fDesc: 'รายละเอียด',
       fTags: 'แท็ก (คั่นด้วยเครื่องหมายจุลภาค)', fPosition: 'ตำแหน่ง', fOrg: 'องค์กร', fType: 'ประเภท', fLocation: 'สถานที่',
-      fResp: 'หน้าที่ความรับผิดชอบ', fAchv: 'ผลงานที่ภาคภูมิใจ', fCourse: 'ชื่อหลักสูตร', fOrganizer: 'ผู้จัด', fInstructor: 'วิทยากร',
+      fResp: 'หน้าที่ความรับผิดชอบ', fAchv: 'ผลงานที่ภาคภูมิใจ (บรรทัดละข้อ ใส่ตัวเลข: %, จำนวนเงิน, จำนวนคน, เวลาที่ลดได้)', fTeamSize: 'ขนาดทีม / จำนวนคนที่บริหาร (เช่น 12 คน)', fBudget: 'งบประมาณ / ขนาดงานที่รับผิดชอบ (เช่น 50 ล้านบาท)', lblTeam: 'ทีม', lblBudget: 'งบประมาณ', fCourse: 'ชื่อหลักสูตร', fOrganizer: 'ผู้จัด', fInstructor: 'วิทยากร',
       fHours: 'ระยะเวลา (ชั่วโมง)', fDate: 'วันที่', fAward: 'ชื่อรางวัล', fAwarding: 'หน่วยงานที่มอบรางวัล', fLevel: 'ระดับ',
       fResult: 'อันดับ / ผลการแข่งขัน', fSkill: 'ชื่อทักษะ', fCategory: 'หมวดหมู่', fYears: 'จำนวนปีที่มีประสบการณ์', fProject: 'ชื่อโครงงาน',
       fRole: 'บทบาท', fObjective: 'วัตถุประสงค์', fSkillsUsed: 'ทักษะที่ใช้', fOutcome: 'ผลลัพธ์', fLinks: 'ลิงก์',
@@ -379,7 +448,7 @@
       contactReq: 'กรุณากรอกรายละเอียดการติดต่อ', tapDelete: 'แตะอีกครั้งเพื่อลบ'
     }
   };
-  var APP_VERSION = '0.8.1 (certificates on record forms)';
+  var APP_VERSION = '1.4 (application package: checklist + zip)';
 
   // ---------- Database (IndexedDB) ----------
   var DB_NAME = 'profilevault', DB_VERSION = 2, DATA_SCHEMA = 1;
@@ -400,7 +469,7 @@
   var PRIVACY_STORES = PERSON_SCOPED.concat(['persons']);
   var PRIVACY = ['public', 'private', 'highly_private'];
   var RECORD_TYPES = ['education', 'experience', 'training', 'award', 'project', 'skill', 'language',
-                      'membership', 'activity', 'studyVisit', 'publication', 'reference'];
+                      'membership', 'activity', 'studyVisit', 'publication', 'reference', 'talk'];
 
   // Each future schema change is a new numbered migration; never edit old ones.
   var MIGRATIONS = {
@@ -847,13 +916,22 @@
   }
 
   // ---------- Resume builder ----------
-  var SEC_LABEL = { summary: 'secSummary', education: 'tEducation', experience: 'tExperience', training: 'tTraining', award: 'tAward', project: 'tProject', skill: 'tSkill' };
+  var SEC_LABEL = { summary: 'secSummary', current: 'secCurrent', education: 'tEducation', experience: 'tExperience', training: 'tTraining', award: 'tAward', project: 'tProject', skill: 'tSkill',
+    language: 'tLanguage', publication: 'tPublication', talk: 'tTalk', membership: 'tMembership', activity: 'tActivity', reference: 'tReference' };
   var DOCS = {
-    full: { order: ['summary', 'education', 'experience', 'training', 'award', 'project', 'skill'], on: { summary: 1, education: 1, experience: 1, training: 1, award: 1, project: 1, skill: 1 }, max: {} },
-    short: { order: ['summary', 'experience', 'education', 'skill', 'award', 'training', 'project'], on: { summary: 1, experience: 1, education: 1, skill: 1, award: 1 }, max: { experience: 4, education: 2, award: 3 } },
-    student: { order: ['summary', 'education', 'award', 'project', 'training', 'experience', 'skill'], on: { summary: 1, education: 1, award: 1, project: 1, training: 1, experience: 1, skill: 1 }, max: { award: 6, project: 5, training: 4, experience: 3 } }
+    full: { order: ['summary', 'current', 'education', 'experience', 'training', 'award', 'project', 'skill', 'language', 'activity', 'publication', 'talk', 'membership', 'reference'],
+            on: { summary: 1, current: 1, education: 1, experience: 1, training: 1, award: 1, project: 1, skill: 1, language: 1, activity: 1, publication: 1, talk: 1, membership: 1, reference: 1 }, max: {} },
+    short: { order: ['summary', 'current', 'experience', 'education', 'skill', 'award', 'training', 'project'], on: { summary: 1, current: 1, experience: 1, education: 1, skill: 1, award: 1, language: 1 }, max: { experience: 4, education: 2, award: 3 } },
+    student: { order: ['summary', 'current', 'education', 'award', 'project', 'training', 'experience', 'skill'], on: { summary: 1, current: 1, education: 1, award: 1, project: 1, training: 1, experience: 1, skill: 1, language: 1, activity: 1 }, max: { award: 6, project: 5, training: 4, experience: 3 } },
+    speaker: { order: ['summary', 'current', 'talk', 'publication', 'award', 'experience', 'education', 'membership', 'language', 'training', 'project', 'skill', 'reference'],
+               on: { summary: 1, current: 1, talk: 1, publication: 1, award: 1, experience: 1, education: 1, membership: 1, language: 1 }, max: { talk: 8, publication: 6, award: 5, experience: 3, education: 2, membership: 4 } },
+    job: { order: ['summary', 'current', 'experience', 'award', 'project', 'publication', 'education', 'training', 'skill', 'language', 'membership', 'talk', 'reference'],
+           on: { summary: 1, current: 1, experience: 1, award: 1, project: 1, publication: 1, education: 1, training: 1, skill: 1, language: 1, membership: 1, reference: 1 }, max: { project: 5, publication: 5, training: 5, membership: 4 } },
+    scholarship: { order: ['summary', 'current', 'education', 'award', 'activity', 'project', 'language', 'training', 'skill', 'publication', 'talk', 'membership', 'experience', 'reference'],
+                   on: { summary: 1, current: 1, education: 1, award: 1, activity: 1, project: 1, language: 1, training: 1, skill: 1, reference: 1 }, max: { award: 8, activity: 6, project: 5, training: 5 } }
   };
-  var DT_KEYS = { full: 'dtFull', short: 'dtShort', student: 'dtStudent' };
+  Object.keys(DOCS).forEach(function (k) { Object.keys(SEC_LABEL).forEach(function (sk) { if (DOCS[k].order.indexOf(sk) < 0) DOCS[k].order.push(sk); }); });
+  var DT_KEYS = { full: 'dtFull', short: 'dtShort', student: 'dtStudent', speaker: 'dtSpeaker', job: 'dtJob', scholarship: 'dtScholar' };
   var rb = { pid: null, draft: null, preset: '', open: {}, tab: 'edit', cache: null, tok: 0 };
 
   function tt(k, L) { return (I18N[L] && I18N[L][k]) || I18N.en[k] || k; }
@@ -870,14 +948,169 @@
     });
     var act = c.photos.filter(function (x) { return x.active; })[0];
     return { docType: docType, lang: lang, name: '', sections: sectionsFor(docType), exclude: {}, filters: { tags: [], from: '', hidePrivate: true },
-             photoId: act ? act.id : '', contactIds: ids, personal: { dob: false, pob: false, nationality: false, nid: false }, summary: { en: '', th: '' } };
+             photoId: act ? act.id : '', contactIds: ids, personal: { dob: false, pob: false, nationality: false, nid: false }, summary: { en: '', th: '' },
+             addressId: '', headline: true, currentShow: { work: true, study: true }, pkg: { list: 'auto', checks: {}, sel: {} } };
+  }
+  function normDraft(dr) {
+    if (!dr.currentShow) dr.currentShow = { work: true, study: true };
+    if (dr.addressId === undefined) dr.addressId = '';
+    if (dr.headline === undefined) dr.headline = true;
+    if (!dr.pkg) dr.pkg = { list: 'auto', checks: {}, sel: {} };
+    if (!dr.sections.some(function (x) { return x.key === 'current'; })) {
+      var at = 0; dr.sections.forEach(function (x, i) { if (x.key === 'summary') at = i + 1; });
+      dr.sections.splice(at, 0, { key: 'current', on: true, max: 0, title: '' });
+    }
+    Object.keys(SEC_LABEL).forEach(function (k) { if (!dr.sections.some(function (x) { return x.key === k; })) dr.sections.push({ key: k, on: false, max: 0, title: '' }); });
+    return dr;
+  }
+  // ---------- Application package (checklist + zip) ----------
+  var PKG_LISTS = {
+    speaker: { dt: 'dtSpeaker', items: [
+      { k: 'cv', req: 1, auto: 'cv', l: { en: 'Speaker profile (this resume)', th: 'ประวัติวิทยากร (เรซูเม่ฉบับนี้)' } },
+      { k: 'bio', req: 1, auto: 'summary', l: { en: 'Short bio', th: 'ประวัติย่อ' }, h: { en: 'Fill in the Summary: about 80 to 150 words, written in the third person.', th: 'กรอกในช่องสรุป ประมาณ 80 ถึง 150 คำ เขียนแบบบุรุษที่สาม' } },
+      { k: 'photo', req: 1, auto: 'photo', l: { en: 'Professional photo', th: 'ภาพถ่ายทางการ' }, h: { en: 'A clear, high-resolution headshot.', th: 'ภาพถ่ายหน้าตรงที่ชัดเจน ความละเอียดสูง' } },
+      { k: 'talks', req: 1, auto: 'rec:talk', l: { en: 'Past talks listed', th: 'การบรรยายที่ผ่านมา' } },
+      { k: 'topics', req: 1, auto: 'manual', cat: 'other', l: { en: 'Topics and talk abstracts', th: 'หัวข้อและบทคัดย่อการบรรยาย' } },
+      { k: 'slides', req: 0, auto: 'manual', cat: 'other', l: { en: 'Sample slides or video link', th: 'ตัวอย่างสไลด์หรือลิงก์วิดีโอ' } },
+      { k: 'needs', req: 0, auto: 'manual', l: { en: 'Equipment, travel and fee terms', th: 'อุปกรณ์ การเดินทาง และเงื่อนไขค่าตอบแทน' } }
+    ] },
+    job: { dt: 'dtJob', items: [
+      { k: 'cv', req: 1, auto: 'cv', l: { en: 'Resume / CV (this document)', th: 'เรซูเม่ / CV (ฉบับนี้)' } },
+      { k: 'cover', req: 1, auto: 'manual', cat: 'other', l: { en: 'Cover letter / statement of motivation', th: 'จดหมายสมัครงาน / หนังสือแสดงเจตจำนง' } },
+      { k: 'edu', req: 1, auto: 'docs', cat: 'education', sel: 1, l: { en: 'Degree certificates and transcripts', th: 'วุฒิการศึกษาและทรานสคริปต์' } },
+      { k: 'work', req: 1, auto: 'docs', cat: 'employment', sel: 1, l: { en: 'Work certificates / employment letters', th: 'หนังสือรับรองการทำงาน' } },
+      { k: 'refs', req: 1, auto: 'rec:reference', l: { en: 'Referees (who agreed to be listed)', th: 'ผู้รับรอง (ที่ยินยอมแล้ว)' } },
+      { k: 'cert', req: 0, auto: 'docs', cat: 'certificate', sel: 1, l: { en: 'Professional certificates and licenses', th: 'ใบรับรองและใบอนุญาตวิชาชีพ' } },
+      { k: 'port', req: 0, auto: 'rec:project', l: { en: 'Key projects / portfolio', th: 'โครงการสำคัญ / ผลงาน' } },
+      { k: 'pub', req: 0, auto: 'rec:publication', l: { en: 'Publications', th: 'ผลงานตีพิมพ์' } },
+      { k: 'id', req: 0, auto: 'docs', cat: 'identity', l: { en: 'ID card / passport copy', th: 'สำเนาบัตรประชาชน / หนังสือเดินทาง' } },
+      { k: 'photo', req: 0, auto: 'photo', l: { en: 'Photo', th: 'รูปถ่าย' } }
+    ] },
+    scholarship: { dt: 'dtScholar', items: [
+      { k: 'cv', req: 1, auto: 'cv', l: { en: 'Student profile / resume (this document)', th: 'ประวัตินักเรียน / เรซูเม่ (ฉบับนี้)' } },
+      { k: 'form', req: 1, auto: 'manual', cat: 'other', l: { en: 'Application form', th: 'ใบสมัคร' } },
+      { k: 'id', req: 1, auto: 'docs', cat: 'identity', l: { en: 'ID card / passport copy', th: 'สำเนาบัตรประชาชน / หนังสือเดินทาง' } },
+      { k: 'photo', req: 1, auto: 'photo', l: { en: 'Photo', th: 'รูปถ่าย' } },
+      { k: 'trans', req: 1, auto: 'docs', cat: 'education', sel: 1, l: { en: 'Report cards and transcripts', th: 'ใบแสดงผลการเรียนและทรานสคริปต์' } },
+      { k: 'statement', req: 1, auto: 'manual', cat: 'other', l: { en: 'Personal statement / essay', th: 'เรียงความ / แนะนำตัว' } },
+      { k: 'letters', req: 1, auto: 'manual', cat: 'other', l: { en: 'Recommendation letters', th: 'จดหมายรับรอง / แนะนำ' } },
+      { k: 'award', req: 0, auto: 'docs', cat: 'award', sel: 1, l: { en: 'Award certificates', th: 'เกียรติบัตรและรางวัล' } },
+      { k: 'cert', req: 0, auto: 'docs', cat: 'certificate', sel: 1, l: { en: 'Test and language certificates', th: 'ใบรับรองผลสอบและภาษา' } },
+      { k: 'act', req: 0, auto: 'rec:activity', l: { en: 'Activities listed', th: 'กิจกรรมที่ทำ' } },
+      { k: 'parent', req: 0, auto: 'manual', cat: 'identity', l: { en: 'Parent / guardian ID copies', th: 'สำเนาบัตรผู้ปกครอง' } }
+    ] }
+  };
+  function pkgListKey(d) { return d.pkg.list === 'auto' ? ({ speaker: 'speaker', job: 'job', scholarship: 'scholarship' })[d.docType] || '' : d.pkg.list; }
+  function pkgCands(it, c, d) {
+    if (it.auto === 'photo') return c.photos.map(function (x) { return { id: x.id, kind: 'photo', ph: x, name: t(PHOTO_LABELS[x.label] || 'pOther'), def: x.id === d.photoId, priv: false }; });
+    if (!it.cat) return [];
+    return (c.docs || []).filter(function (x) { return x.category === it.cat; }).map(function (x) { return { id: x.id, kind: 'doc', doc: x, name: x.fileName, def: !!it.sel, priv: x.privacy !== 'public' }; });
+  }
+  function pkgSelected(it, c, d) {
+    return pkgCands(it, c, d).filter(function (x) { var v = d.pkg.sel[it.k + '|' + x.id]; return v === undefined ? x.def : !!v; });
+  }
+  function pkgState(it, c, d) {
+    var ov = d.pkg.checks[it.k] || '';
+    if (ov === 'na') return { st: 'na', files: [] };
+    var files = pkgSelected(it, c, d), a = it.auto, ok = false;
+    if (a === 'cv') ok = true;
+    else if (a === 'summary') ok = !!((d.summary.en || '').trim() || (d.summary.th || '').trim());
+    else if (a === 'photo') ok = c.photos.length > 0;
+    else if (a.indexOf('rec:') === 0) { var ty = a.slice(4); ok = c.recs.some(function (r) { return r.type === ty && (ty !== 'reference' || (r.data && r.data.consent)); }); }
+    else ok = files.length > 0;
+    if (!ok && a === 'manual' && files.length) ok = true;
+    if (ok) return { st: 'ok', files: files };
+    return ov === 'done' ? { st: 'marked', files: files } : { st: 'miss', files: files };
+  }
+  function pkgItemsOf(d) { var k = pkgListKey(d); return k && PKG_LISTS[k] ? PKG_LISTS[k].items : []; }
+  function pkgCard(c, d) {
+    var items = pkgItemsOf(d), lk = pkgListKey(d);
+    var lo = [['auto', t('pkgAuto')], ['', t('pkgNone')], ['speaker', t(PKG_LISTS.speaker.dt)], ['job', t(PKG_LISTS.job.dt)], ['scholarship', t(PKG_LISTS.scholarship.dt)]].map(function (o) {
+      return '<option value="' + o[0] + '"' + (d.pkg.list === o[0] ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('');
+    var rq = 0, rdy = 0, body = items.map(function (it) {
+      var S = pkgState(it, c, d), isReq = !!it.req, ov = d.pkg.checks[it.k] || '';
+      if (isReq && S.st !== 'na') { rq++; if (S.st === 'ok' || S.st === 'marked') rdy++; }
+      var pill = S.st === 'ok' ? '<span class="pill ok">✓ ' + esc(t('pkgReady')) + (S.files.length ? ' · ' + S.files.length + ' ' + esc(t('pkgFiles')) : '') + '</span>' :
+                 S.st === 'marked' ? '<span class="pill ok">✓ ' + esc(t('pkgMarked')) + '</span>' : S.st === 'na' ? '<span class="pill">' + esc(t('pkgNAs')) + '</span>' : '<span class="pill warn">⚠ ' + esc(pkgCands(it, c, d).length ? t('pkgNotSel') : t('pkgMissing')) + '</span>';
+      var so = [['', 'pkgAutoOpt'], ['done', 'pkgDone'], ['na', 'pkgNA']].map(function (o) { return '<option value="' + o[0] + '"' + (ov === o[0] ? ' selected' : '') + '>' + esc(t(o[1])) + '</option>'; }).join('');
+      var cands = pkgCands(it, c, d), files = '';
+      if (cands.length) files = '<p class="sub" style="margin:6px 0 2px">' + esc(t('pkgPick')) + '</p>' + cands.map(function (x) {
+        var v = d.pkg.sel[it.k + '|' + x.id], on2 = v === undefined ? x.def : !!v;
+        return '<label class="chk"><input type="checkbox" class="pkgSel" data-key="' + esc(it.k + '|' + x.id) + '"' + (on2 ? ' checked' : '') + '> ' + esc(x.name) + (x.priv ? ' <span class="pill">' + esc(t('privLbl')) + '</span>' : '') + '</label>'; }).join('');
+      else if (it.cat) files = '<p class="sub" style="margin:6px 0 0">' + esc(t('pkgNoDocs')) + '</p>';
+      return '<div class="row" style="align-items:flex-start;flex-wrap:wrap;gap:8px"><span style="flex:1;min-width:200px"><b>' + esc(it.l[lang] || it.l.en) + '</b> ' + pill + (isReq ? '' : ' <span class="pill">' + esc(t('pkgOptional')) + '</span>') +
+        (it.h ? '<br><span class="sub" style="margin:0">' + esc(it.h[lang] || it.h.en) + '</span>' : '') + files + '</span>' +
+        '<select class="input pkgChk" data-key="' + it.k + '" style="width:auto;min-width:130px" aria-label="' + esc(t('pkgSt')) + '">' + so + '</select></div>';
+    }).join('');
+    return '<div class="card"><h2>' + esc(t('pkgTitle')) + '</h2><p class="sub">' + esc(t('pkgHint')) + '</p>' +
+      '<div class="fld"><label class="lbl" for="pkgList">' + esc(t('pkgList')) + '</label><select id="pkgList" class="input">' + lo + '</select></div>' +
+      (lk ? '<p><b id="pkgProg">' + rdy + ' / ' + rq + '</b> ' + esc(t('pkgProgress')) + '</p>' + body : '<p class="sub">' + esc(t('pkgNoneHint')) + '</p>') +
+      '<div class="toolbar"><button class="btn" data-action="pkg-make">' + esc(t('pkgMake')) + '</button></div><p id="pkgMsg" class="msg" aria-live="polite"></p></div>';
+  }
+  var PKG_CSS = 'body{margin:0;background:#fff;color:#111;font:14px/1.45 system-ui,"Noto Sans Thai",sans-serif}.paper{max-width:794px;margin:0 auto;padding:32px}.cv-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}' +
+    '.cv-name{margin:0 0 4px;font-size:26px}.cv-line{margin:2px 0;font-size:13px}.cv-photo{width:96px;height:120px;object-fit:cover;border-radius:4px}.cv-sec{margin-top:16px}' +
+    '.cv-sec h2{font-size:15px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #999;padding-bottom:3px;margin:0 0 8px}.cv-item{margin-bottom:10px}.cv-row{display:flex;justify-content:space-between;gap:12px}' +
+    '.cv-date{white-space:nowrap;color:#444}.cv-sub{color:#444;font-size:13px}.cv-item p,.cv-sec p{margin:3px 0}ul{margin:3px 0 3px 20px;padding:0}@page{size:A4;margin:14mm}@media print{.paper{padding:0}}';
+  function pkgExt(mime) { return ({ 'image/jpeg': 'jpg', 'image/jpg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/heic': 'heic', 'image/heif': 'heif' })[mime] || 'jpg'; }
+  async function pkgMake() {
+    var c = rb.cache, d = rb.draft, L = d.lang, msg = q('pkgMsg'), items = pkgItemsOf(d), T = function (k) { return tt(k, L); };
+    if (msg) msg.textContent = t('pkgWorking');
+    var photo = '';
+    if (d.photoId) { var ph = c.photos.filter(function (x) { return x.id === d.photoId; })[0], bl = ph && await storage.local.get(ph.blobId); if (bl) photo = await blobDataUrl(bl); }
+    var base = (nm(c.p, L) || nm(c.p, L === 'th' ? 'en' : 'th') || 'CV').replace(/[^\p{L}\p{N}]+/gu, '_') + '_' + tt(DT_KEYS[d.docType], 'en').replace(/[^\p{L}\p{N}]+/gu, '_') + '_' + nowIso().slice(0, 10) + '_package';
+    var title = (nm(c.p, L) || 'Resume'), html = '<!doctype html><html lang="' + L + '"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + esc(title) + '</title><style>' + PKG_CSS + '</style></head><body><div class="paper">' + renderCv(L, photo) + '</div></body></html>';
+    var entries = [{ name: base + '/Resume.html', blob: new Blob([html], { type: 'text/html' }) }], seen = {}, lines = [], missing = [], used = {}, n = 0;
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i], S = pkgState(it, c, d), label = it.l[L] || it.l.en, status = S.st === 'ok' ? 'x' : S.st === 'marked' ? 'x' : S.st === 'na' ? '-' : ' ';
+      var folder = String(i + 1).replace(/^(\d)$/, '0$1') + '_' + label.replace(/[\\/:*?"<>|]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 50), got = [];
+      for (var j = 0; j < S.files.length; j++) {
+        var f = S.files[j], key = f.kind + f.id; if (seen[key]) { got.push(seen[key]); continue; }
+        var blob = await storage.local.get(f.kind === 'photo' ? f.ph.blobId : f.doc.blobId); if (!blob) continue;
+        var fname = f.kind === 'photo' ? 'Photo_' + safeName(f.name).replace(/\s+/g, '_') + '.' + pkgExt(blob.type) : safeName(f.doc.fileName), path = base + '/Documents/' + folder + '/' + fname;
+        if (used[path]) { var dot = fname.lastIndexOf('.'); fname = (dot > 0 ? fname.slice(0, dot) + '_' + (j + 1) + fname.slice(dot) : fname + '_' + (j + 1)); path = base + '/Documents/' + folder + '/' + fname; }
+        used[path] = 1; entries.push({ name: path, blob: blob }); seen[key] = 'Documents/' + folder + '/' + fname; got.push(seen[key]); n++;
+      }
+      lines.push('[' + status + '] ' + label + (it.req ? '' : ' (' + T('pkgOptional') + ')') + (S.st === 'marked' ? ' - ' + T('pkgMarked') : '') + (S.st === 'na' ? ' - ' + T('pkgNAs') : ''));
+      got.forEach(function (g) { lines.push('      ' + g); });
+      if (S.st === 'miss' && it.req) missing.push(label);
+    }
+    var txt = [T('pkgTxtTitle'), '', displayName(c.p) + ' - ' + T(DT_KEYS[d.docType]), T('pkgTxtDate') + ': ' + nowIso().slice(0, 10), '', 'Resume.html  (' + T('pkgResumeNote') + ')', ''].concat(items.length ? lines : []).concat(['', T('pkgTxtMissing') + ':'], missing.length ? missing.map(function (m) { return '  - ' + m; }) : ['  ' + T('pkgTxtNone')]).join('\r\n');
+    entries.push({ name: base + '/Checklist.txt', blob: new Blob(['\ufeff' + txt], { type: 'text/plain' }) });
+    var zip = await buildZip(entries);
+    await saveFile(zip, base + '.zip');
+    if (msg) msg.textContent = t('pkgBuilt') + ' (' + (n + 2) + ' ' + t('pkgFiles') + ')';
+  }
+  var CUR_FIELDS = ['job', 'org', 'duties', 'school', 'grade', 'major'];
+  function curHasWork(p) { var c = (p && p.current) || {}; return !!(cvText(c.job, 'en') || cvText(c.job, 'th') || cvText(c.org, 'en') || cvText(c.org, 'th')); }
+  function curHasStudy(p) { var c = (p && p.current) || {}; return !!(cvText(c.school, 'en') || cvText(c.school, 'th') || cvText(c.grade, 'en') || cvText(c.grade, 'th') || cvText(c.major, 'en') || cvText(c.major, 'th')); }
+  function curBody(p, L, show) {
+    var c = p.current || {}, h = '', T = function (k) { return tt(k, L); };
+    if (show.work && curHasWork(p)) {
+      var job = cvText(c.job, L), org = cvText(c.org, L);
+      h += '<div class="cv-item"><div class="cv-row"><span><b>' + esc(job) + '</b>' + (org ? (job ? ', ' : '') + esc(org) : '') + '</span><span class="cv-date">' +
+        (c.since ? esc(fmtDate(c.since, L) + ' – ' + T('present')) : '') + '</span></div>' + cvList(cvText(c.duties, L)) + '</div>';
+    }
+    if (show.study && curHasStudy(p)) {
+      var sc = cvText(c.school, L), gr = cvText(c.grade, L), mj = cvText(c.major, L);
+      var sub = [gr ? T('lblGrade') + ': ' + gr : '', mj ? T('lblMajor') + ': ' + mj : ''].filter(Boolean);
+      h += '<div class="cv-item"><div class="cv-row"><span><b>' + esc(sc || gr) + '</b></span><span class="cv-date">' + (c.school ? esc(T('present')) : '') + '</span></div>' +
+        (sc && sub.length ? '<div class="cv-sub">' + esc(sub.join(' · ')) + '</div>' : (!sc && mj ? '<div class="cv-sub">' + esc(T('lblMajor') + ': ' + mj) + '</div>' : '')) + '</div>';
+    }
+    return h;
+  }
+  function curHeadline(p, L, show) {
+    var c = p.current || {}, out = [];
+    if (show.work && curHasWork(p)) { var job = cvText(c.job, L), org = cvText(c.org, L); out.push(job && org ? job + ', ' + org : job || org); }
+    if (show.study && curHasStudy(p)) { var sc = cvText(c.school, L), gr = cvText(c.grade, L); out.push([gr, sc].filter(Boolean).join(', ')); }
+    return out.filter(Boolean).join(' | ');
   }
   function secItems(key) {
     var f = rb.draft.filters, list = rb.cache.recs.filter(function (r) { return r.type === key; });
+    if (key === 'reference') list = list.filter(function (r) { return r.data && r.data.consent; });
     if (f.hidePrivate) list = list.filter(function (r) { return r.privacy === 'public'; });
     if (f.tags.length) list = list.filter(function (r) { return (r.tags || []).some(function (g) { return f.tags.indexOf(g) >= 0; }); });
     if (f.from) list = list.filter(function (r) { var d = r.current ? '9999' : (r.endDate || r.startDate || ''); return !d || d.slice(0, 4) >= f.from; });
-    return list.sort(function (a, b) { return key === 'skill' ? bi(a.title).localeCompare(bi(b.title)) : (b.startDate || '').localeCompare(a.startDate || ''); });
+    return list.sort(function (a, b) { return key === 'skill' || key === 'language' ? bi(a.title).localeCompare(bi(b.title)) : (b.startDate || '').localeCompare(a.startDate || ''); });
   }
   function secIncluded(sec) {
     var l = secItems(sec.key).filter(function (r) { return !rb.draft.exclude[r.id]; });
@@ -886,23 +1119,35 @@
 
   function cvRange(r, L) {
     var a = r.startDate ? fmtDate(r.startDate, L) : '', b = r.current ? tt('present', L) : (r.endDate ? fmtDate(r.endDate, L) : '');
-    if (r.type === 'award') return a;
+    if (r.type === 'award' || r.type === 'talk' || r.type === 'publication') return a;
+    if (r.type === 'reference') return '';
     return a && b && a !== b ? a + ' – ' + b : (a || b);
   }
   function cvList(txt) { var l = String(txt || '').split(/\r?\n/).map(function (x) { return x.trim(); }).filter(Boolean); return l.length ? '<ul>' + l.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : ''; }
   function cvItem(r, L) {
     var d = r.data || {}, T = function (k) { return tt(k, L); }, org = cvText(r.organization, L), sub = [], extra = '';
     if (r.type === 'education') sub = [d.field, d.country, d.gpa ? T('fGpa') + ': ' + d.gpa : '', d.honors];
-    if (r.type === 'experience') { sub = [d.kind ? T('x_' + d.kind) : '', d.location]; extra = cvList(d.responsibilities) + cvList(d.achievements); }
+    if (r.type === 'experience') { sub = [d.kind ? T('x_' + d.kind) : '', d.location, d.teamSize ? T('lblTeam') + ': ' + d.teamSize : '', d.budget ? T('lblBudget') + ': ' + d.budget : '']; extra = cvList(d.responsibilities) + cvList(d.achievements); }
     if (r.type === 'training') sub = [d.trainingType ? T('x_' + d.trainingType) : '', d.location, d.instructor, d.hours ? d.hours + ' ' + T('hrsWord') : ''];
     if (r.type === 'award') sub = [d.level, d.category, d.result];
+    if (r.type === 'publication') sub = [d.pubType ? T('x_' + d.pubType) : '', d.authors, d.links];
+    if (r.type === 'talk') sub = [d.talkType ? T('x_' + d.talkType) : '', d.location, d.audience, d.talkLang, d.links];
+    if (r.type === 'activity') sub = [d.kind ? T('x_' + d.kind) : '', d.role, d.hours ? d.hours + ' ' + T('hrsWord') : ''];
+    if (r.type === 'reference') sub = [d.position, d.relationship, d.email, d.phone];
     if (r.type === 'project') {
-      sub = [d.role, d.skillsUsed];
+      sub = [d.role, d.teamSize ? T('lblTeam') + ': ' + d.teamSize : '', d.budget ? T('lblBudget') + ': ' + d.budget : '', d.skillsUsed];
       extra = (d.objective ? '<p><i>' + esc(T('fObjective')) + ':</i> ' + esc(d.objective) + '</p>' : '') + (d.outcome ? '<p><i>' + esc(T('fOutcome')) + ':</i> ' + esc(d.outcome) + '</p>' : '') + (d.links ? '<p>' + esc(d.links) + '</p>' : '');
     }
     sub = sub.filter(Boolean); var desc = cvText(r.description, L);
     return '<div class="cv-item"><div class="cv-row"><span><b>' + esc(cvText(r.title, L)) + '</b>' + (org ? ', ' + esc(org) : '') + '</span><span class="cv-date">' + esc(cvRange(r, L)) + '</span></div>' +
       (sub.length ? '<div class="cv-sub">' + esc(sub.join(' · ')) + '</div>' : '') + extra + (desc ? '<p>' + esc(desc) + '</p>' : '') + '</div>';
+  }
+  function cvLanguages(items, L) {
+    return items.map(function (r) {
+      var d = r.data || {}, T = function (k) { return tt(k, L); };
+      var det = [d.speaking ? T('fSpeaking') + ': ' + d.speaking : '', d.writing ? T('fWriting') + ': ' + d.writing : '', d.test].filter(Boolean).join(' · ');
+      return '<p><b>' + esc(cvText(r.title, L)) + (d.level ? ' (' + esc(d.level) + ')' : '') + '</b>' + (det ? ' — ' + esc(det) : '') + '</p>';
+    }).join('');
   }
   function cvSkills(items, L) {
     var g = {}, order = [];
@@ -911,20 +1156,24 @@
   }
   function renderCv(L, photoSrc) {
     var c = rb.cache, d = rb.draft, p = c.p, name = (p.title ? p.title + ' ' : '') + (nm(p, L) || nm(p, L === 'th' ? 'en' : 'th') || p.preferredName || '');
-    var contacts = CONTACT_KINDS.reduce(function (acc, k) { return acc.concat(c.contacts.filter(function (x) { return x.kind === k && d.contactIds.indexOf(x.id) >= 0; })); }, []).map(contactText);
+    var contacts = CONTACT_KINDS.reduce(function (acc, k) { return acc.concat(c.contacts.filter(function (x) { return x.kind === k && d.contactIds.indexOf(x.id) >= 0 && x.id !== d.addressId; })); }, []).map(contactText);
+    var adr = d.addressId ? c.contacts.filter(function (x) { return x.id === d.addressId; })[0] : null, adrTxt = adr ? contactText(adr) : '';
+    var hl = d.headline ? curHeadline(p, L, d.currentShow || { work: true, study: true }) : '';
     var pd = [];
     if (d.personal.dob && p.dateOfBirth) pd.push(tt('dob', L) + ': ' + fmtDate(p.dateOfBirth, L));
     if (d.personal.pob && p.placeOfBirth) pd.push(tt('pob', L) + ': ' + p.placeOfBirth);
     if (d.personal.nationality && p.nationality) pd.push(tt('nationality', L) + ': ' + p.nationality);
     if (d.personal.nid && p.nationalId) pd.push(tt('nid', L) + ': ' + p.nationalId);
     var ph = photoSrc ? '<img class="cv-photo" alt="" src="' + esc(photoSrc) + '">' : '';
-    var html = '<div class="cv-head"><div><h1 class="cv-name">' + esc(name) + '</h1>' + (contacts.length ? '<div class="cv-line">' + esc(contacts.join(' · ')) + '</div>' : '') +
+    var html = '<div class="cv-head"><div><h1 class="cv-name">' + esc(name) + '</h1>' + (hl ? '<div class="cv-line"><b>' + esc(hl) + '</b></div>' : '') + (contacts.length ? '<div class="cv-line">' + esc(contacts.join(' · ')) + '</div>' : '') +
+      (adrTxt ? '<div class="cv-line">' + esc(tt('addrLbl', L) + ': ' + adrTxt) + '</div>' : '') +
       (pd.length ? '<div class="cv-line">' + esc(pd.join(' · ')) + '</div>' : '') + '</div>' + ph + '</div>';
     d.sections.forEach(function (sec) {
       if (!sec.on) return;
       var title = esc(sec.title || tt(SEC_LABEL[sec.key], L)), body = '';
       if (sec.key === 'summary') { var tx = d.summary[L] || d.summary[L === 'th' ? 'en' : 'th']; if (tx) body = '<p>' + esc(tx) + '</p>'; }
-      else { var items = secIncluded(sec); body = !items.length ? '' : sec.key === 'skill' ? cvSkills(items, L) : items.map(function (r) { return cvItem(r, L); }).join(''); }
+      else if (sec.key === 'current') { body = curBody(p, L, d.currentShow || { work: true, study: true }); }
+      else { var items = secIncluded(sec); body = !items.length ? '' : sec.key === 'skill' ? cvSkills(items, L) : sec.key === 'language' ? cvLanguages(items, L) : items.map(function (r) { return cvItem(r, L); }).join(''); }
       if (body) html += '<section class="cv-sec"><h2>' + title + '</h2>' + body + '</section>';
     });
     return html;
@@ -974,17 +1223,26 @@
       if (sec.key === 'summary') {
         h += '<div class="fld"><label class="lbl" for="rbSumEn">' + esc(t('rbSumEn')) + '</label><textarea id="rbSumEn" class="input">' + esc(d.summary.en) + '</textarea></div>' +
              '<div class="fld"><label class="lbl" for="rbSumTh">' + esc(t('rbSumTh')) + '</label><textarea id="rbSumTh" class="input">' + esc(d.summary.th) + '</textarea></div>';
+      } else if (sec.key === 'current') {
+        h += '<label class="chk"><input type="checkbox" id="rbCurWork"' + (d.currentShow.work ? ' checked' : '') + '> ' + esc(t('rbCurWork')) + '</label>' +
+             '<label class="chk"><input type="checkbox" id="rbCurStudy"' + (d.currentShow.study ? ' checked' : '') + '> ' + esc(t('rbCurStudy')) + '</label>' +
+             '<label class="chk"><input type="checkbox" id="rbHead"' + (d.headline ? ' checked' : '') + '> ' + esc(t('rbHead')) + '</label>' +
+             '<p class="sub">' + esc(t('rbCurEdit')) + '</p>';
       } else {
         h += '<div class="fld"><label class="lbl" for="rbM_' + sec.key + '">' + esc(t('rbMax')) + '</label><select id="rbM_' + sec.key + '" class="input rbMax" data-key="' + sec.key + '">' + maxOpts(sec.max) + '</select></div>' +
-          '<details data-key="' + sec.key + '"' + (rb.open[sec.key] ? ' open' : '') + '><summary>' + esc(t('rbItems')) + ' <span id="cnt_' + sec.key + '"></span></summary>' +
+          (sec.key === 'reference' ? '<p class="sub">' + esc(t('rbRefHint')) + '</p>' : '') + '<details data-key="' + sec.key + '"' + (rb.open[sec.key] ? ' open' : '') + '><summary>' + esc(t('rbItems')) + ' <span id="cnt_' + sec.key + '"></span></summary>' +
           (items.length ? items.map(function (r) { return '<label class="chk"><input type="checkbox" class="rbItem" data-id="' + esc(r.id) + '"' + (d.exclude[r.id] ? '' : ' checked') + '> ' + esc(bi(r.title)) + '</label>'; }).join('') : '<p class="sub">' + esc(t('rbNoItems')) + '</p>') + '</details>';
       }
       h += '</div>';
     });
-    var ck = c.contacts.map(function (x) { return '<label class="chk"><input type="checkbox" class="rbContact" data-id="' + esc(x.id) + '"' + (d.contactIds.indexOf(x.id) >= 0 ? ' checked' : '') + '> ' + esc(t(KIND_KEYS[x.kind]) + ': ' + contactText(x)) + (x.privacy !== 'public' ? ' (' + esc(t('privLbl')) + ')' : '') + '</label>'; }).join('');
+    var addrOpts = '<option value="">' + esc(t('rbAddrNone')) + '</option>' + c.contacts.filter(function (x) { return isAddr(x.kind); }).map(function (x) {
+      return '<option value="' + esc(x.id) + '"' + (d.addressId === x.id ? ' selected' : '') + '>' + esc(t(KIND_KEYS[x.kind]) + ': ' + contactText(x)) + (x.privacy !== 'public' ? ' (' + esc(t('privLbl')) + ')' : '') + '</option>'; }).join('');
+    var addrSel = '<div class="fld"><label class="lbl" for="rbAddr">' + esc(t('rbAddr')) + '</label><select id="rbAddr" class="input">' + addrOpts + '</select></div>';
+    var ck = c.contacts.filter(function (x) { return !isAddr(x.kind) || d.contactIds.indexOf(x.id) >= 0; }).map(function (x) { return '<label class="chk"><input type="checkbox" class="rbContact" data-id="' + esc(x.id) + '"' + (d.contactIds.indexOf(x.id) >= 0 ? ' checked' : '') + '> ' + esc(t(KIND_KEYS[x.kind]) + ': ' + contactText(x)) + (x.privacy !== 'public' ? ' (' + esc(t('privLbl')) + ')' : '') + '</label>'; }).join('');
     var pers = [['dob', 'dob'], ['pob', 'pob'], ['nationality', 'nationality'], ['nid', 'nid']].map(function (k) {
       return '<label class="chk"><input type="checkbox" class="rbPers" data-k="' + k[0] + '"' + (d.personal[k[0]] ? ' checked' : '') + '> ' + esc(t(k[1])) + '</label>'; }).join('');
-    h += '<div class="card"><h2>' + esc(t('rbContact')) + '</h2>' + (ck || '<p class="sub">' + esc(t('rbNoContact')) + '</p>') + '<h2 style="margin-top:14px">' + esc(t('rbPersonal')) + '</h2>' + pers + '</div>';
+    h += '<div class="card"><h2>' + esc(t('rbContact')) + '</h2>' + addrSel + (ck || '<p class="sub">' + esc(t('rbNoContact')) + '</p>') + '<h2 style="margin-top:14px">' + esc(t('rbPersonal')) + '</h2>' + pers + '</div>';
+    h += pkgCard(c, d);
     return h;
   }
   function initResume() {
@@ -1006,22 +1264,27 @@
     if (parts[1] === 'snap') return snapView(parts[2]);
     var d = await activePerson(), p = d.active;
     if (!p) return head(t('resume'), t('rbSub')) + '<div class="card empty"><div class="big">📄</div><p>' + esc(t('noPerson')) + '</p><a class="btn" href="#people/new">' + esc(t('addPerson')) + '</a></div>';
-    var recs = await repo.list('records', { personId: p.id }), contacts = await repo.list('contacts', { personId: p.id }), photos = await repo.list('photos', { personId: p.id });
+    var recs = await repo.list('records', { personId: p.id }), contacts = await repo.list('contacts', { personId: p.id }), photos = await repo.list('photos', { personId: p.id }), docs = await repo.list('documents', { personId: p.id });
     var presets = (await repo.list('resumeProfiles', { personId: p.id })).sort(function (a, b) { return a.name.localeCompare(b.name); });
     var snaps = (await repo.list('generated', { personId: p.id })).sort(function (a, b) { return a.createdAt < b.createdAt ? 1 : -1; }), urls = {}, tags = {};
     for (var i = 0; i < photos.length; i++) urls[photos[i].id] = await photoUrl(photos[i]);
     recs.forEach(function (r) { (r.tags || []).forEach(function (g) { tags[g] = 1; }); });
-    rb.cache = { p: p, recs: recs, contacts: contacts, photos: photos, urls: urls, presets: presets, snaps: snaps, tagsAll: Object.keys(tags).sort() };
+    rb.cache = { p: p, recs: recs, docs: docs, contacts: contacts, photos: photos, urls: urls, presets: presets, snaps: snaps, tagsAll: Object.keys(tags).sort() };
     if (rb.pid !== p.id || !rb.draft) { rb.pid = p.id; rb.preset = ''; rb.draft = newDraft('full', rb.cache); }
     else {
       var dr = rb.draft; if (dr.photoId && !urls[dr.photoId]) dr.photoId = '';
       dr.contactIds = dr.contactIds.filter(function (id) { return contacts.some(function (x) { return x.id === id; }); });
+      if (dr.addressId && !contacts.some(function (x) { return x.id === dr.addressId; })) dr.addressId = '';
     }
 
     return '<div class="noprint">' + head(t('rbTitle'), displayName(p) + ' · ' + t('rbSub')) +
       '<div class="seg rbtabs" role="group" style="margin-bottom:12px"><button data-action="rb-tab" data-tab="edit" class="' + (rb.tab === 'edit' ? 'on' : '') + '">' + esc(t('rbEditTab')) + '</button><button data-action="rb-tab" data-tab="preview" class="' + (rb.tab === 'preview' ? 'on' : '') + '">' + esc(t('rbPrevTab')) + '</button></div></div>' +
       '<div class="rb" data-tab="' + rb.tab + '"><div id="rbControls" class="noprint"></div><div id="rbPreviewCol"></div></div>' +
-      '<div class="card noprint" style="margin-top:16px"><h2>' + esc(t('rbHistory')) + '</h2>' + '<div id="rbHist">' + histHtml() + '</div></div>';
+      '<div class="card noprint" style="margin-top:16px"><h2>' + esc(t('rbHistory')) + '</h2>' + '<div id="rbHist">' + histHtml() + '</div></div>' +
+      '<div class="card noprint" id="xlCard"><h2>' + esc(t('xlTitle')) + '</h2><p class="sub">' + esc(t('xlHint')) + '</p>' +
+      '<div class="grid two"><div class="fld"><label class="lbl" for="xlScope">' + esc(t('xlScope')) + '</label><select id="xlScope" class="input"><option value="this">' + esc(t('xlThis')) + '</option><option value="all">' + esc(t('xlAllPeople')) + '</option></select></div></div>' +
+      '<label class="chk"><input type="checkbox" id="xlPrivate"> ' + esc(t('xlPrivate')) + '</label>' +
+      '<div class="toolbar"><button class="btn" data-action="make-xlsx">' + esc(t('xlGo')) + '</button></div><div id="xlOut" aria-live="polite"></div></div>';
   }
   async function snapView(id) {
     var g = id ? await repo.get('generated', id) : null;
@@ -1043,7 +1306,7 @@
   async function rbPrint() {
     var c = rb.cache, d = rb.draft, photo = '';
     if (d.photoId) { var ph = c.photos.filter(function (x) { return x.id === d.photoId; })[0], bl = ph && await storage.local.get(ph.blobId); if (bl) photo = await blobDataUrl(bl); }
-    var base = (nm(c.p, d.lang) || nm(c.p, d.lang === 'th' ? 'en' : 'th') || 'CV').replace(/[^\p{L}\p{N}]+/gu, '_') + '_' + tt(DT_KEYS[d.docType], 'en').replace(/\s+/g, '_') + '_' + nowIso().slice(0, 10);
+    var base = (nm(c.p, d.lang) || nm(c.p, d.lang === 'th' ? 'en' : 'th') || 'CV').replace(/[^\p{L}\p{N}]+/gu, '_') + '_' + tt(DT_KEYS[d.docType], 'en').replace(/[^\p{L}\p{N}]+/gu, '_') + '_' + nowIso().slice(0, 10);
     var g = await repo.create('generated', { personId: c.p.id, name: base, docType: d.docType, lang: d.lang, resumeProfileId: rb.preset || '', html: renderCv(d.lang, photo) });
     c.snaps.unshift(g); var hb = q('rbHist'); if (hb) hb.innerHTML = histHtml(); printAs(base);
   }
@@ -1061,11 +1324,18 @@
     if (el.id === 'rbName') { d.name = el.value; return true; }
     if (el.id === 'rbPreset') {
       var pr = rb.cache.presets.filter(function (x) { return x.id === el.value; })[0];
-      rb.preset = pr ? pr.id : ''; rb.draft = pr ? Object.assign(newDraft('full', rb.cache), pr.draft, { name: pr.name }) : newDraft(d.docType, rb.cache);
+      rb.preset = pr ? pr.id : ''; rb.draft = pr ? normDraft(Object.assign(newDraft('full', rb.cache), pr.draft, { name: pr.name })) : newDraft(d.docType, rb.cache);
       initResume(); return true;
     }
     if (el.id === 'rbDoc') { d.docType = el.value; d.sections = sectionsFor(el.value); initResume(); return true; }
     if (el.id === 'rbLang') { d.lang = el.value; refreshPreview(); return true; }
+    if (el.id === 'pkgList') { d.pkg.list = el.value; initResume(); return true; }
+    if (el.classList.contains('pkgChk')) { if (el.value) d.pkg.checks[el.getAttribute('data-key')] = el.value; else delete d.pkg.checks[el.getAttribute('data-key')]; initResume(); return true; }
+    if (el.classList.contains('pkgSel')) { d.pkg.sel[el.getAttribute('data-key')] = el.checked; initResume(); return true; }
+    if (el.id === 'rbAddr') { d.addressId = el.value; refreshPreview(); return true; }
+    if (el.id === 'rbHead') { d.headline = el.checked; refreshPreview(); return true; }
+    if (el.id === 'rbCurWork') { d.currentShow.work = el.checked; refreshPreview(); return true; }
+    if (el.id === 'rbCurStudy') { d.currentShow.study = el.checked; refreshPreview(); return true; }
     if (el.id === 'rbPhoto') { d.photoId = el.value; refreshPreview(); return true; }
     if (el.classList.contains('rbSecOn')) { sec().on = el.checked; refreshPreview(); return true; }
     if (el.classList.contains('rbMax')) { sec().max = parseInt(el.value, 10) || 0; refreshPreview(); return true; }
@@ -1078,6 +1348,238 @@
     if (el.classList.contains('rbPers')) { d.personal[el.getAttribute('data-k')] = el.checked; refreshPreview(); return true; }
     if (el.id === 'rbSumEn' || el.id === 'rbSumTh') { d.summary[el.id === 'rbSumEn' ? 'en' : 'th'] = el.value; refreshPreview(); return true; }
     return false;
+  }
+
+  // ---------- Search, tags, timeline, expirations ----------
+  var sr = { idx: [], tags: {}, pid: '' }, tl = { types: {}, tag: '' };
+  function blobText(parts) { return parts.filter(Boolean).join(' ').toLowerCase(); }
+  async function buildIndex() {
+    var d = await activePerson(), pm = {}, idx = [], tags = {}, multi = d.list.length > 1;
+    d.list.forEach(function (x) { pm[x.id] = x; });
+    var who = function (pid) { return multi && pm[pid] ? displayName(pm[pid]) : ''; }, addTags = function (l) { (l || []).forEach(function (g) { tags[g] = (tags[g] || 0) + 1; }); };
+    d.list.forEach(function (x) {
+      idx.push({ kind: 'person', icon: '👤', pid: x.id, title: displayName(x), sub: otherName(x), href: '#people/' + x.id, tags: [], text: blobText([nm(x, 'en'), nm(x, 'th'), x.preferredName, x.title, x.nationality, x.placeOfBirth, x.notes].concat(CUR_FIELDS.map(function (k) { var o = (x.current || {})[k]; return o ? (o.en || '') + ' ' + (o.th || '') : ''; }))) });
+    });
+    (await repo.list('records')).filter(function (r) { return pm[r.personId]; }).forEach(function (r) {
+      var ti = biv(r.title), og = biv(r.organization), ds = biv(r.description), def = TYPE_DEFS[r.type]; addTags(r.tags);
+      idx.push({ kind: 'record', icon: def.icon, pid: r.personId, title: bi(r.title), sub: [t(def.one), bi(r.organization), recRange(r), who(r.personId)].filter(Boolean).join(' · '), href: '#people/' + r.personId + '/rec/' + r.type + '/' + r.id,
+        tags: r.tags || [], priv: r.privacy !== 'public', text: blobText([ti.en, ti.th, og.en, og.th, ds.en, ds.th, (r.tags || []).join(' '), Object.keys(r.data || {}).map(function (k) { return r.data[k]; }).join(' '), tt(def.one, 'en'), tt(def.one, 'th')]) });
+    });
+    (await repo.list('documents')).filter(function (x) { return pm[x.personId]; }).forEach(function (x) {
+      addTags(x.tags);
+      idx.push({ kind: 'document', icon: fileIcon(x), pid: x.personId, title: x.fileName, sub: [t(CAT_KEYS[x.category] || 'dcOther'), fmtSize(x.size), x.date ? fmtDate(x.date) : '', who(x.personId)].filter(Boolean).join(' · '), href: '#documents/' + x.id,
+        tags: x.tags || [], priv: x.privacy !== 'public', text: blobText([x.fileName, x.description, (x.tags || []).join(' '), x.notes, x.source, tt(CAT_KEYS[x.category] || 'dcOther', 'en'), tt(CAT_KEYS[x.category] || 'dcOther', 'th')]) });
+    });
+    (await repo.list('contacts')).filter(function (c) { return pm[c.personId]; }).forEach(function (c) {
+      idx.push({ kind: 'contact', icon: '☎️', pid: c.personId, title: t(KIND_KEYS[c.kind]) + ': ' + contactText(c), sub: who(c.personId), href: '#people/' + c.personId, tags: [], priv: c.privacy !== 'public', text: blobText([tt(KIND_KEYS[c.kind], 'en'), tt(KIND_KEYS[c.kind], 'th'), contactText(c)]) });
+    });
+    sr.tags = tags; sr.pid = d.active ? d.active.id : '';
+    return { idx: idx, multi: multi };
+  }
+  async function searchView() {
+    var b = await buildIndex(), initial = decodeURIComponent(parseHash().slice(1).join('/'));
+    sr.idx = b.idx;
+    return head(t('search'), t('srHint')) + '<div class="card"><input id="srQ" type="search" class="input" placeholder="' + esc(t('searchPh')) + '" aria-label="' + esc(t('search')) + '" value="' + esc(initial) + '" autocomplete="off">' +
+      (b.multi ? '<div class="fld" style="margin:10px 0 0"><select id="srScope" class="input" aria-label="' + esc(t('srPeople')) + '"><option value="all">' + esc(t('srEveryone')) + '</option><option value="this">' + esc(t('srThis')) + '</option></select></div>' : '') + '</div><div id="srOut" aria-live="polite"></div>';
+  }
+  function runSearch() {
+    var out = q('srOut'), box = q('srQ');
+    if (!out || !box) return;
+    var raw = box.value.trim(), scope = q('srScope') ? q('srScope').value : 'all';
+    if (!raw) {
+      var tg = Object.keys(sr.tags).sort(function (a, b2) { return sr.tags[b2] - sr.tags[a] || a.localeCompare(b2); });
+      out.innerHTML = tg.length ? '<div class="card"><h2>' + esc(t('srTags')) + '</h2><div class="chips">' + tg.map(function (g) { return '<button class="chip" data-action="sr-tag" data-tag="' + esc(g) + '">#' + esc(g) + ' ' + sr.tags[g] + '</button>'; }).join('') + '</div></div>' : '';
+      return;
+    }
+    var toks = raw.toLowerCase().split(/\s+/).filter(Boolean);
+    var hits = sr.idx.filter(function (e) {
+      if (scope === 'this' && sr.pid && e.pid !== sr.pid) return false;
+      return toks.every(function (tk) {
+        if (tk.charAt(0) === '#' && tk.length > 1) return e.tags.some(function (g) { return g.toLowerCase() === tk.slice(1); });
+        return e.text.indexOf(tk) >= 0 || e.title.toLowerCase().indexOf(tk) >= 0;
+      });
+    });
+    if (!hits.length) { out.innerHTML = '<div class="card empty"><p>' + esc(t('srNone')) + '</p></div>'; return; }
+    var shown = hits.slice(0, 60), groups = [['person', 'srPeople'], ['record', 'srRecordsH'], ['document', 'srDocsH'], ['contact', 'srContactsH']], html = '<p class="sub">' + esc(fillT(t('srCount'), { n: hits.length })) + (hits.length > 60 ? ' ' + esc(t('srMore')) : '') + '</p>';
+    groups.forEach(function (g) {
+      var l = shown.filter(function (e) { return e.kind === g[0]; });
+      if (!l.length) return;
+      html += '<h2 style="font-size:15px;margin:14px 0 8px">' + esc(t(g[1])) + ' · ' + l.length + '</h2>' + l.map(function (e) {
+        return '<a class="card item" href="' + esc(e.href) + '"><span class="avatar">' + e.icon + '</span><span class="txt"><b>' + esc(e.title) + '</b><span class="sub" style="margin:0">' + esc(e.sub) +
+          (e.tags.length ? ' ' + esc(e.tags.map(function (x) { return '#' + x; }).join(' ')) : '') + '</span></span>' + (e.priv ? '<span class="pill">' + esc(t('privLbl')) + '</span>' : '') + '</a>';
+      }).join('');
+    });
+    out.innerHTML = html;
+  }
+
+  async function timelineView(p) {
+    var recs = await repo.list('records', { personId: p.id }), all = {}, types = Object.keys(tl.types).filter(function (k) { return tl.types[k]; });
+    recs.forEach(function (r) { (r.tags || []).forEach(function (g) { all[g] = 1; }); });
+    var list = recs.filter(function (r) { return (!types.length || types.indexOf(r.type) >= 0) && (!tl.tag || (r.tags || []).indexOf(tl.tag) >= 0); });
+    var dated = list.filter(function (r) { return r.startDate || r.endDate; }).sort(function (a, b) { return (b.startDate || b.endDate).localeCompare(a.startDate || a.endDate); }), undated = list.filter(function (r) { return !r.startDate && !r.endDate; });
+    var item = function (r) {
+      var def = TYPE_DEFS[r.type];
+      return '<a class="tl-item" href="#people/' + esc(p.id) + '/rec/' + r.type + '/' + esc(r.id) + '"><b>' + def.icon + ' ' + esc(bi(r.title)) + '</b>' + (r.privacy !== 'public' ? ' <span class="pill">' + esc(t('privLbl')) + '</span>' : '') +
+        '<br><span class="sub" style="margin:0">' + esc([t(def.one), bi(r.organization), recRange(r)].filter(Boolean).join(' · ')) + '</span></a>';
+    }, html = '', year = '';
+    dated.forEach(function (r) { var y = (r.startDate || r.endDate).slice(0, 4); if (y !== year) { year = y; html += '<div class="tl-year">' + y + '</div>'; } html += item(r); });
+    if (undated.length) html += '<div class="tl-year">' + esc(t('tlNoDate')) + '</div>' + undated.map(item).join('');
+    var chips = '<button class="chip' + (types.length ? '' : ' on') + '" data-action="tl-type" data-type="">' + esc(t('tlAll')) + '</button>' + REC_TYPES.map(function (k) {
+      return '<button class="chip' + (tl.types[k] ? ' on' : '') + '" data-action="tl-type" data-type="' + k + '">' + TYPE_DEFS[k].icon + ' ' + esc(t(TYPE_DEFS[k].label)) + '</button>'; }).join('');
+    var tg = Object.keys(all).sort();
+    return '<p><a href="#people/' + esc(p.id) + '">← ' + esc(displayName(p)) + '</a></p>' + head(t('timeline'), displayName(p)) + '<div class="chips">' + chips + '</div>' +
+      (tg.length ? '<div class="fld"><select id="tlTag" class="input" aria-label="' + esc(t('tlTag')) + '"><option value="">' + esc(t('tlTag')) + ': ' + esc(t('rbAll')) + '</option>' +
+        tg.map(function (g) { return '<option value="' + esc(g) + '"' + (tl.tag === g ? ' selected' : '') + '>#' + esc(g) + '</option>'; }).join('') + '</select></div>' : '') +
+      (html ? '<div class="tl">' + html + '</div>' : '<div class="card empty"><p>' + esc(t('tlEmpty')) + '</p></div>');
+  }
+  async function expiringDocs() {
+    var pm = {}, out = [];
+    (await repo.list('persons')).forEach(function (x) { pm[x.id] = x; });
+    (await repo.list('documents')).forEach(function (x) {
+      if (!x.expiryDate || !pm[x.personId]) return;
+      var days = Math.ceil((new Date(x.expiryDate + 'T00:00:00Z') - Date.now()) / 86400000);
+      if (!isNaN(days) && days <= 60) out.push({ doc: x, days: days, p: pm[x.personId] });
+    });
+    return out.sort(function (a, b) { return a.days - b.days; }).slice(0, 6);
+  }
+
+  // ---------- Excel export (hand-built .xlsx: no external library) ----------
+  function xlCol(n) { var s2 = ''; n++; while (n > 0) { var m = (n - 1) % 26; s2 = String.fromCharCode(65 + m) + s2; n = Math.floor((n - 1) / 26); } return s2; }
+  function xlEsc(v) {
+    return String(v).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\uFFFE\uFFFF]/g, '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function xlSheetXml(headers, rows) {
+    var all = [headers].concat(rows), w = headers.map(function (h) { return String(h).length; });
+    var sd = all.map(function (r, ri) {
+      var cells = r.map(function (v, ci) {
+        var ref = xlCol(ci) + (ri + 1), st = ri === 0 ? 1 : 2;
+        if (v === '' || v == null) return ri === 0 ? '<c r="' + ref + '" s="' + st + '"/>' : '';
+        if (typeof v === 'number' && isFinite(v)) { w[ci] = Math.max(w[ci], String(v).length); return '<c r="' + ref + '" s="' + st + '"><v>' + v + '</v></c>'; }
+        var str = String(v).slice(0, 32000), longest = Math.max.apply(null, str.split(/\r?\n/).map(function (x) { return x.length; }));
+        w[ci] = Math.max(w[ci], longest);
+        return '<c r="' + ref + '" s="' + st + '" t="inlineStr"><is><t xml:space="preserve">' + xlEsc(str) + '</t></is></c>';
+      }).join('');
+      return '<row r="' + (ri + 1) + '"' + (ri === 0 ? ' ht="30" customHeight="1"' : '') + '>' + cells + '</row>';
+    }).join('');
+    var cols = '<cols>' + w.map(function (n, i) { return '<col min="' + (i + 1) + '" max="' + (i + 1) + '" width="' + Math.min(60, Math.max(10, Math.round(n * 1.15) + 2)) + '" customWidth="1"/>'; }).join('') + '</cols>';
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
+      '<dimension ref="A1:' + xlCol(headers.length - 1) + all.length + '"/><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>' +
+      '<sheetFormatPr defaultRowHeight="15"/>' + cols + '<sheetData>' + sd + '</sheetData><autoFilter ref="A1:' + xlCol(headers.length - 1) + all.length + '"/></worksheet>';
+  }
+  var XL_STYLES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
+    '<fonts count="2"><font><sz val="10"/><name val="Tahoma"/></font><font><b/><sz val="10"/><name val="Tahoma"/></font></fonts>' +
+    '<fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFD6DDFB"/><bgColor indexed="64"/></patternFill></fill></fills>' +
+    '<borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>' +
+    '<cellXfs count="3"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>' +
+    '<xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment vertical="center" wrapText="1"/></xf>' +
+    '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf></cellXfs>' +
+    '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
+  async function buildXlsx(sheets) {
+    var NS = 'http://schemas.openxmlformats.org/', ct = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>' +
+      '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>' +
+      sheets.map(function (x, i) { return '<Override PartName="/xl/worksheets/sheet' + (i + 1) + '.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>'; }).join('') + '</Types>';
+    var wb = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="' + NS + 'officeDocument/2006/relationships"><sheets>' +
+      sheets.map(function (x, i) { return '<sheet name="' + xlEsc(x.name) + '" sheetId="' + (i + 1) + '" r:id="rId' + (i + 1) + '"/>'; }).join('') + '</sheets></workbook>';
+    var wbr = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+      sheets.map(function (x, i) { return '<Relationship Id="rId' + (i + 1) + '" Type="' + NS + 'officeDocument/2006/relationships/worksheet" Target="worksheets/sheet' + (i + 1) + '.xml"/>'; }).join('') +
+      '<Relationship Id="rId' + (sheets.length + 1) + '" Type="' + NS + 'officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>';
+    var rels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="' + NS + 'officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>';
+    var entries = [['[Content_Types].xml', ct], ['_rels/.rels', rels], ['xl/workbook.xml', wb], ['xl/_rels/workbook.xml.rels', wbr], ['xl/styles.xml', XL_STYLES]]
+      .concat(sheets.map(function (x, i) { return ['xl/worksheets/sheet' + (i + 1) + '.xml', xlSheetXml(x.headers, x.rows)]; }))
+      .map(function (e) { return { name: e[0], blob: new Blob([e[1]]) }; });
+    return new Blob([await buildZip(entries)], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  }
+
+  function biv(o) { return typeof o === 'string' ? { en: o, th: '' } : (o || {}); }
+  function bcols(h, f) { return [[h + ' (EN)', function (r) { return biv(f(r)).en || ''; }], [h + ' (TH)', function (r) { return biv(f(r)).th || ''; }]]; }
+  function dcol(h, k) { return [[h, function (r) { return (r.data || {})[k] || ''; }]]; }
+  function ncol(h, k) { return [[h, function (r) { var v = (r.data || {})[k]; return v === '' || v == null || isNaN(Number(v)) ? '' : Number(v); }]]; }
+  function ocol(h, f) { return [[h, f]]; }
+  var yes = function (r) { return r.current ? 'Yes' : ''; };
+  var XL_TYPES = [
+    ['Education', 'education', [].concat(bcols('Qualification', function (r) { return r.title; }), bcols('Institution', function (r) { return r.organization; }), dcol('Field of study', 'field'), dcol('Country', 'country'),
+      ocol('Start', function (r) { return r.startDate || ''; }), ocol('End', function (r) { return r.endDate || ''; }), ocol('Current', yes), dcol('GPA / grade', 'gpa'), dcol('Honors', 'honors'))],
+    ['Experience', 'experience', [].concat(bcols('Position', function (r) { return r.title; }), bcols('Organization', function (r) { return r.organization; }), dcol('Type', 'kind'), dcol('Location', 'location'),
+      ocol('Start', function (r) { return r.startDate || ''; }), ocol('End', function (r) { return r.endDate || ''; }), ocol('Current', yes), dcol('Team size', 'teamSize'), dcol('Budget / scale', 'budget'), dcol('Responsibilities', 'responsibilities'), dcol('Achievements', 'achievements'))],
+    ['Training', 'training', [].concat(bcols('Course', function (r) { return r.title; }), bcols('Organizer', function (r) { return r.organization; }), dcol('Type', 'trainingType'), dcol('Location', 'location'),
+      ocol('Start', function (r) { return r.startDate || ''; }), ocol('End', function (r) { return r.endDate || ''; }), dcol('Instructor', 'instructor'), ncol('Hours', 'hours'))],
+    ['Awards', 'award', [].concat(bcols('Award', function (r) { return r.title; }), bcols('Awarding organization', function (r) { return r.organization; }), ocol('Date', function (r) { return r.startDate || ''; }),
+      dcol('Level', 'level'), dcol('Category', 'category'), dcol('Ranking / result', 'result'))],
+    ['Projects', 'project', [].concat(bcols('Project', function (r) { return r.title; }), bcols('Organization', function (r) { return r.organization; }), dcol('Role', 'role'),
+      ocol('Start', function (r) { return r.startDate || ''; }), ocol('End', function (r) { return r.endDate || ''; }), ocol('Current', yes), dcol('Team size', 'teamSize'), dcol('Budget / scale', 'budget'), dcol('Objective', 'objective'), dcol('Skills used', 'skillsUsed'), dcol('Outcome', 'outcome'), dcol('Links', 'links'))],
+    ['Skills', 'skill', [].concat(bcols('Skill', function (r) { return r.title; }), dcol('Category', 'category'), dcol('Level', 'level'), ncol('Years of experience', 'years'))],
+    ['Languages', 'language', [].concat(bcols('Language', function (r) { return r.title; }), dcol('Overall level', 'level'), dcol('Speaking', 'speaking'), dcol('Writing', 'writing'), dcol('Test / certificate', 'test'))],
+    ['Activities', 'activity', [].concat(bcols('Activity', function (r) { return r.title; }), bcols('School / organization', function (r) { return r.organization; }), dcol('Type', 'kind'), dcol('Role', 'role'),
+      ocol('Start', function (r) { return r.startDate || ''; }), ocol('End', function (r) { return r.endDate || ''; }), ocol('Current', yes), ncol('Hours', 'hours'))],
+    ['Publications', 'publication', [].concat(bcols('Title', function (r) { return r.title; }), bcols('Publisher / journal', function (r) { return r.organization; }), dcol('Type', 'pubType'),
+      ocol('Published', function (r) { return r.startDate || ''; }), dcol('Authors', 'authors'), dcol('Link', 'links'))],
+    ['Talks', 'talk', [].concat(bcols('Talk title', function (r) { return r.title; }), bcols('Event / host', function (r) { return r.organization; }), dcol('Type', 'talkType'),
+      ocol('Date', function (r) { return r.startDate || ''; }), dcol('Location', 'location'), dcol('Audience', 'audience'), dcol('Language', 'talkLang'), dcol('Link', 'links'))],
+    ['Memberships', 'membership', [].concat(bcols('Position / membership', function (r) { return r.title; }), bcols('Organization', function (r) { return r.organization; }),
+      ocol('Start', function (r) { return r.startDate || ''; }), ocol('End', function (r) { return r.endDate || ''; }), ocol('Current', yes))],
+    ['References', 'reference', [].concat(bcols('Name', function (r) { return r.title; }), bcols('Organization', function (r) { return r.organization; }), dcol('Position', 'position'), dcol('Relationship', 'relationship'),
+      dcol('Email', 'email'), dcol('Phone', 'phone'), ocol('Agreed to be listed', function (r) { return r.data && r.data.consent ? 'Yes' : ''; }))]
+  ];
+  function xlCur(p) {
+    var c = p.current || {}, g = function (k, l) { return (c[k] && c[k][l]) || ''; };
+    return [g('job', 'en'), g('job', 'th'), g('org', 'en'), g('org', 'th'), c.since || '', g('duties', 'en'), g('duties', 'th'), g('school', 'en'), g('school', 'th'), g('grade', 'en'), g('grade', 'th'), g('major', 'en'), g('major', 'th')];
+  }
+  async function collectExport(scopeAll, withPrivate) {
+    var d = await activePerson(), people = scopeAll ? d.list : (d.active ? [d.active] : []);
+    var allRecs = await repo.list('records'), allDocs = await repo.list('documents'), allLinks = await repo.list('recordDocs'), allContacts = await repo.list('contacts');
+    var ok2 = function (x) { return withPrivate || x.privacy === 'public'; }, pname = function (p) { return nm(p, 'en') || nm(p, 'th') || p.preferredName || ''; };
+    var skipped = 0, sheets = [], profile = { name: 'Profile', headers: ['Person', 'Title', 'First name (EN)', 'Middle name (EN)', 'Last name (EN)', 'First name (TH)', 'Middle name (TH)', 'Last name (TH)', 'Preferred name', 'Gender',
+      'Date of birth', 'Place of birth', 'Nationality', 'National ID / passport', 'Notes',
+      'Current job (EN)', 'Current job (TH)', 'Workplace (EN)', 'Workplace (TH)', 'Working since', 'Responsibilities (EN)', 'Responsibilities (TH)', 'School (EN)', 'School (TH)', 'Grade (EN)', 'Grade (TH)', 'Specialization (EN)', 'Specialization (TH)'], rows: [] };
+    var contacts = { name: 'Contacts', headers: ['Person', 'Type', 'Value / address line', 'District', 'Province', 'Postal code', 'Country', 'Preferred'], rows: [] };
+    var docsSheet = { name: 'Documents', headers: ['Person', 'File name', 'Category', 'Document date', 'Expiry date', 'Source', 'Description', 'Tags', 'File type', 'Size (bytes)', 'Linked records', 'Notes'], rows: [] };
+    var typeSheets = XL_TYPES.map(function (x) {
+      var cols = x[2].concat([['Description (EN)', function (r) { return biv(r.description).en || ''; }], ['Description (TH)', function (r) { return biv(r.description).th || ''; }],
+        ['Tags', function (r) { return (r.tags || []).join(', '); }], ['Documents', function (r, ctx) { return (ctx.docNames[r.id] || []).join('; '); }]]);
+      return { name: x[0], type: x[1], cols: cols, headers: ['Person'].concat(cols.map(function (c) { return c[0]; })), rows: [] };
+    });
+    people.forEach(function (p) {
+      var pf = withPrivate ? [] : (p.privateFields || []), hide = function (k, v) { return pf.indexOf(k) >= 0 ? '' : (v || ''); }, n = function (l, k) { var o = (p.names || {})[l]; return o && typeof o === 'object' ? o[k] || '' : ''; };
+      profile.rows.push([pname(p), p.title || '', n('en', 'first'), n('en', 'middle'), n('en', 'last'), n('th', 'first'), n('th', 'middle'), n('th', 'last'), p.preferredName || '', p.gender || '',
+        hide('dateOfBirth', p.dateOfBirth), hide('placeOfBirth', p.placeOfBirth), p.nationality || '', hide('nationalId', p.nationalId), p.notes || ''].concat(xlCur(p)));
+      var cAll = allContacts.filter(function (c) { return c.personId === p.id; }), cKept = cAll.filter(ok2); skipped += cAll.length - cKept.length;
+      cKept.sort(function (a, b) { return CONTACT_KINDS.indexOf(a.kind) - CONTACT_KINDS.indexOf(b.kind); }).forEach(function (c) {
+        var a = c.data || {}, addr = isAddr(c.kind);
+        contacts.rows.push([pname(p), t2(KIND_KEYS[c.kind]), addr ? a.line || '' : c.value || '', addr ? a.district || '' : '', addr ? a.province || '' : '', addr ? a.postalCode || '' : '', addr ? a.country || '' : '', c.preferred ? 'Yes' : '']);
+      });
+      var pdocsAll = allDocs.filter(function (x) { return x.personId === p.id; }), pdocs = pdocsAll.filter(ok2), docById = {}, pRecs = allRecs.filter(function (r) { return r.personId === p.id; }), recById = {}, docNames = {}, docRecs = {};
+      pdocs.forEach(function (x) { docById[x.id] = x; }); pRecs.forEach(function (r) { recById[r.id] = r; });
+      allLinks.filter(function (l) { return l.personId === p.id; }).forEach(function (l) {
+        var dd = docById[l.documentId], rr = recById[l.recordId];
+        if (dd && rr && ok2(rr)) { (docNames[rr.id] = docNames[rr.id] || []).push(dd.fileName); (docRecs[dd.id] = docRecs[dd.id] || []).push(t2(TYPE_DEFS[rr.type].one) + ': ' + (titleText(rr.title))); }
+      });
+      skipped += pdocsAll.length - pdocs.length; var ctx = { docNames: docNames };
+      typeSheets.forEach(function (ts) {
+        var lAll = pRecs.filter(function (r) { return r.type === ts.type; }), l = lAll.filter(ok2); skipped += lAll.length - l.length;
+        l.sort(function (a, b) { return ts.type === 'skill' ? titleText(a.title).localeCompare(titleText(b.title)) : (b.startDate || '').localeCompare(a.startDate || ''); });
+        l.forEach(function (r) { ts.rows.push([pname(p)].concat(ts.cols.map(function (c) { return c[1](r, ctx); }))); });
+      });
+      pdocs.sort(function (a, b) { return (b.date || '').localeCompare(a.date || ''); }).forEach(function (x) {
+        docsSheet.rows.push([pname(p), x.fileName, t2(CAT_KEYS[x.category] || 'dcOther'), x.date || '', x.expiryDate || '', x.source || '', x.description || '', (x.tags || []).join(', '), x.mimeType || '', x.size || 0, (docRecs[x.id] || []).join('; '), x.notes || '']);
+      });
+    });
+    sheets.push(profile, contacts); typeSheets.forEach(function (x) { sheets.push(x); }); sheets.push(docsSheet);
+    return { sheets: sheets, people: people, skipped: skipped };
+  }
+  function t2(k) { return tt(k, 'en'); }
+  async function doExcel(btn) {
+    var out = q('xlOut'), all = q('xlScope').value === 'all', priv = q('xlPrivate').checked;
+    btn.disabled = true; out.innerHTML = '<p class="sub">' + esc(t('xlWorking')) + '</p>';
+    try {
+      var x = await collectExport(all, priv);
+      if (!x.people.length) { out.innerHTML = '<p class="msg">' + esc(t('xlNone')) + '</p>'; btn.disabled = false; return; }
+      var blob = await buildXlsx(x.sheets), base = all ? 'ProfileVault_everyone' : 'ProfileVault_' + ((nm(x.people[0], 'en') || nm(x.people[0], 'th') || 'person').replace(/[^\p{L}\p{N}]+/gu, '_'));
+      var name = base + '_' + nowIso().slice(0, 10) + '.xlsx';
+      out.innerHTML = '<p><span class="pill ok">' + esc(t('xlDone')) + '</span></p><p class="sub">' + esc(name + ' · ' + fmtSize(blob.size)) + '</p><p class="sub">' + esc(t('xlSheets')) + ': ' +
+        esc(x.sheets.map(function (s2) { return s2.name + ' (' + s2.rows.length + ')'; }).join(' · ')) + '</p>' + (x.skipped ? '<p class="sub">' + esc(fillT(t('xlSkipped'), { n: x.skipped })) + '</p>' : '');
+      await saveFile(blob, name);
+    } catch (e) { out.innerHTML = '<p class="msg">' + esc(e.message) + '</p>'; }
+    btn.disabled = false;
   }
 
   // ---------- Backup & restore screens ----------
@@ -1253,13 +1755,14 @@
   var lang = 'en';
   try { lang = localStorage.getItem('pv_lang') || ((navigator.language || '').indexOf('th') === 0 ? 'th' : 'en'); } catch (e) {}
   function t(k) { return (I18N[lang] && I18N[lang][k]) || I18N.en[k] || k; }
-  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
 
   // ---------- Routes ----------
   var ROUTES = [
     { id: 'dashboard', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>', view: dashboardView },
     { id: 'people',    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14.2c2.9 0 5 2 5 5.2"/></svg>', view: peopleView },
     { id: 'documents', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>', view: documentsView },
+    { id: 'search',    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/></svg>', view: searchView },
     { id: 'resume',    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h6"/></svg>', view: resumeView },
     { id: 'settings',  icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>', view: settingsView }
   ];
@@ -1288,10 +1791,23 @@
   function displayName(p) { return nm(p, lang) || nm(p, lang === 'th' ? 'en' : 'th') || p.preferredName || '—'; }
   function otherName(p) { var o = nm(p, lang === 'th' ? 'en' : 'th'); return o === displayName(p) ? '' : o; }
   function initial(p) { return esc(Array.from(displayName(p))[0] || '?'); }
-  function completeness(p, ctx) {
-    ctx = ctx || {};
-    var checks = [hasName(p), !!p.dateOfBirth, !!p.placeOfBirth, !!p.nationality, !!p.gender, !!ctx.photo, !!ctx.contact, !!ctx.record];
-    return Math.round(100 * checks.filter(Boolean).length / checks.length);
+  function completenessDetail(p, ctx) {
+    ctx = ctx || {}; var n = ctx.n || {};
+    var basic = hasName(p) && [p.dateOfBirth, p.placeOfBirth, p.nationality, p.gender].filter(Boolean).length >= 2;
+    var items = [['basicInfo', basic], ['photos', !!ctx.photo], ['contacts', !!ctx.contact], ['tEducation', !!n.education], ['tExperience', !!n.experience],
+                 ['tTraining', !!n.training], ['tAward', !!n.award], ['documents', !!ctx.docs]];
+    return { items: items, pct: Math.round(100 * items.filter(function (x) { return x[1]; }).length / items.length) };
+  }
+  function completeness(p, ctx) { return completenessDetail(p, ctx).pct; }
+  async function completenessCtx(pid) {
+    var recs = await repo.list('records', { personId: pid }), n = {};
+    recs.forEach(function (r) { n[r.type] = (n[r.type] || 0) + 1; });
+    return { n: n, photo: (await repo.list('photos', { personId: pid })).length > 0, contact: (await repo.list('contacts', { personId: pid })).length > 0, docs: (await repo.list('documents', { personId: pid })).length > 0 };
+  }
+  async function completenessCard(p) {
+    var c = completenessDetail(p, await completenessCtx(p.id));
+    return '<div class="card"><h2>' + esc(t('completeness')) + ' <span class="pill ' + (c.pct >= 75 ? 'ok' : '') + '">' + c.pct + '%</span></h2><div class="bar"><span style="width:' + c.pct + '%"></span></div><div style="margin-top:10px">' +
+      c.items.map(function (x) { return '<div class="row" style="padding:6px 0"><span>' + esc(t(x[0])) + '</span><span>' + (x[1] ? '✓' : '△') + '</span></div>'; }).join('') + '</div></div>';
   }
   function fmtDate(iso, L2) {
     var m = iso.length === 7, d = new Date(iso + (iso.length === 10 ? 'T00:00:00Z' : (m ? '-01T00:00:00Z' : '')));
@@ -1309,7 +1825,7 @@
 
   async function dashboardView() {
     var d = await activePerson(), p = d.active, card, ctx = {};
-    if (p) ctx = { photo: (await repo.list('photos', { personId: p.id })).length > 0, contact: (await repo.list('contacts', { personId: p.id })).length > 0, record: (await repo.list('records', { personId: p.id })).length > 0 };
+    if (p) ctx = await completenessCtx(p.id);
     var pct = p ? completeness(p, ctx) : 0;
     if (!p) {
       card = '<div class="row"><span>' + esc(t('noPerson')) + '</span><span class="pill">—</span></div>' +
@@ -1320,6 +1836,12 @@
              '<p style="margin:12px 0 0"><a href="#people/' + esc(p.id) + '">' + esc(t('openProfile')) + '</a></p>';
     }
     var last = d.ws.lastBackupAt ? '<span class="pill ok">' + esc(fmtDate(d.ws.lastBackupAt.slice(0, 10))) + '</span>' : '<span class="pill warn">' + esc(t('never')) + '</span>';
+    var exp = await expiringDocs(), expCard = '';
+    if (exp.length) {
+      expCard = '<div class="card"><h2>' + esc(t('expTitle')) + '</h2>' + exp.map(function (x) {
+        return '<div class="row"><a href="#documents/' + esc(x.doc.id) + '">' + fileIcon(x.doc) + ' ' + esc(x.doc.fileName) + '</a><span>' + (d.list.length > 1 ? '<span class="sub" style="margin:0">' + esc(displayName(x.p)) + '</span> ' : '') +
+          '<span class="pill warn">' + esc(x.days < 0 ? t('expired') : fillT(t('expDays'), { n: x.days })) + '</span></span></div>'; }).join('') + '</div>';
+    }
     var bs = await backupStatus(), banner = '';
     if (bs.overdue) {
       banner = '<div class="card warnbox"><p style="margin:0 0 10px"><b>' + esc(!bs.last ? t('bkOverdueNever') : fillT(t('bkOverdueAge'), { d: bs.days })) + '</b>' +
@@ -1328,7 +1850,8 @@
     var qa = p ? [['addEducation', '#people/' + p.id + '/rec/education/new'], ['addAward', '#people/' + p.id + '/rec/award/new'], ['uploadDoc', '#documents'], ['genResume', '#resume']] : [];
     var others = qa.map(function (x) { return '<a class="btn ghost" href="' + esc(x[1]) + '">' + esc(t(x[0])) + '</a>'; }).join('');
     return head(t('welcome'), t('dashSub')) +
-      banner +
+      '<div class="fld"><input id="homeQ" type="search" class="input" placeholder="' + esc(t('searchPh')) + '" aria-label="' + esc(t('search')) + '" autocomplete="off"></div>' +
+      banner + expCard +
       '<div class="card"><h2>' + esc(t('person')) + '</h2>' + card + '</div>' +
       '<div class="grid two">' +
         '<div class="card"><h2>' + esc(t('completeness')) + '</h2><div class="bar"><span style="width:' + pct + '%"></span></div><p class="sub" style="margin:8px 0 0">' + pct + '%</p></div>' +
@@ -1344,6 +1867,7 @@
       var p = await repo.get('persons', sub);
       if (!p || p.deletedAt) return head(t('people'), '') + '<div class="card empty">' + esc(t('notFound')) + '</div><a class="btn ghost" href="#people">' + esc(t('back')) + '</a>';
       if (parts[2] === 'edit') return personForm(p);
+      if (parts[2] === 'timeline') return timelineView(p);
       if (parts[2] === 'rec') return recordsView(p, parts[3], parts[4]);
       if (parts[2] === 'contact') return contactForm(p, parts[3] && parts[3] !== 'new' ? await repo.get('contacts', parts[3]) : null);
       return personHome(p);
@@ -1359,14 +1883,18 @@
   }
 
   // ---------- Records (one form engine for every record type) ----------
-  var REC_TYPES = ['education', 'experience', 'training', 'award', 'skill', 'project'];
+  var REC_TYPES = ['education', 'experience', 'training', 'award', 'skill', 'project', 'language', 'activity', 'publication', 'talk', 'membership', 'reference'];
   var OPT = {
     kind: ['employment', 'internship', 'volunteer', 'leadership', 'research', 'teaching', 'other'],
     ttype: ['workshop', 'professional', 'online', 'certification', 'seminar', 'conference'],
-    scat: ['professional', 'technical', 'soft']
+    scat: ['professional', 'technical', 'soft'],
+    ptype: ['article', 'book', 'chapter', 'report', 'paper', 'brief', 'other'],
+    talk: ['keynote', 'panel', 'workshop', 'lecture', 'webinar', 'poster', 'other'],
+    akind: ['club', 'sport', 'arts', 'volunteer', 'leadership', 'competition', 'other']
   };
   var COMBO = { level: ['school', 'university', 'local', 'provincial', 'national', 'international', 'professional'],
-                slevel: ['Beginner', 'Intermediate', 'Advanced', 'Expert'] };
+                slevel: ['Beginner', 'Intermediate', 'Advanced', 'Expert'],
+                llevel: ['Native', 'Fluent', 'Advanced', 'Intermediate', 'Basic'] };
   var TAGS = { n: 'tags', k: 'tags', l: 'fTags' }, DESC = { n: 'description', k: 'bita', l: 'fDesc' };
   var TYPE_DEFS = {
     education: { icon: '🎓', label: 'tEducation', one: 'sEducation', fields: [
@@ -1378,6 +1906,7 @@
       { n: 'title', k: 'bi', l: 'fPosition' }, { n: 'organization', k: 'bi', l: 'fOrg' },
       { n: 'data.kind', k: 'select', l: 'fType', o: 'kind' }, { n: 'data.location', k: 'text', l: 'fLocation' },
       { n: 'startDate', k: 'month', l: 'fStart' }, { n: 'endDate', k: 'month', l: 'fEnd' }, { n: 'current', k: 'bool', l: 'fCurrent' },
+      { n: 'data.teamSize', k: 'text', l: 'fTeamSize' }, { n: 'data.budget', k: 'text', l: 'fBudget' },
       { n: 'data.responsibilities', k: 'area', l: 'fResp' }, { n: 'data.achievements', k: 'area', l: 'fAchv' }, DESC, TAGS ] },
     training: { icon: '📚', label: 'tTraining', one: 'sTraining', fields: [
       { n: 'title', k: 'bi', l: 'fCourse' }, { n: 'organization', k: 'bi', l: 'fOrganizer' },
@@ -1393,11 +1922,38 @@
       { n: 'data.level', k: 'combo', l: 'fLevel', o: 'slevel' }, { n: 'data.years', k: 'num', l: 'fYears' }, DESC, TAGS ] },
     project: { icon: '🔬', label: 'tProject', one: 'sProject', fields: [
       { n: 'title', k: 'bi', l: 'fProject' }, { n: 'organization', k: 'bi', l: 'fOrg' }, { n: 'data.role', k: 'text', l: 'fRole' },
+      { n: 'data.teamSize', k: 'text', l: 'fTeamSize' }, { n: 'data.budget', k: 'text', l: 'fBudget' },
       { n: 'startDate', k: 'month', l: 'fStart' }, { n: 'endDate', k: 'month', l: 'fEnd' }, { n: 'current', k: 'bool', l: 'fCurrent' },
       { n: 'data.objective', k: 'area', l: 'fObjective' }, { n: 'data.skillsUsed', k: 'text', l: 'fSkillsUsed' },
       { n: 'data.outcome', k: 'area', l: 'fOutcome' }, { n: 'data.links', k: 'text', l: 'fLinks' }, DESC, TAGS ] }
   };
-  var SINGLE_DATE = { award: 1 };
+  TYPE_DEFS.language = { icon: '🗣️', label: 'tLanguage', one: 'sLanguage', fields: [
+      { n: 'title', k: 'bi', l: 'fLanguage' }, { n: 'data.level', k: 'combo', l: 'fOverall', o: 'llevel' },
+      { n: 'data.speaking', k: 'combo', l: 'fSpeaking', o: 'llevel' }, { n: 'data.writing', k: 'combo', l: 'fWriting', o: 'llevel' },
+      { n: 'data.test', k: 'text', l: 'fLangTest' }, TAGS ] };
+  TYPE_DEFS.activity = { icon: '🎯', label: 'tActivity', one: 'sActivity', fields: [
+      { n: 'title', k: 'bi', l: 'fActivity' }, { n: 'organization', k: 'bi', l: 'fActOrg' },
+      { n: 'data.kind', k: 'select', l: 'fType', o: 'akind' }, { n: 'data.role', k: 'text', l: 'fRole' },
+      { n: 'startDate', k: 'month', l: 'fStart' }, { n: 'endDate', k: 'month', l: 'fEnd' }, { n: 'current', k: 'bool', l: 'fCurrent' },
+      { n: 'data.hours', k: 'num', l: 'fHours' }, DESC, TAGS ] };
+  TYPE_DEFS.publication = { icon: '📖', label: 'tPublication', one: 'sPublication', fields: [
+      { n: 'title', k: 'bi', l: 'fPubTitle' }, { n: 'organization', k: 'bi', l: 'fPublisher' },
+      { n: 'data.pubType', k: 'select', l: 'fType', o: 'ptype' }, { n: 'startDate', k: 'month', l: 'fPubDate' },
+      { n: 'data.authors', k: 'text', l: 'fAuthors' }, { n: 'data.links', k: 'text', l: 'fLinks' }, DESC, TAGS ] };
+  TYPE_DEFS.talk = { icon: '🎤', label: 'tTalk', one: 'sTalk', fields: [
+      { n: 'title', k: 'bi', l: 'fTalkTitle' }, { n: 'organization', k: 'bi', l: 'fEvent' },
+      { n: 'data.talkType', k: 'select', l: 'fType', o: 'talk' }, { n: 'startDate', k: 'date', l: 'fDate' },
+      { n: 'data.location', k: 'text', l: 'fLocation' }, { n: 'data.audience', k: 'text', l: 'fAudience' },
+      { n: 'data.talkLang', k: 'text', l: 'fTalkLang' }, { n: 'data.links', k: 'text', l: 'fLinks' }, DESC, TAGS ] };
+  TYPE_DEFS.membership = { icon: '🤝', label: 'tMembership', one: 'sMembership', fields: [
+      { n: 'title', k: 'bi', l: 'fMemberRole' }, { n: 'organization', k: 'bi', l: 'fMemberOrg' },
+      { n: 'startDate', k: 'month', l: 'fStart' }, { n: 'endDate', k: 'month', l: 'fEnd' }, { n: 'current', k: 'bool', l: 'fCurrent' }, DESC, TAGS ] };
+  TYPE_DEFS.reference = { icon: '✉️', label: 'tReference', one: 'sReference', fields: [
+      { n: 'title', k: 'bi', l: 'fRefName' }, { n: 'organization', k: 'bi', l: 'fOrg' },
+      { n: 'data.position', k: 'text', l: 'fRefPos' }, { n: 'data.relationship', k: 'text', l: 'fRelation' },
+      { n: 'data.email', k: 'text', l: 'fRefEmail' }, { n: 'data.phone', k: 'text', l: 'fRefPhone' },
+      { n: 'data.consent', k: 'bool', l: 'fConsent' }, TAGS ] };
+  var SINGLE_DATE = { award: 1, talk: 1, publication: 1 };
 
   function bi(o) { if (!o) return ''; if (typeof o === 'string') return o; return o[lang] || o[lang === 'th' ? 'en' : 'th'] || ''; }
   function getPath(o, path) { return path.split('.').reduce(function (v, k) { return v == null ? undefined : v[k]; }, o); }
@@ -1456,7 +2012,8 @@
     rec.privacy = on('r_priv') ? 'private' : 'public';
     return rec;
   }
-  var recStage = [], CAT_FOR = { education: 'education', experience: 'employment', training: 'training', award: 'award', project: 'project', skill: 'certificate' };
+  var recStage = [], CAT_FOR = { education: 'education', experience: 'employment', training: 'training', award: 'award', project: 'project', skill: 'certificate',
+                                 language: 'certificate', publication: 'publication', talk: 'other', membership: 'other', activity: 'other', reference: 'other' };
   function finalName(name, origName) {
     var n = safeName(name || origName);
     if (!EXT[extOf(n)]) { var e = extOf(origName); if (e) n += '.' + e; }
@@ -1517,11 +2074,13 @@
       return back + recordForm(p, type, r) + (await recordDocsCard(p, r));
     }
     var list = (await repo.list('records', { personId: p.id, type: type })).sort(function (a, b) {
-      if (type === 'skill') return bi(a.title).localeCompare(bi(b.title));
+      if (type === 'skill' || type === 'language') return bi(a.title).localeCompare(bi(b.title));
       return (b.startDate || '').localeCompare(a.startDate || '');
     });
     var cards = list.map(function (r) {
       var sub2 = [bi(r.organization), recRange(r)].filter(Boolean).join(' · ');
+      if (type === 'language') sub2 = [r.data && r.data.level, r.data && r.data.test].filter(Boolean).join(' · ');
+      if (type === 'reference') sub2 = [r.data && r.data.position, bi(r.organization), r.data && r.data.consent ? '✓' : ''].filter(Boolean).join(' · ');
       if (type === 'skill') sub2 = [r.data && r.data.category ? t('x_' + r.data.category) : '', r.data && r.data.level].filter(Boolean).join(' · ');
       return '<div class="card"><div class="row" style="border:0;padding:0"><span><b>' + esc(bi(r.title)) + '</b>' + (r.privacy !== 'public' ? ' <span class="pill">' + esc(t('privLbl')) + '</span>' : '') +
         '<br><span class="sub" style="margin:0">' + esc(sub2) + '</span></span><span><a class="btn ghost sm" href="#people/' + esc(p.id) + '/rec/' + type + '/' + esc(r.id) + '">' + esc(t('edit')) + '</a> ' +
@@ -1861,6 +2420,20 @@
   function nv(p, l, k) { var n = p && p.names && p.names[l]; return (n && typeof n === 'object' && n[k]) || ''; }
   function chk(id, on) { return '<label class="chk"><input type="checkbox" id="' + id + '"' + (on ? ' checked' : '') + '> ' + esc(t('privLbl')) + '</label>'; }
 
+  function curCard(p) {
+    var c = (p && p.current) || {};
+    function two(k, lbl, area) {
+      return ['en', 'th'].map(function (l) {
+        var id = 'f_cur_' + k + '_' + l, v = (c[k] && c[k][l]) || '', lab = esc(t(lbl)) + ' (' + l.toUpperCase() + ')';
+        return '<div class="fld"><label class="lbl" for="' + id + '">' + lab + '</label>' + (area ? '<textarea class="input" id="' + id + '">' + esc(v) + '</textarea>' : '<input class="input" id="' + id + '" value="' + esc(v) + '" autocomplete="off">') + '</div>';
+      }).join('');
+    }
+    return '<div class="card"><h2>' + esc(t('curTitle')) + '</h2><p class="sub">' + esc(t('curHint')) + '</p>' +
+      '<p><b>' + esc(t('curWorkH')) + '</b></p><div class="grid two">' + two('job', 'curJob') + two('org', 'curOrg') +
+      '<div class="fld"><label class="lbl" for="f_cur_since">' + esc(t('curSince')) + '</label><input class="input" type="month" id="f_cur_since" value="' + esc(c.since || '') + '"></div></div>' +
+      '<div class="grid two">' + two('duties', 'curDuties', true) + '</div>' +
+      '<p style="margin-top:14px"><b>' + esc(t('curStudyH')) + '</b></p><div class="grid two">' + two('school', 'curSchool') + two('grade', 'curGrade') + two('major', 'curMajor') + '</div></div>';
+  }
   function personForm(p) {
     var priv = p ? (p.privateFields || []) : ['nationalId'];
     var gopts = [['', '—'], ['female', t('gFemale')], ['male', t('gMale')], ['other', t('gOther')], ['undisclosed', t('gUndisclosed')]].map(function (g) {
@@ -1880,7 +2453,8 @@
         '<div class="fld">' + fld('f_pob', t('pob'), p && p.placeOfBirth).replace('</div>', chk('pv_pob', priv.indexOf('placeOfBirth') >= 0) + '</div>') + '</div>' +
         fld('f_nat', t('nationality'), p && p.nationality) +
         '<div class="fld">' + fld('f_nid', t('nid'), p && p.nationalId).replace('</div>', chk('pv_nid', priv.indexOf('nationalId') >= 0) + '</div>') + '</div>' +
-      '</div><div class="fld"><label class="lbl" for="f_notes">' + esc(t('notes')) + '</label><textarea class="input" id="f_notes">' + esc(p && p.notes) + '</textarea></div></div>' +
+      '</div><div class="fld"><label class="lbl" for="f_notes">' + esc(t('notes')) + '</label><textarea class="input" id="f_notes">' + esc(p && p.notes !== 'null' ? p.notes : '') + '</textarea></div></div>' +
+      curCard(p) +
       '<p id="formMsg" class="msg" aria-live="polite"></p>' +
       '<div class="toolbar"><button class="btn" data-action="save-person" data-id="' + esc(p ? p.id : '') + '">' + esc(t('save')) + '</button>' +
       '<a class="btn ghost" href="#people' + (p ? '/' + esc(p.id) : '') + '">' + esc(t('cancel')) + '</a></div>';
@@ -1889,28 +2463,35 @@
   async function personHome(p) {
     var d = await activePerson(), am = await activePhotos(), isA = d.active && d.active.id === p.id, pf = p.privateFields || [];
     var g = { female: 'gFemale', male: 'gMale', other: 'gOther', undisclosed: 'gUndisclosed' };
+    var cu = p.current || {};
     var rows = [
       ['preferred', p.preferredName, ''], ['titleF', p.title, ''], ['gender', p.gender && t(g[p.gender]), ''],
       ['dob', p.dateOfBirth && fmtDate(p.dateOfBirth), 'dateOfBirth'], ['pob', p.placeOfBirth, 'placeOfBirth'],
-      ['nationality', p.nationality, ''], ['nid', p.nationalId && ('••••' + p.nationalId.slice(-3)), 'nationalId'], ['notes', p.notes, '']
+      ['nationality', p.nationality, ''], ['nid', p.nationalId && ('••••' + p.nationalId.slice(-3)), 'nationalId'],
+      ['curJob', bi(cu.job), ''], ['curOrg', bi(cu.org), ''], ['curSchool', bi(cu.school), ''], ['curGrade', bi(cu.grade), ''], ['curMajor', bi(cu.major), ''], ['notes', p.notes === 'null' ? '' : p.notes, '']
     ].filter(function (r) { return r[1]; }).map(function (r) {
       return '<div class="row"><span class="sub" style="margin:0">' + esc(t(r[0])) + '</span><span>' + esc(r[1]) +
              (r[2] && pf.indexOf(r[2]) >= 0 ? ' <span class="pill">' + esc(t('privLbl')) + '</span>' : '') + '</span></div>';
     }).join('');
     return '<p><a href="#people">← ' + esc(t('people')) + '</a></p>' +
       '<div class="card item">' + avatar(p, am[p.id], true) + '<span class="txt"><h1 style="margin:0">' + esc(displayName(p)) + '</h1><span class="sub" style="margin:0">' + esc(otherName(p)) + '</span></span></div>' +
-      '<div class="toolbar"><a class="btn" href="#people/' + esc(p.id) + '/edit">' + esc(t('edit')) + '</a>' +
+      '<div class="toolbar"><a class="btn" href="#people/' + esc(p.id) + '/edit">' + esc(t('edit')) + '</a><a class="btn ghost" href="#people/' + esc(p.id) + '/timeline">' + esc(t('timeline')) + '</a>' +
         (isA ? '<span class="pill ok" style="align-self:center">' + esc(t('activeLbl')) + '</span>' : '<button class="btn ghost" data-action="make-active" data-id="' + esc(p.id) + '">' + esc(t('makeActive')) + '</button>') +
         '<button class="btn ghost" data-action="ask-delete">' + esc(t('del')) + '</button></div>' +
       '<div id="delBox" class="card" hidden><p><b>' + esc(t('delAsk')) + '</b></p><p class="sub">' + esc(t('delWarn')) + '</p>' +
         '<button class="btn danger" data-action="do-delete" data-id="' + esc(p.id) + '">' + esc(t('yesDelete')) + '</button> ' +
         '<button class="btn ghost" data-action="cancel-delete">' + esc(t('cancel')) + '</button></div>' +
       '<div class="card"><h2>' + esc(t('basicInfo')) + '</h2>' + (rows || '<p class="sub" style="margin:0">—</p>') + '</div>' +
-      (await recordsCard(p)) + (await docsCard(p)) + (await photosCard(p)) + (await contactsCard(p));
+      (await completenessCard(p)) + (await recordsCard(p)) + (await docsCard(p)) + (await photosCard(p)) + (await contactsCard(p));
   }
 
   function val(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
   function on(id) { var el = document.getElementById(id); return !!(el && el.checked); }
+  function collectCurrent() {
+    var o = { since: val('f_cur_since') };
+    CUR_FIELDS.forEach(function (k) { o[k] = { en: val('f_cur_' + k + '_en'), th: val('f_cur_' + k + '_th') }; });
+    return o;
+  }
   function collectPerson() {
     var priv = [];
     if (on('pv_dob')) priv.push('dateOfBirth');
@@ -1919,7 +2500,7 @@
     function n(l) { return { first: val('f_' + l + '_first'), middle: val('f_' + l + '_middle'), last: val('f_' + l + '_last') }; }
     return { names: { en: n('en'), th: n('th') }, preferredName: val('f_pref'), title: val('f_title'), gender: val('f_gender'),
              dateOfBirth: val('f_dob'), placeOfBirth: val('f_pob'), nationality: val('f_nat'), nationalId: val('f_nid'),
-             privateFields: priv, notes: val('f_notes'), status: 'active' };
+             privateFields: priv, notes: val('f_notes'), status: 'active', current: collectCurrent() };
   }
   async function savePerson(id) {
     var data = collectPerson(), msg = document.getElementById('formMsg');
@@ -2032,6 +2613,7 @@
       view.innerHTML = html;
       window.scrollTo(0, 0);
       if (route === 'people') renderStage();
+      if (route === 'search') runSearch();
       if (route === 'resume') { if (parseHash()[1] === 'snap') fitPaper(); else initResume(); }
       if (route === 'settings') { refreshStorageInfo(); refreshDbInfo(); refreshDeletedList(); refreshBackupUi(); }
     }).catch(function (err) {
@@ -2042,8 +2624,10 @@
   // ---------- Events ----------
   window.addEventListener('hashchange', render);
   window.addEventListener('resize', function () { fitPaper(); });
+  document.addEventListener('keydown', function (e) { if (e.target.id === 'homeQ' && e.key === 'Enter' && e.target.value.trim()) location.hash = '#search/' + encodeURIComponent(e.target.value.trim()); });
   document.addEventListener('toggle', function (e) { if (e.target.tagName === 'DETAILS' && e.target.getAttribute('data-key')) rb.open[e.target.getAttribute('data-key')] = e.target.open; }, true);
   document.addEventListener('input', function (e) {
+    if (e.target.id === 'srQ') { runSearch(); return; }
     if (e.target.classList && e.target.classList.contains('stageName')) { var si = recStage[parseInt(e.target.getAttribute('data-i'), 10)]; if (si) si.name = e.target.value; return; }
     if (rbHandle(e.target, 'input')) return;
     if (e.target.id !== 'docQ') return;
@@ -2053,6 +2637,8 @@
   document.addEventListener('change', function (e) {
     var el = e.target;
     if (rbHandle(el, 'change')) return;
+    if (el.id === 'srScope') { runSearch(); return; }
+    if (el.id === 'tlTag') { tl.tag = el.value; render(); return; }
     if (el.id === 'stageInput') { var sf = Array.prototype.slice.call(el.files || []); el.value = ''; stageAdd(sf); return; }
     if (el.classList && el.classList.contains('recDocName')) {
       repo.update('documents', el.getAttribute('data-id'), { fileName: finalName(el.value, el.getAttribute('data-orig')) }).then(render);
@@ -2105,8 +2691,12 @@
       if (a === 'rb-save') { rbSavePreset().catch(fail); return; }
       if (a === 'rb-del') { if (armed(act, t('tapDelete'))) repo.softDelete('resumeProfiles', rb.preset).then(function () { rb.preset = ''; render(); }); return; }
       if (a === 'rb-print') { rbPrint().catch(fail); return; }
+      if (a === 'pkg-make') { pkgMake().catch(fail); return; }
       if (a === 'print-snap') { repo.get('generated', id).then(function (g) { if (g) printAs(g.name); }); return; }
       if (a === 'del-snap') { if (armed(act, t('tapDelete'))) repo.softDelete('generated', id).then(render); return; }
+      if (a === 'tl-type') { var ty = act.getAttribute('data-type'); if (!ty) tl.types = {}; else tl.types[ty] = !tl.types[ty]; render(); return; }
+      if (a === 'sr-tag') { q('srQ').value = '#' + act.getAttribute('data-tag'); runSearch(); return; }
+      if (a === 'make-xlsx') { doExcel(act); return; }
       if (a === 'pick-stage') { q('stageInput').click(); return; }
       if (a === 'stage-rm') { recStage.splice(parseInt(act.getAttribute('data-i'), 10), 1); renderStage(); return; }
       if (a === 'make-backup') { doMakeBackup(act); return; }
