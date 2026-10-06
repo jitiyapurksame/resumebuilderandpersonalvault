@@ -1,4 +1,4 @@
-PROFILEVAULT v1.4 - DEPLOY GUIDE
+PROFILEVAULT v1.5 - DEPLOY GUIDE
 ================================
 
 IN THIS ZIP
@@ -17,7 +17,7 @@ UPDATE LATER
   it replaces the old one). Vercel redeploys in about a minute.
   Your saved data stays, because the address stays the same.
 
-WHAT IS IN v1.4
+WHAT IS IN v1.5
   Home: search box, backup reminder, documents expiring soon, quick actions
   People: profile, photos, contacts, completeness checklist, timeline
   Records: education, experience, training, awards, skills, projects
@@ -26,7 +26,9 @@ WHAT IS IN v1.4
   Search: people, records, documents, contacts, #tags (Home box or Search tab)
   Resume: choose sections/items/filters, live A4 preview, saved presets,
           Save as PDF (print), saved copies, Excel export
-  NEW in v1.4: Application package (checklist for speaker, job or scholarship/school,
+  NEW in v1.5: Teacher's / recommendation letters and Portfolio link on the checklists;
+          shortcuts to Current work & study on the resume page and person page.
+  Earlier in v1.4: Application package (checklist for speaker, job or scholarship/school,
           then download the resume and chosen documents as one zip).
   Earlier in v1.3: Team size and Budget / scale fields on experience and projects.
   Earlier in v1.2: record types Languages, Activities, Publications, Talks,
